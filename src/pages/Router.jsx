@@ -8,12 +8,11 @@
 
 import { Route, Routes } from "react-router-dom";
 /* root pages */
-import CommonLayout from "../../components/layout/CommonLayout";
 import Home from "./root/Home";
 import Login from "./root/Login";
 import Signup from "./root/Signup";
 import Program from "./program/Program";
-import UpdateInfo from "./mypage/MypageUpdate";
+import Mypage from "./mypage/Mypage";
 
 export default function Router() {
   return (
@@ -25,7 +24,7 @@ export default function Router() {
         <Route path="program" element={<Program />} />
       </Route>
       <Route path="/mypage">
-        <Route index element={<UpdateInfo />} />
+        <Route index element={<Mypage />} />
       </Route>
     </Routes>
   );
