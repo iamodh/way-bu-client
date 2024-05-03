@@ -1,14 +1,24 @@
 import { createGlobalStyle } from "styled-components";
 
 export default createGlobalStyle`
-    body {
-      margin: 0; line-height: normal;
-    }
+body {
+    margin: 0; line-height: normal;
+}
+
+* {
+    font-family: "Pretendard-Regular";
+}
+
 :root {
 
 /* fonts */
---l-bold: Inter;
---font-mansalva: Mansalva;
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
 
 /* font sizes */
 --font-size-xxl: 32px;
@@ -71,4 +81,5 @@ export default createGlobalStyle`
 --br-mini: 15px;
 --br-xl: 20px;
 }
+
 `;
