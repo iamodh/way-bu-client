@@ -1,6 +1,88 @@
 import { createGlobalStyle } from "styled-components";
 
 export default createGlobalStyle`
+body {
+    margin: 0; line-height: normal;
+}
+
+* {
+    font-family: "Pretendard-Regular";
+}
+
+:root {
+
+/* fonts */
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+/* font sizes */
+--font-size-xxl: 32px;
+--font-size-xl: 24px;
+--font-size-l: 20px;
+--font-size-m: 16px;
+--font-size-s: 12px;
+--font-size-xs: 8px;
+
+/* Colors */
+--color-white: #fff;
+--color-gray: #bbb;
+--color-black: #000;
+--color-blue-main: #3592F0;
+--color-blue-vivid: #A1DBF1;
+--color-blue-light: #5ba6f3;
+--color-blue-bright: #6FCBF4;
+--color-navy: #1B4965;
+--color-skyblue-main: #CEEBF3;
+--color-skyblue-light: #F4FCFF;
+--color-skyblue-background: #EDF4F7;
+--color-sand-main: #FFECCC;
+--color-sand-bright: #F7EEDD;
+--color-sand-lignt: #FAFAF4;
+--color-tag-red-back: #FDF1F2;
+--color-tag-red-front: #F58E93;
+--color-tag-orange-back: #FDF4EA;
+--color-tag-orange-front: #F09335;
+--color-tag-mint-back: #E7F7F7;
+--color-tag-mint-front: #15B5B0;
+--color-tag-green-back: #EDF5F1;
+--color-tag-green-front: #4C9C78;
+
+
+/* Gaps */
+--gap-9xs: 4px;
+--gap-5xs: 8px;
+--gap-3xs: 10px;
+--gap-base: 16px;
+--gap-xl: 20px;
+--gap-13xl: 32px;
+--gap-17xl: 36px;
+--gap-21xl: 40px;
+
+/* Paddings */
+--padding-9xs: 4px;
+--padding-5xs: 8px;
+--padding-3xs: 10px;
+--padding-xs: 12px;
+--padding-base: 16px;
+--padding-xl: 20px;
+--padding-5xl: 24px;
+--padding-13xl: 32px;
+--padding-41xl: 60px;
+--padding-45xl: 64px;
+
+/* Border radiuses */
+--br-8xs: 5px;
+--br-3xs: 10px;
+--br-mini: 15px;
+--br-xl: 20px;
+}
+
+=======
     body {
       margin: 0; line-height: normal;
     }
