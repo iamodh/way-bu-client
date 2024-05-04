@@ -4,20 +4,20 @@ import Index from "./MypageIndex";
 // import Menubar from "./components/Menubar";
 
 const MypageUpdateWapper = styled.div`
-  width: 100%;
+  /* width: 100%;
   position: relative;
   background-color: var(--color-white);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   padding: 0px;
   box-sizing: border-box;
-  gap: var(--gap-13xl);
-  /* font-family: "Pretendard-Regular"; */
+  font-family: "Pretendard-Regular";
   line-height: normal;
-  letter-spacing: normal;
+  letter-spacing: normal; */
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-13xl);
   @media screen and (max-width: 768px) {
     gap: var(--gap-base);
   }
@@ -26,10 +26,12 @@ const MypageUpdateWapper = styled.div`
 const MypageLayout = () => {
   // Menubar 완성 후 Profile 위에 추가 예정
   return (
-    <MypageUpdateWapper>
-      <Profile />
-      <Index />
-    </MypageUpdateWapper>
+    <>
+      <MypageUpdateWapper>
+        <Profile />
+        <Index />
+      </MypageUpdateWapper>
+    </>
   );
 };
 
