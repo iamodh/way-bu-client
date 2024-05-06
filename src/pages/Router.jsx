@@ -13,11 +13,12 @@ import Login from "./root/Login";
 import Signup from "./root/Signup";
 import Program from "./program/Program";
 import Mypage from "./mypage/Mypage";
+import CommonLayout from "../components/layout/CommonLayout";
 
 export default function Router() {
   return (
     <Routes>
-      <Route path="/">
+      <Route path="/" element={<CommonLayout />}>
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
