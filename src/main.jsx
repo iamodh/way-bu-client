@@ -3,15 +3,15 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { QueryClient, QueryClientProvider } from "react-query";
 import GlobalStyles from "./global";
+import { RecoilRoot } from "recoil";
 
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient}>
     <GlobalStyles />
+    <RecoilRoot>
       <App />
-    </QueryClientProvider>
-  </React.StrictMode>
+    </RecoilRoot>
+  </QueryClientProvider>
 );
-
