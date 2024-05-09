@@ -30,10 +30,10 @@ const Button = styled.button`
   }
 `;
 
-const IndexButton = ({ prop }) => {
+const IndexButton = ({ text }) => {
   return (
     <Button>
-      <Div>{prop}</Div>
+      <Div>{text}</Div>
     </Button>
   );
 };

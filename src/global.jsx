@@ -4,6 +4,7 @@ export default createGlobalStyle`
 
 * {
     font-family: "Pretendard-Regular";
+		/* box-sizing: border-box; */
 }
 
 :root {
@@ -15,7 +16,6 @@ export default createGlobalStyle`
     font-weight: 400;
     font-style: normal;
 }
-
 
 
 /* font sizes */

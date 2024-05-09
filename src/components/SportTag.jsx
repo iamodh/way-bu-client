@@ -29,10 +29,10 @@ const SportTag = styled.button`
   }
 `;
 
-const IndexButton = ({ prop }) => {
+const IndexButton = ({ text }) => {
   return (
     <SportTag>
-      <Div>{prop}</Div>
+      <Div>{text}</Div>
     </SportTag>
   );
 };

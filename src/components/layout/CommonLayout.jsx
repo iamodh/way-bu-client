@@ -29,7 +29,7 @@ export default function CommonLayout() {
           <Link to={"/login"}>
             <NavItem>Login</NavItem>
           </Link>
-          <Link to={"signup"}>
+          <Link to={"/signup"}>
             <NavItem>Signup</NavItem>
           </Link>
           <Link to={"/program"}>
