@@ -2,7 +2,7 @@ import { Link, Outlet } from "react-router-dom";
 import { styled } from "styled-components";
 import { client } from "../../../libs/supabase";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { loggedInUserState } from "../../atom";
+import { isDarkModeState, loggedInUserState } from "../../atom";
 import { useEffect, useState } from "react";
 
 const Header = styled.header`
@@ -55,6 +55,13 @@ export default function CommonLayout() {
     console.log("로그아웃 되었습니다.");
   };
 
+  /* DarkMode */
+  const [isDarkMode, setIsDarkMode] = useRecoilState(isDarkModeState);
+
+  const handleDarkMode = () => {
+    setIsDarkMode((prev) => !prev);
+  };
+
   return (
     <>
       <Header>
@@ -74,6 +81,7 @@ export default function CommonLayout() {
           {loggedInUser ? (
             <button onClick={handleLogout}>로그아웃</button>
           ) : null}
+          <button onClick={handleDarkMode}>다크모드 ON</button>
         </Nav>
       </Header>
       <Outlet />
