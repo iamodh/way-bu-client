@@ -30,34 +30,13 @@ const Tag = styled.button`
   }
 `;
 
-export default function SportsTag({ prop }) {
-  console.log(prop.name, prop.theme);
-  let color = `var(--color-tag-${prop.theme}-front)`;
-  let bgColor = `var(--color-tag-${prop.theme}-back)`;
+export default function SportsTag({ sport }) {
+  let color = `var(--color-tag-${sport.theme_color}-front)`;
+  let bgColor = `var(--color-tag-${sport.theme_color}-back)`;
 
   return (
     <Tag color={color} bgColor={bgColor}>
-      <Div>{prop.name}</Div>
+      <Div>{sport.title}</Div>
     </Tag>
   );
 }
-
-// 정환님 코드
-const Object = (props) => {
-  const ObjBox = styled.div`
-    border: 1px solid rgba(0, 0, 0, 0.5);
-    margin: 0.3rem;
-    padding: 0 0.5rem;
-    border-radius: 0.5rem;
-    opacity: 0.5;
-    color: ${props.color};
-    background-color: ${props.bgColor};
-    &:hover {
-      cursor: pointer;
-      background-color: #5090e9;
-      color: white;
-      opacity: 1;
-    }
-  `;
-  return <ObjBox color={props.color}>{props.name}</ObjBox>;
-};

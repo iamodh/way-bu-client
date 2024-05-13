@@ -33,11 +33,11 @@ export default function ProgramItem({ program, width }) {
       <TextBox>
         <H3>{program.program_name}</H3>
         <div>
-          {"⭐".repeat(program.numOfRates)} ({program.numOfRates})
+          {"⭐".repeat(program.business_id)} ({program.business_id})
         </div>
         <Span>{program.price}</Span>
         <Span>
-          {program.available[0]} - {program.available[1]}
+          {program.open_time} - {program.close_time}
         </Span>
       </TextBox>
       <ButtonBlue text={"비교하기"}></ButtonBlue>

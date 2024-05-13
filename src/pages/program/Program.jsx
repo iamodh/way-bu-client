@@ -1,76 +1,10 @@
 import { useQuery } from "react-query";
-import { getPrograms } from "../../../apis/program";
 import { styled } from "styled-components";
 import SportTag from "../../components/SportTag";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProgramItem from "../../components/ProgramItem";
+import { client } from "../../../libs/supabase";
 
-const programSample = [
-  {
-    id: 1,
-    program_name: "프로그램 이름",
-    business_name: "업체 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 2,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 3,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    price: "100,000원",
-    numOfRates: 3,
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 4,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 5,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 6,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 7,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 8,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-];
 const Span = styled.span`
   font-size: var(--font-size-l);
   line-height: 1.5rem;
@@ -145,14 +79,16 @@ const Price = styled.div`
   min-width: 30px;
   width: 24%;
   height: 100%;
+  font-size: var(--font-size-l);
   border: 1px solid var(--color-gray);
   border-radius: var(--br-mini);
+  cursor: pointer;
   @media screen and (max-width: 768px) {
     font-size: var(--font-size-m);
     min-width: 15px;
   }
 `;
-const DateAndTime = styled(Price)`
+const DateAndTime = styled.div`
   min-width: 60px;
   width: 48%;
 `;
@@ -242,14 +178,39 @@ const GridBox = styled.div`
   }
 `;
 
-const sportsSample = [
-  { name: "수영", theme: "red" },
-  { name: "서핑", theme: "orange" },
-  { name: "요트", theme: "mint" },
-  { name: "카약", theme: "green" },
-];
-
 export default function Program() {
+  const [sports, setSports] = useState();
+  const [programs, setPrograms] = useState([]);
+  const [sportsLoading, setSportsLoading] = useState(true);
+  const [programsLoading, setProgramsLoading] = useState(true);
+
+  useEffect(() => {
+    getSports();
+    getPrograms();
+  }, []);
+
+  async function getSports() {
+    const { data, error } = await client.from("SPORT").select();
+    setSports(data);
+    setSportsLoading(false);
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+  }
+
+  async function getPrograms() {
+    const { data, error } = await client.from("PROGRAM").select();
+    setPrograms(data);
+    setProgramsLoading(false);
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+  }
+
+  console.log(sports);
+
   return (
     <Wrapper>
       <SearchContainer>
@@ -261,9 +222,15 @@ export default function Program() {
       <FilterContainer>
         <Sports>
           <SpanBold>종목</SpanBold>
-          {sportsSample.map((e, i) => {
-            return <SportTag prop={e} key={i} />;
-          })}
+          {sportsLoading ? (
+            "Loading..."
+          ) : (
+            <>
+              {sports.map((s) => (
+                <SportTag sport={s} key={s.id} />
+              ))}
+            </>
+          )}
         </Sports>
         <MainFilter>
           <DateAndTime>
@@ -323,11 +290,15 @@ export default function Program() {
             );
           })}
         </SortOption>
-        <GridBox>
-          {programSample.map((program, idx) => (
-            <ProgramItem program={program} width={300} key={idx} />
-          ))}
-        </GridBox>
+        {programsLoading ? (
+          "Loading..."
+        ) : (
+          <GridBox>
+            {programs.map((p) => (
+              <ProgramItem program={p} width={300} key={p.id} />
+            ))}
+          </GridBox>
+        )}
       </ProgramContainer>
     </Wrapper>
   );
