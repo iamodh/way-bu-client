@@ -2,20 +2,84 @@ import { useQuery } from "react-query";
 import { getPrograms } from "../../../apis/program";
 import { styled } from "styled-components";
 import SportTag from "../../components/SportTag";
-import ButtonBlue from "../../components/ButtonBlue";
-import Rating from "react-simple-star-rating";
 import { useState } from "react";
+import ProgramItem from "../../components/ProgramItem";
 
+const programSample = [
+  {
+    id: 1,
+    program_name: "프로그램 이름",
+    business_name: "업체 이름",
+    numOfRates: 3,
+    price: "100,000원",
+    available: ["10:00", "20:00"],
+  },
+  {
+    id: 2,
+    business_name: "업체 이름",
+    program_name: "프로그램 이름",
+    numOfRates: 3,
+    price: "100,000원",
+    available: ["10:00", "20:00"],
+  },
+  {
+    id: 3,
+    business_name: "업체 이름",
+    program_name: "프로그램 이름",
+    price: "100,000원",
+    numOfRates: 3,
+    available: ["10:00", "20:00"],
+  },
+  {
+    id: 4,
+    business_name: "업체 이름",
+    program_name: "프로그램 이름",
+    numOfRates: 3,
+    price: "100,000원",
+    available: ["10:00", "20:00"],
+  },
+  {
+    id: 5,
+    business_name: "업체 이름",
+    program_name: "프로그램 이름",
+    numOfRates: 3,
+    price: "100,000원",
+    available: ["10:00", "20:00"],
+  },
+  {
+    id: 6,
+    business_name: "업체 이름",
+    program_name: "프로그램 이름",
+    numOfRates: 3,
+    price: "100,000원",
+    available: ["10:00", "20:00"],
+  },
+  {
+    id: 7,
+    business_name: "업체 이름",
+    program_name: "프로그램 이름",
+    numOfRates: 3,
+    price: "100,000원",
+    available: ["10:00", "20:00"],
+  },
+  {
+    id: 8,
+    business_name: "업체 이름",
+    program_name: "프로그램 이름",
+    numOfRates: 3,
+    price: "100,000원",
+    available: ["10:00", "20:00"],
+  },
+];
 const Span = styled.span`
   font-size: var(--font-size-l);
   line-height: 1.5rem;
+  @media screen and (max-width: 768px) {
+    font-size: var(--font-size-m);
+  }
 `;
 const SpanBold = styled(Span)`
   font-weight: bold;
-`;
-const H3 = styled.h3`
-  font-size: var(--font-size-xl);
-  font-weight: 900;
 `;
 const Wrapper = styled.div`
   max-width: 1000px;
@@ -26,11 +90,15 @@ const Wrapper = styled.div`
 const SearchContainer = styled.div`
   display: flex;
   height: 60px;
-  max-width: 600px;
+  width: 50%;
+  min-width: 300px;
   margin: var(--padding-xl) auto;
   border: 1px solid var(--color-blue-main);
   border-radius: var(--br-mini);
-  background-color: var(--color-white);
+  @media screen and (max-width: 768px) {
+    font-size: var(--font-size-m);
+    height: 40px;
+  }
 `;
 const SearchInput = styled.input`
   width: 100%;
@@ -44,6 +112,9 @@ const IconBox = styled.button`
   background-color: var(--color-blue-main);
   border: none;
   border-radius: 0 var(--br-mini) var(--br-mini) 0;
+  &:hover {
+    background-color: var(--color-navy);
+  }
 `;
 const FilterContainer = styled.div`
   display: flex;
@@ -59,69 +130,69 @@ const Sports = styled.div`
 `;
 const MainFilter = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  width: 80%;
   height: 80px;
-  margin: var(--padding-xl) 0;
-`;
-const DateAndTime = styled.div`
-  display: flex;
-  min-width: 100px;
-  width: 48%;
-  height: 100%;
-  border: 1px solid var(--color-gray);
-  border-radius: var(--br-mini);
-  background-color: var(--color-white);
-`;
-const Date = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50%;
-  min-width: 50px;
-  height: 100%;
-  border-right: 1px solid var(--color-gray);
-`;
-const Time = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50%;
-  min-width: 50px;
-  height: 100%;
+  margin: var(--padding-xl) auto;
+  @media screen and (max-width: 768px) {
+    height: 60px;
+  }
 `;
 const Price = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 50px;
+  min-width: 30px;
   width: 24%;
   height: 100%;
   border: 1px solid var(--color-gray);
   border-radius: var(--br-mini);
-  background-color: var(--color-white);
+  @media screen and (max-width: 768px) {
+    font-size: var(--font-size-m);
+    min-width: 15px;
+  }
+`;
+const DateAndTime = styled(Price)`
+  min-width: 60px;
+  width: 48%;
+`;
+const Date = styled(Price)`
+  width: 50%;
+  border: none;
+  border-radius: 0px;
+  border-right: 1px solid var(--color-gray);
+`;
+const Time = styled(Price)`
+  width: 50%;
+  border: none;
+  border-radius: 0px;
 `;
 const Location = styled(Price)``;
 const DetailFilter = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--padding-base);
-  width: 100%;
-  min-width: 1000px;
+  width: 80%;
+  min-width: 500px;
   margin: 0 auto;
   padding: var(--padding-13xl) 0;
   background-color: var(--color-white);
   border: 1px solid var(--color-gray);
   border-radius: var(--br-mini);
+  @media screen and (max-width: 768px) {
+    font-size: var(--font-size-m);
+    min-width: 320px;
+  }
 `;
 const InputRow = styled.div`
   display: flex;
   flex-direction: row;
-  margin: 0 var(--padding-41xl);
+  margin: 0 5%;
 `;
 const RowName = styled.label`
   font-weight: 900;
   width: 20%;
-  min-width: 200px;
+  min-width: 100px;
 `;
 const Radio = styled.input`
   display: none;
@@ -147,7 +218,7 @@ const NumberInput = styled.input`
 const ProgramContainer = styled.div`
   width: 100%;
 `;
-const SortOption = styled.div`
+const SortOption = styled(Span)`
   display: flex;
   justify-content: flex-end;
   margin: var(--padding-base);
@@ -155,37 +226,30 @@ const SortOption = styled.div`
 const GridBox = styled.div`
   display: grid;
   width: 1000px;
+  margin: 0 auto;
   max-height: 2400px;
   grid-template-columns: 1fr 1fr 1fr;
   grid-column-gap: var(--padding-xl);
   grid-row-gap: var(--padding-41xl);
   justify-items: center;
-`;
-const GridItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  width: 300px;
-  height: 450px;
-  padding: var(--padding-base);
-  background-color: var(--color-white);
-  border: 1px solid var(--color-gray);
-  border-radius: var(--br-mini);
-`;
-const TextBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: var(--padding-base) 0;
+  @media screen and (max-width: 1100px) {
+    width: 600px;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media screen and (max-width: 600px) {
+    width: 400px;
+    grid-template-columns: 1fr;
+  }
 `;
 
+const sportsSample = [
+  { name: "수영", theme: "red" },
+  { name: "서핑", theme: "orange" },
+  { name: "요트", theme: "mint" },
+  { name: "카약", theme: "green" },
+];
+
 export default function Program() {
-  const [rating, setRating] = useState(0);
-  const handleRating = (rate) => {
-    setRating(rate);
-  };
-  const onPointerEnter = () => console.log("Enter");
-  const onPointerLeave = () => console.log("Leave");
-  const onPointerMove = (value, index) => console.log(value, index);
   return (
     <Wrapper>
       <SearchContainer>
@@ -197,8 +261,8 @@ export default function Program() {
       <FilterContainer>
         <Sports>
           <SpanBold>종목</SpanBold>
-          {["서핑", "요트", "패들보드", "카약", "모터보트"].map((str, i) => {
-            return <SportTag text={str} key={i} />;
+          {sportsSample.map((e, i) => {
+            return <SportTag prop={e} key={i} />;
           })}
         </Sports>
         <MainFilter>
@@ -260,16 +324,8 @@ export default function Program() {
           })}
         </SortOption>
         <GridBox>
-          {[1, 2, 3, 4, 5].map((str, i) => (
-            <GridItem key={i}>
-              <img src="/img/ellipse-13@2x.png" alt="image" />
-              <TextBox>
-                <H3>프로그램명{str}</H3>
-                <Span>150,000원</Span>
-                <Span>10:00 - 18:00</Span>
-              </TextBox>
-              <ButtonBlue text="비교하기" />
-            </GridItem>
+          {programSample.map((program, idx) => (
+            <ProgramItem program={program} width={300} key={idx} />
           ))}
         </GridBox>
       </ProgramContainer>
