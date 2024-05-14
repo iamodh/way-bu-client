@@ -2,15 +2,15 @@ import { useQuery } from "react-query";
 import { styled } from "styled-components";
 import SportTag from "../../components/SportTag";
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import ProgramItem from "../../components/ProgramItem";
 import { client } from "../../../libs/supabase";
+import { QueryClient, QueryClientProvider } from "react-query";
+import ButtonBlue from "../../components/ButtonBlue";
 
 const Span = styled.span`
-  font-size: var(--font-size-l);
+  font-size: var(--font-size-m);
   line-height: 1.5rem;
-  @media screen and (max-width: 768px) {
-    font-size: var(--font-size-m);
-  }
 `;
 const SpanBold = styled(Span)`
   font-weight: bold;
@@ -18,10 +18,10 @@ const SpanBold = styled(Span)`
 const Wrapper = styled.div`
   max-width: 1000px;
   margin: 0 auto;
-  font-size: var(--font-size-l);
+  font-size: var(--font-size-m);
   font-family: "Pretendard-regular";
 `;
-const SearchContainer = styled.div`
+const SearchContainer = styled.form`
   display: flex;
   height: 60px;
   width: 50%;
@@ -30,7 +30,6 @@ const SearchContainer = styled.div`
   border: 1px solid var(--color-blue-main);
   border-radius: var(--br-mini);
   @media screen and (max-width: 768px) {
-    font-size: var(--font-size-m);
     height: 40px;
   }
 `;
@@ -50,65 +49,115 @@ const IconBox = styled.button`
     background-color: var(--color-navy);
   }
 `;
-const FilterContainer = styled.div`
+const Message = styled.div`
+  margin-top: 20px;
+  text-align: center;
+  font-weight: bold;
+  color: var(--color-blue-main);
+  background-color: var(--color-skyblue-background);
+`;
+const FilterContainer = styled.form`
   display: flex;
   flex-direction: column;
+  position: relative;
 `;
 const Sports = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
   height: 32px;
   gap: 4px;
   margin: 0 auto;
+  white-space: normal;
+  @media screen {
+  }
 `;
 const MainFilter = styled.div`
   display: flex;
   justify-content: space-around;
-  width: 80%;
+  width: 100%;
   height: 80px;
   margin: var(--padding-xl) auto;
   @media screen and (max-width: 768px) {
     height: 60px;
   }
 `;
-const Price = styled.div`
+
+const DateAndTime = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 30px;
-  width: 24%;
-  height: 100%;
-  font-size: var(--font-size-l);
-  border: 1px solid var(--color-gray);
-  border-radius: var(--br-mini);
-  cursor: pointer;
-  @media screen and (max-width: 768px) {
-    font-size: var(--font-size-m);
-    min-width: 15px;
-  }
-`;
-const DateAndTime = styled.div`
   min-width: 60px;
   width: 48%;
+  font-size: var(--font-size-m);
+  border: 1px solid var(--color-gray);
+  border-radius: var(--br-mini);
 `;
-const Date = styled(Price)`
+const Date = styled.input`
   width: 50%;
   border: none;
   border-radius: 0px;
   border-right: 1px solid var(--color-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  font-size: var(--font-size-m);
+  cursor: pointer;
+  @media screen and (max-width: 768px) {
+    min-width: 15px;
+  }
 `;
-const Time = styled(Price)`
+const Time = styled.input`
   width: 50%;
   border: none;
   border-radius: 0px;
+  border-right: 1px solid var(--color-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  font-size: var(--font-size-m);
+  cursor: pointer;
+  @media screen and (max-width: 768px) {
+    min-width: 15px;
+  }
 `;
-const Location = styled(Price)``;
+const Price = styled.input`
+  display: flex;
+  min-width: 30px;
+  width: 24%;
+  height: 100%;
+  padding: 0 var(--padding-base);
+  font-size: var(--font-size-m);
+  border: 1px solid var(--color-gray);
+  border-radius: var(--br-mini);
+  cursor: pointer;
+  @media screen and (max-width: 768px) {
+    min-width: 15px;
+  }
+`;
+const Location = styled.select`
+  display: flex;
+  min-width: 30px;
+  width: 24%;
+  height: 100%;
+  padding: 0 var(--padding-xl);
+  font-size: var(--font-size-m);
+  border: 1px solid var(--color-gray);
+  border-radius: var(--br-mini);
+  cursor: pointer;
+  @media screen and (max-width: 8px) {
+    min-width: 15px;
+  }
+`;
 const DetailFilter = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--padding-base);
-  width: 80%;
+  width: 100%;
   min-width: 500px;
   margin: 0 auto;
   padding: var(--padding-13xl) 0;
@@ -130,14 +179,14 @@ const RowName = styled.label`
   width: 20%;
   min-width: 100px;
 `;
-const Radio = styled.input`
+const Checkbox = styled.input`
   display: none;
   &:checked + label {
     color: var(--color-blue-main);
     font-weight: 900;
   }
 `;
-const RadioLabel = styled.label`
+const CheckboxLabel = styled.label`
   color: var(--color-gray);
   cursor: pointer;
   margin-right: var(--padding-base);
@@ -151,6 +200,12 @@ const NumberInput = styled.input`
   width: 10%;
   padding: 2px var(--padding-3xs);
 `;
+const ButtonContainer = styled.div`
+  display: flex;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+`;
 const ProgramContainer = styled.div`
   width: 100%;
 `;
@@ -161,28 +216,25 @@ const SortOption = styled(Span)`
 `;
 const GridBox = styled.div`
   display: grid;
-  width: 1000px;
+  width: 100%;
   margin: 0 auto;
-  max-height: 2400px;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-column-gap: var(--padding-xl);
-  grid-row-gap: var(--padding-41xl);
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-column-gap: var(--padding-base);
+  grid-row-gap: var(--padding-xl);
   justify-items: center;
-  @media screen and (max-width: 1100px) {
-    width: 600px;
-    grid-template-columns: 1fr 1fr;
+  @media screen and (max-width: 900px) {
+    grid-template-columns: 1fr 1fr 1fr;
   }
-  @media screen and (max-width: 600px) {
+  @media screen and (max-width: 426px) {
     width: 400px;
     grid-template-columns: 1fr;
   }
 `;
 
 export default function Program() {
+  /* DB - sports */
   const [sports, setSports] = useState();
-  const [programs, setPrograms] = useState([]);
   const [sportsLoading, setSportsLoading] = useState(true);
-  const [programsLoading, setProgramsLoading] = useState(true);
 
   useEffect(() => {
     getSports();
@@ -199,22 +251,54 @@ export default function Program() {
     }
   }
 
-  async function getPrograms() {
-    const { data, error } = await client.from("PROGRAM").select();
-    setPrograms(data);
-    setProgramsLoading(false);
-    if (error) {
-      console.log(error.message);
-      return;
-    }
+  /* DB - programs */
+  // const [programs, setPrograms] = useState([]);
+  // const [programLoading, setProgramLoading] = useState(true);
+
+  // async function getPrograms() {
+  //   const { data, error } = await client.from("PROGRAM").select();
+  //   setPrograms(data);
+  //   setProgramLoading(false);
+  //   if (error) {
+  //     console.log(error.message);
+  //     return;
+  //   }
+  // }
+
+  function getPrograms() {
+    return fetch("http://localhost:4000/api/program").then((response) =>
+      response.json()
+    );
   }
 
-  console.log(sports);
+  const { isLoading: programLoading, data: programData } = useQuery(
+    ["programs"],
+    getPrograms
+  );
+
+  /* form */
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+  const onValid = (data) => {
+    console.log(data);
+    reset();
+  };
 
   return (
     <Wrapper>
-      <SearchContainer>
-        <SearchInput placeholder="검색어를 입력해주세요." />
+      <Message>{errors?.keyword?.message}</Message>
+      <SearchContainer onSubmit={handleSubmit(onValid)}>
+        <SearchInput
+          {...register("keyword", {
+            required: "검색어가 입력되지 않았습니다!!",
+          })}
+          type="text"
+          placeholder="검색어를 입력해주세요."
+        />
         <IconBox>
           <img src="/icon/search.svg" alt="search" />
         </IconBox>
@@ -234,35 +318,47 @@ export default function Program() {
         </Sports>
         <MainFilter>
           <DateAndTime>
-            <Date>날짜</Date>
-            <Time>시간</Time>
+            <Date type="date" />
+            <Time type="time" />
           </DateAndTime>
-          <Price>가격</Price>
-          <Location>지역</Location>
+          <Price type="number" placeholder="가격" />
+          <Location>
+            <option value="">지역</option>
+            <option value="location1">광안리</option>
+            <option value="location2">해운대</option>
+            <option value="location3">다대포</option>
+            <option value="location4">송정</option>
+            <option value="location5">송도</option>
+          </Location>
         </MainFilter>
         <DetailFilter>
           <InputRow>
             <RowName>난이도</RowName>
-            <Radio type="checkbox" value="상" name="level" id="level1" />
-            <RadioLabel htmlFor="level1">상</RadioLabel>
-            <Radio type="checkbox" value="중" name="level" id="level2" />
-            <RadioLabel htmlFor="level2">중</RadioLabel>
-            <Radio type="checkbox" value="하" name="level" id="level3" />
-            <RadioLabel htmlFor="level3">하</RadioLabel>
+            <Checkbox type="checkbox" value="상" name="level" id="level1" />
+            <CheckboxLabel htmlFor="level1">상</CheckboxLabel>
+            <Checkbox type="checkbox" value="중" name="level" id="level2" />
+            <CheckboxLabel htmlFor="level2">중</CheckboxLabel>
+            <Checkbox type="checkbox" value="하" name="level" id="level3" />
+            <CheckboxLabel htmlFor="level3">하</CheckboxLabel>
           </InputRow>
           <InputRow>
             <RowName>예약방식</RowName>
-            <Radio type="checkbox" value="way-bu" name="method" id="way-bu" />
-            <RadioLabel htmlFor="way-bu">WAY-BU 예약</RadioLabel>
-            <Radio type="checkbox" value="link" name="method" id="link" />
-            <RadioLabel htmlFor="link">예약 링크</RadioLabel>
+            <Checkbox
+              type="checkbox"
+              value="way-bu"
+              name="method"
+              id="way-bu"
+            />
+            <CheckboxLabel htmlFor="way-bu">WAY-BU 예약</CheckboxLabel>
+            <Checkbox type="checkbox" value="link" name="method" id="link" />
+            <CheckboxLabel htmlFor="link">예약 링크</CheckboxLabel>
           </InputRow>
           <InputRow>
             <RowName>나이대</RowName>
-            <Radio type="checkbox" value="10" name="age" id="10" />
-            <RadioLabel htmlFor="10">10세 이하 포함</RadioLabel>
-            <Radio type="checkbox" value="14" name="age" id="14" />
-            <RadioLabel htmlFor="14">14세 이하 포함</RadioLabel>
+            <Checkbox type="checkbox" value="10" name="age" id="10" />
+            <CheckboxLabel htmlFor="10">10세 이하 포함</CheckboxLabel>
+            <Checkbox type="checkbox" value="14" name="age" id="14" />
+            <CheckboxLabel htmlFor="14">14세 이하 포함</CheckboxLabel>
           </InputRow>
           <InputRow>
             <RowName>인원</RowName>
@@ -270,32 +366,35 @@ export default function Program() {
           </InputRow>
           <InputRow>
             <RowName>프로그램 기간</RowName>
-            <Radio type="checkbox" value="way-bu" name="term" id="long" />
-            <RadioLabel htmlFor="long">장기</RadioLabel>
-            <Radio type="checkbox" value="link" name="term" id="short" />
-            <RadioLabel htmlFor="short">단기</RadioLabel>
-            <Radio type="checkbox" value="link" name="term" id="oneday" />
-            <RadioLabel htmlFor="oneday">하루</RadioLabel>
+            <Checkbox type="checkbox" value="way-bu" name="term" id="long" />
+            <CheckboxLabel htmlFor="long">장기</CheckboxLabel>
+            <Checkbox type="checkbox" value="link" name="term" id="short" />
+            <CheckboxLabel htmlFor="short">단기</CheckboxLabel>
+            <Checkbox type="checkbox" value="link" name="term" id="oneday" />
+            <CheckboxLabel htmlFor="oneday">하루</CheckboxLabel>
           </InputRow>
         </DetailFilter>
+        <ButtonContainer>
+          <ButtonBlue text={"필터 적용하기"} width={"200px"} />
+        </ButtonContainer>
       </FilterContainer>
       <ProgramContainer>
         <SortOption>
           {["인기순", "가격 높은순", "별점 높은순"].map((str, i) => {
             return (
-              <>
-                <Radio type="radio" value={str} name="sortOption" id={i} />
-                <RadioLabel htmlFor={i}>{str}</RadioLabel>
-              </>
+              <div key={i}>
+                <Checkbox type="radio" value={str} name="sortOption" id={i} />
+                <CheckboxLabel htmlFor={i}>{str}</CheckboxLabel>
+              </div>
             );
           })}
         </SortOption>
-        {programsLoading ? (
+        {programLoading ? (
           "Loading..."
         ) : (
           <GridBox>
-            {programs.map((p) => (
-              <ProgramItem program={p} width={300} key={p.id} />
+            {programData.data.map((p) => (
+              <ProgramItem program={p} key={p.id} />
             ))}
           </GridBox>
         )}

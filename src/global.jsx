@@ -4,7 +4,7 @@ export default createGlobalStyle`
 
 * {
     font-family: "Pretendard-Regular";
-		/* box-sizing: border-box; */
+		box-sizing: border-box;
 }
 
 :root {

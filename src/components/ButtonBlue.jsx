@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const Div = styled.div`
   position: relative;
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-l);
   line-height: 20px;
   font-family: inherit;
   color: inherit;
@@ -14,7 +14,7 @@ const Div = styled.div`
 const Button = styled.button`
   cursor: pointer;
   border: none;
-  min-width: 200px;
+  width: ${(props) => props.width};
   padding: var(--padding-xl) var(--padding-xl);
   background-color: var(--color-blue-main);
   color: var(--color-white);
@@ -30,9 +30,9 @@ const Button = styled.button`
   }
 `;
 
-const IndexButton = ({ text }) => {
+const IndexButton = ({ width, text }) => {
   return (
-    <Button>
+    <Button width={width}>
       <Div>{text}</Div>
     </Button>
   );
