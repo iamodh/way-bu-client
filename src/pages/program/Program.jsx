@@ -1,81 +1,11 @@
-// import { useQuery } from "react-query";
-// import { getPrograms } from "../../../apis/program";
-
 import styled from "styled-components";
 import ProgramItem from "../../components/program/ProgramItem";
 import SportsTag from "../../components/global/SportsTag";
-
-// export default function Program() {
-//   const { isLoading, data } = useQuery(["programs"], getPrograms);
-//   return <>{isLoading ? "Loading..." : <ul>{JSON.stringify(data)}</ul>}</>;
-// }
-
-const programSample = [
-  {
-    id: 1,
-    program_name: "프로그램 이름",
-    business_name: "업체 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 2,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 3,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    price: "100,000원",
-    numOfRates: 3,
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 4,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 5,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 6,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 7,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-  {
-    id: 8,
-    business_name: "업체 이름",
-    program_name: "프로그램 이름",
-    numOfRates: 3,
-    price: "100,000원",
-    available: ["10:00", "20:00"],
-  },
-];
+import { useCallback, useState } from "react";
+import { useQuery } from "react-query";
+import { useForm } from "react-hook-form";
+import { getPrograms } from "../../../apis/programs";
+import { getSports } from "../../../apis/sports";
 
 const Body = styled.main`
   background-color: ${(props) => props.theme.backgroundColor};
@@ -94,7 +24,7 @@ const Wrapper = styled.div`
 `;
 
 /* Search */
-const SearchContainer = styled.div`
+const SearchContainer = styled.form`
   margin-top: 20px;
   width: 80%;
   display: flex;
@@ -137,7 +67,17 @@ const SearchButton = styled.button`
   transition: all 0.1s ease-in-out;
 `;
 
-/* Filter */
+/* Program */
+const ProgramContainer = styled.div`
+  width: 80%;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+`;
+
+/* Filters */
+
 const FilterContainer = styled.div`
   width: 80%;
   height: 400px;
@@ -145,7 +85,7 @@ const FilterContainer = styled.div`
   flex-direction: column;
 `;
 
-const SportsFilter = styled.div`
+const SportsFilter = styled.form`
   height: 40px;
   align-items: center;
   gap: 10px;
@@ -155,18 +95,6 @@ const SportsFilter = styled.div`
     font-weight: bold;
   }
 `;
-
-// const SportsTag = styled.div`
-//   padding: 4px 8px;
-//   border-radius: 6px;
-//   border: 2px solid var(--color-gray);
-//   font-size: var(--font-size-s);
-//   cursor: pointer;
-//   &:hover {
-//     background-color: var(--color-blue-vivid);
-//   }
-//   transition: all 0.2s ease-in-out;
-// `;
 
 const MainFilter = styled.div`
   height: 50px;
@@ -251,39 +179,82 @@ const FilterCol = styled.div`
   }
 `;
 
-/* Program */
-const ProgramContainer = styled.div`
-  width: 80%;
-
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-`;
-
 export default function Program() {
+  /* REACT HOOK FORM */
+  /* search 폼 관리 */
+  const { register: searchRegister, handleSubmit: handleSearchSubmit } =
+    useForm();
+
+  // keyword를 state로 받은 후 useQuery에 매개변수로 전달, api 요청
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const onSearchSubmit = (data) => {
+    setSearchKeyword(data.keyword);
+  };
+
+  /* REACT QUERY */
+  /* get programs */
+  const [tagIds, setTagIds] = useState([]);
+
+  const { isLoading: programsLoading, data: programsData } = useQuery(
+    ["programs", searchKeyword],
+    () => getPrograms(searchKeyword),
+    {
+      select: (programsData) =>
+        tagIds.length === 0
+          ? programsData
+          : programsData.filter((program) => {
+              return tagIds.includes(program.id);
+            }),
+    }
+  );
+
+  /* get sports */
+  const { isLoading: sportsLoading, data: sportsData } = useQuery(
+    ["sports"],
+    getSports
+  );
+
+  // id가 tagIds에 존재하면 제거, 존재하지 않으면 추가
+  const hanldeTagClicked = (id) => {
+    if (tagIds.includes(id)) {
+      const idx = tagIds.indexOf(id);
+      setTagIds((prev) => {
+        prev.splice(idx, 1);
+        return prev;
+      });
+    } else {
+      setTagIds((prev) => [...prev, id]);
+    }
+  };
+
   return (
     <Body>
       <Wrapper>
-        <SearchContainer>
-          <Input placeholder="키워드를 입력하세요" />
+        <SearchContainer onSubmit={handleSearchSubmit(onSearchSubmit)}>
+          <Input
+            placeholder="키워드를 입력하세요"
+            {...searchRegister("keyword")}
+          />
           <SearchButton>검색</SearchButton>
         </SearchContainer>
         <FilterContainer>
           <SportsFilter>
             <h3>종목</h3>
-            {["서핑", "스쿠버다이빙", "패들보드", "잠수", "낚시"].map(
-              (e, i) => {
-                return (
-                  <SportsTag
-                    key={i}
-                    color={"#ff4d4d"}
-                    text={e}
-                    bgColor={"#ffcccc"}
-                    hoverColor={"#ffb8b8"}
-                  />
-                );
-              }
-            )}
+            {sportsLoading
+              ? "Loading..."
+              : sportsData.map((sport) => {
+                  return (
+                    <SportsTag
+                      key={sport.id}
+                      color={"#ff4d4d"}
+                      text={sport.title}
+                      bgcolor={"#ffcccc"}
+                      hovercolor={"#ffb8b8"}
+                      // handleTagClicked 함수를 onClick props로 전달함
+                      onClick={() => hanldeTagClicked(sport.id)}
+                    />
+                  );
+                })}
           </SportsFilter>
           <MainFilter>
             <DateAndTime>
@@ -353,9 +324,17 @@ export default function Program() {
           </DetailFilter>
         </FilterContainer>
         <ProgramContainer>
-          {programSample.map((program, index) => {
-            return <ProgramItem program={program} key={index} />;
-          })}
+          {programsLoading ? (
+            "Loading Programs..."
+          ) : (
+            <>
+              {programsData.length !== 0
+                ? programsData.map((program) => (
+                    <ProgramItem key={program.id} program={program} />
+                  ))
+                : "데이터가 존재하지 않습니다."}
+            </>
+          )}
         </ProgramContainer>
       </Wrapper>
     </Body>

@@ -44,15 +44,21 @@ export default function ProgramItem({ program }) {
           width: "150px",
           height: "150px",
           backgroundColor: "rgb(203 213 225)",
+          backgroundImage: `${
+            program.thumbnail ? `url(${program.thumbnail})` : ""
+          }`,
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
         }}
       />
       <h3>{program.program_name}</h3>
-      <div>⭐⭐⭐⭐⭐({program.numOfRates})</div>
-      <span>{program.price}</span>
+      <div>⭐⭐⭐⭐⭐(0)</div>
+      <span>{program.price} 원</span>
       <div>
-        <span>{program.available[0]}</span>
+        <span>{program.open_time}</span>
         <span> ~ </span>
-        <span>{program.available[1]}</span>
+        <span>{program.close_time}</span>
       </div>
       <Button>비교하기</Button>
     </Wrapper>

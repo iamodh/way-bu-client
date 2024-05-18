@@ -1,18 +1,16 @@
-/*
-
-/ -> 인덱스
-/login -> 로그인
-/signup -> 회원가입
-
-*/
-
 import { Route, Routes } from "react-router-dom";
 /* root pages */
 import Home from "./root/Home";
 import Login from "./root/Login";
 import Signup from "./root/Signup";
+
+/* program pagse */
 import Program from "./program/Program";
+
+/* my pages */
 import Mypage from "./mypage/Mypage";
+
+/* layouts */
 import CommonLayout from "../components/layout/CommonLayout";
 
 export default function Router() {
