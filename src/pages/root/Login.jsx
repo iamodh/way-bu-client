@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { client } from "../../../libs/supabase";
 import { useRecoilState } from "recoil";
 import { loggedInUserState } from "../../atom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Wrapper = styled.div`
   padding: 32px;
@@ -52,6 +52,9 @@ export default function Login() {
 
   /* login 후 session에서 user 정보를 가져와 전역 state에 저장함 */
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   async function signInWithEmail(formData) {
     const { data, error } = await client.auth.signInWithPassword({
       email: formData.email,
@@ -87,7 +90,28 @@ export default function Login() {
     if (error) console.log(error);
   }
 
-  async function addUserProfile() {}
+  async function checkLogin() {
+    const authInfo = await client.auth.getSession();
+    const session = authInfo.data.session;
+    if (session) {
+      const {
+        data: { user },
+        error,
+      } = await client.auth.getUser();
+      setLoggedInUser(user);
+    }
+    if (loggedInUser) {
+      let { data: user_profile, error } = await client
+        .from("user_profile")
+        .select("user_id");
+      setLoggedInUserProfile(user_profile[0]);
+    }
+    if (authInfo.error) console.log(authInfo.error);
+  }
+
+  useEffect(() => {
+    checkLogin();
+  }, []);
 
   /* Login Error 처리 */
   const [alert, setAlert] = useState({ cnt: 0, err: null });
@@ -137,16 +161,18 @@ export default function Login() {
   };
 
   const LoggedPage = () => {
-    <Wrapper>
-      <p>{loggedInUser.email}</p>
-      <p>{loggedInUser.user_metadata.name}</p>
-      <img
-        width={"150px"}
-        height={"200px"}
-        src={loggedInUser.user_metadata.avatar_url}
-        alt=""
-      />
-    </Wrapper>;
+    return (
+      <Wrapper>
+        <p>{loggedInUser.email}</p>
+        <p>{loggedInUser.user_metadata.name}</p>
+        <img
+          width={"150px"}
+          height={"200px"}
+          src={loggedInUser.user_metadata.avatar_url}
+          alt=""
+        />
+      </Wrapper>
+    );
   };
 
   return <>{loggedInUser ? <LoggedPage /> : <UnLoggedPage />}</>;
