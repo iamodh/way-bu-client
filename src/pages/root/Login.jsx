@@ -67,11 +67,33 @@ export default function Login() {
     console.log("로그인 정보", data.session.user);
   }
 
+  async function googleLogin() {
+    let { data, error } = await client.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:5173/login",
+      },
+    });
+    if (error) console.log(error);
+  }
+
+  async function kakaoLogin() {
+    let { data, error } = await client.auth.signInWithOAuth({
+      provider: "kakao",
+      options: {
+        redirectTo: "http://localhost:5173/login",
+      },
+    });
+    if (error) console.log(error);
+  }
+
+  async function addUserProfile() {}
+
   /* Login Error 처리 */
   const [alert, setAlert] = useState({ cnt: 0, err: null });
 
-  return (
-    <>
+  const UnLoggedPage = () => {
+    return (
       <Wrapper>
         {alert.cnt !== 0 && alert ? (
           <Alert key={alert.cnt}>{alert.err + " count: " + alert.cnt}</Alert>
@@ -104,7 +126,28 @@ export default function Login() {
           </InputBox>
           <button style={{ padding: "10px" }}>로그인</button>
         </Form>
+        <button onClick={kakaoLogin} style={{ padding: "10px" }}>
+          카카오 로그인
+        </button>
+        <button onClick={googleLogin} style={{ padding: "10px" }}>
+          구글 로그인
+        </button>
       </Wrapper>
-    </>
-  );
+    );
+  };
+
+  const LoggedPage = () => {
+    <Wrapper>
+      <p>{loggedInUser.email}</p>
+      <p>{loggedInUser.user_metadata.name}</p>
+      <img
+        width={"150px"}
+        height={"200px"}
+        src={loggedInUser.user_metadata.avatar_url}
+        alt=""
+      />
+    </Wrapper>;
+  };
+
+  return <>{loggedInUser ? <LoggedPage /> : <UnLoggedPage />}</>;
 }
