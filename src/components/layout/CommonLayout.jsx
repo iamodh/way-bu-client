@@ -2,7 +2,7 @@ import { Link, Outlet } from "react-router-dom";
 import { styled } from "styled-components";
 import { client } from "../../../libs/supabase";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { loggedInUserState } from "../../atom";
+import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useEffect, useState } from "react";
 
 const Header = styled.header`
@@ -26,6 +26,10 @@ export default function CommonLayout() {
   /* 새로고침 마다 getSession 해서 로그인 체크 */
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
+    loggedInUserProfileState
+  );
+
   useEffect(() => {
     getCurrentSession();
   }, []);
@@ -52,6 +56,7 @@ export default function CommonLayout() {
       return;
     }
     setLoggedInUser(null);
+    setLoggedInUserProfile(null);
     console.log("로그아웃 되었습니다.");
   };
 
@@ -65,9 +70,11 @@ export default function CommonLayout() {
           <Link to={"/login"}>
             <NavItem>Login</NavItem>
           </Link>
-          <Link to={"signup"}>
-            <NavItem>Signup</NavItem>
-          </Link>
+          {!loggedInUser ? (
+            <Link to={"signup"}>
+              <NavItem>Signup</NavItem>
+            </Link>
+          ) : null}
           <Link to={"/program"}>
             <NavItem>Program</NavItem>
           </Link>

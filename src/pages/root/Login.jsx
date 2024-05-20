@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { client } from "../../../libs/supabase";
 import { useRecoilState } from "recoil";
-import { loggedInUserState } from "../../atom";
+import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useState, useEffect } from "react";
 
 const Wrapper = styled.div`
@@ -52,7 +52,9 @@ export default function Login() {
 
   /* login 후 session에서 user 정보를 가져와 전역 state에 저장함 */
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
-  const [loggedInUserProfile, setLoggedInUserProfile] = useState(null);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
+    loggedInUserProfileState
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   async function signInWithEmail(formData) {
@@ -67,6 +69,7 @@ export default function Login() {
       return;
     }
     setLoggedInUser(data.session.user);
+    checkLogin();
     console.log("로그인 정보", data.session.user);
   }
 
@@ -91,24 +94,37 @@ export default function Login() {
   }
 
   async function checkLogin() {
-    const authInfo = await client.auth.getSession();
-    const session = authInfo.data.session;
+    // 세션 정보를 가져옵니다.
+    const { data: authData, error: authError } = await client.auth.getSession();
+    if (authError) {
+      console.error("Authentication error:", authError);
+      return;
+    }
+    const { session } = authData;
     if (session) {
-      const {
-        data: { user },
-        error,
-      } = await client.auth.getUser();
-      setLoggedInUser(user);
+      const { user } = session;
+
+      if (user) {
+        setLoggedInUser(user);
+        const { data: userProfile, error: profileError } = await client
+          .from("USER_PROFILE")
+          .select("*")
+          .eq("user_id", user.id);
+
+        if (profileError) {
+          console.error("Error fetching user profile:", profileError);
+        } else {
+          setLoggedInUserProfile(userProfile);
+          console.log("User profile:", userProfile);
+        }
+      }
+    } else {
+      console.log("No active session found");
     }
-    if (loggedInUser) {
-      let { data: user_profile, error } = await client
-        .from("user_profile")
-        .select("user_id");
-      setLoggedInUserProfile(user_profile[0]);
-    }
-    if (authInfo.error) console.log(authInfo.error);
+    setIsLoading(false);
   }
 
+  console.log(loggedInUserProfile);
   useEffect(() => {
     checkLogin();
   }, []);
@@ -161,16 +177,28 @@ export default function Login() {
   };
 
   const LoggedPage = () => {
+    if (isLoading) return <>Loading...</>;
+
+    const user =
+      loggedInUserProfile && loggedInUserProfile.length > 0
+        ? loggedInUserProfile[0]
+        : null;
+    const userName = user
+      ? user.user_nickname
+      : loggedInUser.user_metadata.name;
+    const avatarUrl = user
+      ? user.avatar_url
+      : loggedInUser.user_metadata.avatar_url;
+    const birthDate = user ? user.birth_date : null;
+    const joinPath = user ? user.join_path : null;
+
     return (
       <Wrapper>
         <p>{loggedInUser.email}</p>
-        <p>{loggedInUser.user_metadata.name}</p>
-        <img
-          width={"150px"}
-          height={"200px"}
-          src={loggedInUser.user_metadata.avatar_url}
-          alt=""
-        />
+        <p>{userName}</p>
+        <img width={"150px"} height={"200px"} src={avatarUrl} alt="프사" />
+        <p>{birthDate}</p>
+        <p>{joinPath}</p>
       </Wrapper>
     );
   };
