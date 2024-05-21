@@ -128,4 +128,12 @@ table {
 body {
     margin: 0; line-height: normal;
 }
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+a:visited {
+    color: inherit;
+} 
 `;
