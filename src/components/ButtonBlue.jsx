@@ -29,6 +29,9 @@ const Button = styled.button`
     background-color: var(--color-navy);
     box-sizing: border-box;
   }
+  @media screen and (max-width: 768px) {
+    padding: var(--padding-3xs) var(--padding-3xs);
+  }
 `;
 
 const IndexButton = ({ text, size }) => {

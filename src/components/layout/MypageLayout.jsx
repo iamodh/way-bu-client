@@ -5,7 +5,6 @@ import { NavLink, Outlet } from "react-router-dom";
 // import { useRecoilState } from "recoil";
 // import { mypageIndexState } from "../../atom";
 // import { useEffect } from "react";
-// import Menubar from "./components/Menubar";
 
 const MypageWrapper = styled.div`
   width: 100%;

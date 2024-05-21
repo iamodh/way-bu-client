@@ -28,13 +28,13 @@ export default function Router() {
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
-      </Route>
-      <Route path="/mypage" element={<MypageLayout />}>
-        <Route index element={<MypageUpdate />} />
-        <Route path="review" element={<MypageReview />} />
-        <Route path="community" element={<MypageCommunity />} />
-        <Route path="matching" element={<MypageMatching />} />
-        <Route path="setting" element={<MypageSetting />} />
+        <Route path="/mypage" element={<MypageLayout />}>
+          <Route index element={<MypageUpdate />} />
+          <Route path="review" element={<MypageReview />} />
+          <Route path="community" element={<MypageCommunity />} />
+          <Route path="matching" element={<MypageMatching />} />
+          <Route path="setting" element={<MypageSetting />} />
+        </Route>
       </Route>
     </Routes>
   );

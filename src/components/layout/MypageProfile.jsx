@@ -31,18 +31,19 @@ const B = styled.span`
 const ProfileWrapper = styled.section`
   display: flex;
   width: 90%;
-  margin: var(--padding-base) auto;
+  max-width: 1000px;
+  margin: var(--padding-base) auto 0;
   flex-direction: row;
   font-family: inherit;
 `;
 const ProfileBox = styled.div`
-  /* background-color: var(--color-sand-main); */
   width: 100%;
   display: flex;
   flex-direction: row;
   gap: var(--gap-base);
   @media screen and (max-width: 768px) {
     flex-direction: column;
+    gap: var(--gap-3xs);
   }
 `;
 const IntroduceBox = styled.div`
@@ -103,12 +104,13 @@ const SportTagParent = styled.div`
 `;
 const CountBox = styled.div`
   border-radius: var(--br-mini);
-  background-color: var(--color-skyblue-background);
+  border: 1px solid var(--color-blue-main);
+  background-color: var(--color-sand-light);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: var(--padding-9xl) var(--padding-12xl-7) var(--padding-7xl);
+  justify-content: center;
+  padding: var(--padding-base);
   gap: var(--gap-base);
   @media screen and (max-width: 768px) {
     padding: var(--padding-5xs) var(--padding-base);
