@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Button from "../../../components/ButtonBlue";
+import Button from "../../components/ButtonBlue";
 
 const Title = styled.div`
   display: flex;
@@ -43,7 +43,7 @@ const InputBox = styled.div`
   justify-content: flex-start;
   box-sizing: border-box;
   min-width: 200px;
-  `;
+`;
 const Div = styled.div`
   position: relative;
   font-size: var(--font-size-ml);
@@ -103,7 +103,7 @@ const ItemBox = styled.div`
   color: var(--black);
   font-family: inherit;
   padding: 0px var(--padding-45xl);
-`
+`;
 
 const MypageUpdateWarpper = styled.div`
   align-self: stretch;
@@ -117,48 +117,48 @@ const MypageUpdateWarpper = styled.div`
   font-size: var(--font-size-ml);
   color: var(--black);
   font-family: inherit;
-`
+`;
 
 const MypageUpdate = () => {
   return (
     <MypageUpdateWarpper>
       <Title>개인정보 수정하기</Title>
       <ItemBox>
-      <Item>
-        <ItemTitle>이름</ItemTitle>
-        <InputBox>
-          <InputText type="text" />
-        </InputBox>
-      </Item>
-      <Item>
-        <ItemTitle>생년월일</ItemTitle>
-        <InputBox>
-          <InputText type="text" />
-        </InputBox>
-      </Item>
-      <Item>
-        <ItemTitle>이메일</ItemTitle>
-        <InputBox>
-          <InputText type="text" />
-        </InputBox>
-      </Item>
-      <Item>
-        <ItemTitle>비밀번호 변경</ItemTitle>
-        <InputBox>
-          <InputText type="text" />
-        </InputBox>
-      </Item>
-      <Item>
-        <ItemTitle>전화번호</ItemTitle>
-        <InputBox>
-          <InputText type="text" />
-        </InputBox>
-        <BtnConfirm>
-          <Div>인증</Div>
-        </BtnConfirm>
-      </Item>
+        <Item>
+          <ItemTitle>이름</ItemTitle>
+          <InputBox>
+            <InputText type="text" />
+          </InputBox>
+        </Item>
+        <Item>
+          <ItemTitle>생년월일</ItemTitle>
+          <InputBox>
+            <InputText type="text" />
+          </InputBox>
+        </Item>
+        <Item>
+          <ItemTitle>이메일</ItemTitle>
+          <InputBox>
+            <InputText type="text" />
+          </InputBox>
+        </Item>
+        <Item>
+          <ItemTitle>비밀번호 변경</ItemTitle>
+          <InputBox>
+            <InputText type="text" />
+          </InputBox>
+        </Item>
+        <Item>
+          <ItemTitle>전화번호</ItemTitle>
+          <InputBox>
+            <InputText type="text" />
+          </InputBox>
+          <BtnConfirm>
+            <Div>인증</Div>
+          </BtnConfirm>
+        </Item>
       </ItemBox>
-    <Button prop={"저장하기"}/>
+      <Button text={"저장하기"} size={"l"} />
     </MypageUpdateWarpper>
   );
 };

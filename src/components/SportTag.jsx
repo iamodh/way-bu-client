@@ -23,6 +23,10 @@ const Label = styled.label`
     box-shadow: 1px 1px 1px var(--color-gray);
     box-sizing: border-box;
   }
+  @media screen and (max-width: 768px) {
+    padding: 1px var(--padding-5xs);
+    font-size: var(--font-size-s);
+  }
 `;
 
 const Tag = styled.input`

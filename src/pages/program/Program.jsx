@@ -14,9 +14,10 @@ const Span = styled.span`
 `;
 const SpanBold = styled(Span)`
   font-weight: bold;
+  margin: 0 var(--padding-3xs);
 `;
 const Wrapper = styled.div`
-  max-width: 1000px;
+  max-width: 1400px;
   margin: 0 auto;
   font-size: var(--font-size-m);
   font-family: "Pretendard-regular";
@@ -25,10 +26,12 @@ const SearchContainer = styled.form`
   display: flex;
   height: 60px;
   width: 50%;
+  max-width: 500px;
   min-width: 300px;
   margin: var(--padding-xl) auto;
   border: 1px solid var(--color-blue-main);
   border-radius: var(--br-mini);
+
   @media screen and (max-width: 768px) {
     height: 40px;
   }
@@ -57,6 +60,9 @@ const Message = styled.div`
   background-color: var(--color-skyblue-background);
 `;
 const FilterContainer = styled.form`
+  width: 80%;
+  max-width: 800px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -65,14 +71,14 @@ const Sports = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+`;
+const SprotsList = styled.div`
+  display: flex;
   align-content: center;
   flex-wrap: wrap;
-  height: 32px;
   gap: 4px;
-  margin: 0 auto;
+  margin: var(--padding-xs) auto;
   white-space: normal;
-  @media screen {
-  }
 `;
 const MainFilter = styled.div`
   display: flex;
@@ -139,7 +145,7 @@ const Price = styled.input`
     min-width: 15px;
   }
 `;
-const Location = styled.select`
+const Dropdown = styled.select`
   display: flex;
   min-width: 30px;
   width: 24%;
@@ -207,7 +213,9 @@ const ButtonContainer = styled.div`
   bottom: 20px;
 `;
 const ProgramContainer = styled.div`
-  width: 100%;
+  width: 80%;
+  margin: 0 auto;
+  background-color: cyan;
 `;
 const SortOption = styled(Span)`
   display: flex;
@@ -251,30 +259,38 @@ export default function Program() {
     }
   }
 
+  /* Date */
+  const [selectedDate, setSelectedDate] = useState();
+  const handleDateChange = (event) => {
+    setSelectedDate(event.target.value);
+  };
+
+  /* Dropdown */
+
   /* DB - programs */
-  // const [programs, setPrograms] = useState([]);
-  // const [programLoading, setProgramLoading] = useState(true);
+  const [programs, setPrograms] = useState([]);
+  const [programLoading, setProgramLoading] = useState(true);
 
-  // async function getPrograms() {
-  //   const { data, error } = await client.from("PROGRAM").select();
-  //   setPrograms(data);
-  //   setProgramLoading(false);
-  //   if (error) {
-  //     console.log(error.message);
-  //     return;
-  //   }
-  // }
-
-  function getPrograms() {
-    return fetch("http://localhost:4000/api/program").then((response) =>
-      response.json()
-    );
+  async function getPrograms() {
+    const { data, error } = await client.from("PROGRAM").select();
+    setPrograms(data);
+    setProgramLoading(false);
+    if (error) {
+      console.log(error.message);
+      return;
+    }
   }
 
-  const { isLoading: programLoading, data: programData } = useQuery(
-    ["programs"],
-    getPrograms
-  );
+  // function getPrograms() {
+  //   return fetch("http://localhost:4000/api/program").then((response) =>
+  //     response.json()
+  //   );
+  // }
+
+  // const { isLoading: programLoading, data: programData } = useQuery(
+  //   ["programs"],
+  //   getPrograms
+  // );
 
   /* form */
   const {
@@ -300,36 +316,45 @@ export default function Program() {
           placeholder="검색어를 입력해주세요."
         />
         <IconBox>
-          <img src="/icon/search.svg" alt="search" />
+          <img src="/icon/search_white.svg" alt="search" />
         </IconBox>
       </SearchContainer>
       <FilterContainer>
         <Sports>
           <SpanBold>종목</SpanBold>
+
           {sportsLoading ? (
             "Loading..."
           ) : (
-            <>
+            <SprotsList>
               {sports.map((s) => (
                 <SportTag sport={s} key={s.id} />
               ))}
-            </>
+            </SprotsList>
           )}
         </Sports>
         <MainFilter>
           <DateAndTime>
-            <Date type="date" />
+            <Date
+              type="date"
+              name="dateCondition"
+              value={selectedDate}
+              onChange={handleDateChange}
+              min={"2024-01-01"}
+              max={"2024-12-31"}
+              defaultValue={"2024-05-20"}
+            />
             <Time type="time" />
           </DateAndTime>
           <Price type="number" placeholder="가격" />
-          <Location>
+          <Dropdown>
             <option value="">지역</option>
             <option value="location1">광안리</option>
             <option value="location2">해운대</option>
             <option value="location3">다대포</option>
             <option value="location4">송정</option>
             <option value="location5">송도</option>
-          </Location>
+          </Dropdown>
         </MainFilter>
         <DetailFilter>
           <InputRow>
@@ -375,7 +400,7 @@ export default function Program() {
           </InputRow>
         </DetailFilter>
         <ButtonContainer>
-          <ButtonBlue text={"필터 적용하기"} width={"200px"} />
+          <ButtonBlue text={"필터 적용하기"} size={"m"} />
         </ButtonContainer>
       </FilterContainer>
       <ProgramContainer>
@@ -393,7 +418,7 @@ export default function Program() {
           "Loading..."
         ) : (
           <GridBox>
-            {programData.data.map((p) => (
+            {programs.map((p) => (
               <ProgramItem program={p} key={p.id} />
             ))}
           </GridBox>
