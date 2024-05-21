@@ -30,7 +30,7 @@ const Button = styled.button`
   }
 `;
 
-const IndexButton = ({ prop }) => {
+const ButtonBlue = ({ prop }) => {
   return (
     <Button>
       <Div>{prop}</Div>
@@ -38,4 +38,4 @@ const IndexButton = ({ prop }) => {
   );
 };
 
-export default IndexButton;
+export default ButtonBlue;

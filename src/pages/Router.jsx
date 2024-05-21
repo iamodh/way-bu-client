@@ -14,6 +14,7 @@ import Signup from "./root/Signup";
 import Program from "./program/Program";
 import Mypage from "./mypage/Mypage";
 import CommonLayout from "../components/layout/CommonLayout";
+import Matching from "./matching/Matching";
 
 export default function Router() {
   return (
@@ -26,6 +27,9 @@ export default function Router() {
       </Route>
       <Route path="/mypage">
         <Route index element={<Mypage />} />
+      </Route>
+      <Route path="/matching">
+        <Route index element={<Matching />} />
       </Route>
     </Routes>
   );
