@@ -41,6 +41,7 @@ const Alert = styled.span`
 
 export default function Login() {
   /* Form */
+  // 로그인 폼을 이용한 로그인
   const {
     register,
     handleSubmit,
@@ -95,6 +96,7 @@ export default function Login() {
 
   async function checkLogin() {
     // 세션 정보를 가져옵니다.
+    // 세션으로부터 현재 로그인된 유저 정보를 받고 로그인 유저가 변경될 시 반영
     const { data: authData, error: authError } = await client.auth.getSession();
     if (authError) {
       console.error("Authentication error:", authError);
@@ -105,6 +107,7 @@ export default function Login() {
       const { user } = session;
 
       if (user) {
+        // session으로부터 auth.user 정보를 받아오고 auth.user로 부터 userProfle 정보를 받아옴
         setLoggedInUser(user);
         const { data: userProfile, error: profileError } = await client
           .from("USER_PROFILE")
@@ -131,13 +134,17 @@ export default function Login() {
   const [avatarFile, setAvatarFile] = useState(null);
 
   const uploadFile = async () => {
+    // db에 avatar 이미지 파일을 저장
     if (!avatarFile) {
       console.log("no file exist");
       return;
     }
     const filePath = `${loggedInUser.id}-${new Date().getTime()}`;
-    console.log("path = ", loggedInUserProfile);
+    // 저장하는 파일명을 user_id로 해서 주인을 구분하고
+    // 동일한 파일명을 사용시 변경을 인지하지 못해 page가 rendering되지 않는 문제를 해결하기 위해 뒤에 시간 값을 추가
+
     if (loggedInUserProfile[0].avatar_url) {
+      // 기존의 avatar가 존재할 경우 삭제
       const oldPath = loggedInUserProfile[0].avatar_url.replace(
         import.meta.env.VITE_STORE_URL + "avatar/",
         ""
@@ -172,7 +179,7 @@ export default function Login() {
   };
 
   const updateUserAvatar = async (url) => {
-    console.log("url = ", url);
+    // user_profile의 avatar_url을 변경된 url로 업데이트
     const { data, error } = await client
       .from("USER_PROFILE")
       .update({ avatar_url: url })
@@ -189,6 +196,7 @@ export default function Login() {
   };
 
   const handleImage = (e) => {
+    //선택한 파일 정보를 저장
     console.log(e.target.files[0]);
     setAvatarFile(e.target.files[0]);
   };
