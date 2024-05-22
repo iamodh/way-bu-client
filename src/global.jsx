@@ -4,6 +4,7 @@ export default createGlobalStyle`
 
 * {
     font-family: "Pretendard-Regular";
+		box-sizing: border-box;
 }
 
 :root {
@@ -15,7 +16,6 @@ export default createGlobalStyle`
     font-weight: 400;
     font-style: normal;
 }
-
 
 
 /* font sizes */
@@ -41,7 +41,7 @@ export default createGlobalStyle`
 --color-skyblue-background: #EDF4F7;
 --color-sand-main: #FFECCC;
 --color-sand-bright: #F7EEDD;
---color-sand-lignt: #FAFAF4;
+--color-sand-light: #FAFAF4;
 --color-tag-red-back: #FDF1F2;
 --color-tag-red-front: #F58E93;
 --color-tag-orange-back: #FDF4EA;

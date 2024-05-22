@@ -1,40 +1,60 @@
 import styled from "styled-components";
 
-const Div = styled.div`
+const Label = styled.label`
   position: relative;
-  font-size: 18px;
+  font-size: var(--font-size-m);
   line-height: 20px;
   font-family: inherit;
-  color: var(--color-blue-main);
+  color: inherit;
   text-align: center;
-  display: inline-block;
-  white-space: nowrap;
-`;
-
-const SportTag = styled.button`
-  cursor: pointer;
-  border: 1px solid var(--color-blue-main);
-  padding: var(--padding-9xs) var(--padding-3xs);
-  background-color: var(--color-skyblue-light);
-  border-radius: var(--br-mini);
-  overflow: hidden;
-  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid ${(props) => props.color};
+  color: ${(props) => props.color};
+  padding: var(--padding-9xs) var(--padding-3xs);
+  background-color: ${(props) => props.bgcolor};
+  border-radius: var(--br-mini);
+  overflow: hidden;
   &:hover {
-    border: 2px solid var(--color-blue-main);
+    border: 2px solid ${(props) => props.color};
     box-shadow: 1px 1px 1px var(--color-gray);
     box-sizing: border-box;
   }
+  @media screen and (max-width: 768px) {
+    padding: 1px var(--padding-5xs);
+    font-size: var(--font-size-s);
+  }
 `;
 
-const IndexButton = ({ prop }) => {
-  return (
-    <SportTag>
-      <Div>{prop}</Div>
-    </SportTag>
-  );
-};
+const Tag = styled.input`
+  display: none;
+  &:checked + label {
+    background-color: ${(props) => props.color};
+    color: ${(props) => props.bgcolor};
+    border: 2px solid var(--color-navy);
+  }
+`;
 
-export default IndexButton;
+export default function SportsTag({ sport }) {
+  let color = `var(--color-tag-${sport.theme_color}-front)`;
+  let bgcolor = `var(--color-tag-${sport.theme_color}-back)`;
+
+  return (
+    <>
+      <Tag
+        type="checkbox"
+        value={sport.title}
+        name={sport.title}
+        id={sport.title}
+        color={color}
+        bgcolor={bgcolor}
+      />
+      <Label htmlFor={sport.title} color={color} bgcolor={bgcolor}>
+        {sport.title}
+      </Label>
+    </>
+  );
+}

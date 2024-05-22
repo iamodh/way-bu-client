@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 
 const EditIcon = styled.img`
@@ -11,55 +12,37 @@ const EditIcon = styled.img`
     height: 32px;
   }
 `;
-const Div = styled.div`
-  position: relative;
-  line-height: 20px;
-  display: inline-block;
-  min-width: 32px;
-`;
 const Text = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 0px var(--padding-3xs) 0px var(--padding-5xs);
+  flex-wrap: wrap;
   text-align: center;
+  font-size: var(--font-size-m);
+  @media screen and (max-width: 768px) {
+    font-size: var(--font-size-s);
+  }
 `;
-const Button = styled.button`
-  min-width: 100px;
-  min-height: 100px;
-  border: none;
-  border-radius: var(--br-xl);
-  background-color: var(--color-skyblue-background);
+const Box = styled.div`
+  width: 100px;
+  height: 100px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--padding-5xs) var(--padding-9xs);
-  gap: var(--gap-5xs);
-  text-align: left;
-  font-size: var(--font-size-m);
-  color: var(--color-black);
-  font-family: var(--pretendard-regular);
-  transition: transform 0.2 ease-in-out;
   @media screen and (max-width: 768px) {
-    font-size: var(--font-size-s);
-  }
-  &:hover{
-    box-shadow: 4px 4px 4px 0px var(--color-gray);
-    transform: translate(-2px, -4px);
+    width: 60px;
+    height: 60px;
+    gap: var(--gap-9xs);
   }
 `;
 
-const IndexButton = ({ edit, prop }) => {
+const IndexButton = ({ edit, text }) => {
   return (
-    <Button>
-      <EditIcon loading="lazy" alt={prop} src={edit} />
-      <Text>
-        <Div>{prop}</Div>
-      </Text>
-    </Button>
+    <Box>
+      <EditIcon loading="lazy" alt={text} src={edit} />
+      <Text>{text}</Text>
+    </Box>
   );
 };
 

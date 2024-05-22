@@ -1,86 +1,49 @@
 import styled from "styled-components";
-import SportTag from "../SportTag";
+import { useState, useEffect } from "react";
+import { client } from "../../../libs/supabase";
+import SportsTag from "../SportTag";
 
-const ProfileImage = styled.img`
-  height: 120px;
-  width: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-
-  min-height: 120px;
-  /* position: relative; */
-  @media screen and (max-width: 768px) {
-    height: 60px;
-    /* width: 60px; */
-  }
-`;
 const H = styled.h2`
   margin: 0;
-  position: relative;
-  font-size: var(--font-size-xl);
-  line-height: 29.33px;
-  font-weight: 700;
-  font-family: inherit;
-  display: inline-block;
-  min-width: 116px;
-  white-space: nowrap;
-  @media screen and (max-width: 768px) {
-    font-size: var(--font-size-l);
-  }
-`;
-const Div = styled.div`
-  align-self: stretch;
-  position: relative;
   font-size: var(--font-size-l);
-  white-space: nowrap;
+  font-weight: 700;
+  /* white-space: nowrap; */
   @media screen and (max-width: 768px) {
     font-size: var(--font-size-m);
   }
 `;
-const Introduce = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: var(--gap-9xs);
+const Div = styled.div`
+  align-self: center;
+  flex-wrap: wrap;
+  @media screen and (max-width: 768px) {
+    font-size: var(--font-size-s);
+  }
 `;
-const B = styled.b`
-  position: relative;
-  line-height: 20px;
-  display: inline-block;
-`;
-const SportTagParent = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: var(--gap-5xs);
+const B = styled.span`
   font-size: var(--font-size-m);
+  position: relative;
+  display: inline-block;
+  font-weight: 700;
+  @media screen and (max-width: 768px) {
+    font-size: var(--font-size-s);
+  }
 `;
-const Interest = styled.div`
+const ProfileWrapper = styled.section`
+  display: flex;
+  width: 90%;
+  max-width: 1000px;
+  margin: var(--padding-base) auto 0;
+  flex-direction: row;
+  font-family: inherit;
+`;
+const ProfileBox = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--gap-3xs);
-  font-size: var(--font-size-l);
-  color: var(--main-blue);
+  gap: var(--gap-base);
   @media screen and (max-width: 768px) {
-    flex-wrap: wrap;
-  }
-`;
-const IntroduceContents = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: var(--gap-17xl);
-  min-width: 311px;
-  @media screen and (max-width: 768px) {
-    flex: 1;
-  }
-  @media screen and (max-width: 768px) {
-    gap: var(--gap-xl);
+    flex-direction: column;
+    gap: var(--gap-3xs);
   }
 `;
 const IntroduceBox = styled.div`
@@ -90,17 +53,82 @@ const IntroduceBox = styled.div`
   display: flex;
   padding: var(--padding-xs) var(--padding-13xl);
   gap: var(--gap-base);
-  min-width: 400px;
-  max-width: 100%;
-
-  /* box-sizing: border-box;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start; */
-
   @media screen and (max-width: 768px) {
     flex-wrap: wrap;
-    min-width: 100%;
+  }
+`;
+const ProfileImage = styled.img`
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  @media screen and (max-width: 768px) {
+    height: 60px;
+    width: 60px;
+  }
+`;
+const IntroduceContents = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-base);
+  @media screen and (max-width: 768px) {
+    flex: 1;
+    gap: var(--gap-5xs);
+    flex-wrap: wrap;
+  }
+`;
+const Introduce = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-9xs);
+  flex-wrap: wrap;
+`;
+const Interest = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--gap-3xs);
+  color: var(--main-blue);
+`;
+const SportTagParent = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-9xs);
+`;
+const CountBox = styled.div`
+  border-radius: var(--br-mini);
+  border: 1px solid var(--color-blue-main);
+  background-color: var(--color-sand-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-base);
+  gap: var(--gap-base);
+  @media screen and (max-width: 768px) {
+    padding: var(--padding-5xs) var(--padding-base);
+    flex-direction: row;
+    font-size: var(--font-size-s);
+    justify-content: space-around;
+    flex-wrap: wrap;
+    border-radius: var(--br-3xs);
+  }
+`;
+const CountItem = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--gap-base);
+  @media screen and (max-width: 768px) {
+    gap: var(--gap-9xs);
   }
 `;
 const FrameItem = styled.img`
@@ -108,111 +136,81 @@ const FrameItem = styled.img`
   width: 20px;
   position: relative;
 `;
-const B1 = styled.b`
-  position: relative;
-  line-height: 20px;
-  display: inline-block;
+const B1 = styled(B)`
   min-width: 48px;
-`;
-const Div1 = styled.div`
-  position: relative;
-  display: inline-block;
-  min-width: 36px;
-`;
-const InfoItem = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--gap-base);
-`;
-const InfoBox = styled.div`
-  border-radius: var(--br-mini);
-  background-color: var(--light-sand);
-  border: 1px solid var(--main-blue);
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: var(--padding-9xl) var(--padding-12xl-7) var(--padding-7xl);
-  gap: var(--gap-base);
-  font-size: var(--font-size-l);
-`;
-const ProfileBox = styled.div`
-  width: 1000px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-  gap: var(--gap-13xl);
-  max-width: 100%;
-
-  justify-content: flex-start;
-  flex-direction: row;
-
   @media screen and (max-width: 768px) {
-    gap: var(--gap-base);
+    min-width: 32px;
   }
 `;
-const ProfileWrapper = styled.section`
-  /* display: flex; */
-  /* justify-content: center; */
-  margin: 0 auto;
-  font-size: var(--font-size-xl);
-  color: var(--color-black);
 
-  /* flex-direction: row;
-  align-self: stretch;
-  align-items: flex-start;
-  box-sizing: border-box;
-  max-width: 100%;
-  text-align: left;
-  font-family: inherit; */
-`;
+export default function MypageProfile() {
+  const user_id = 1;
+  const [userProfile, setUserProfile] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
-const Profile = () => {
+  useEffect(() => {
+    getUserProfile();
+    console.log(userProfile);
+  }, []);
+
+  async function getUserProfile() {
+    const { data, error } = await client
+      .from("USER_PROFILE")
+      .select(`*, SPORT(title, theme_color)`)
+      .eq("id", user_id)
+      .single();
+    setUserProfile(data);
+    setIsLoading(false);
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+  }
+
   return (
-    <>
-      <ProfileWrapper>
+    <ProfileWrapper>
+      {isLoading ? (
+        "Loading..."
+      ) : (
         <ProfileBox>
           <IntroduceBox>
-            <ProfileImage loading="lazy" alt="" src="/img/ellipse-13@2x.png" />
+            <ProfileImage
+              loading="lazy"
+              alt=""
+              src={`/img/${userProfile.avatar_url}`}
+            />
             <IntroduceContents>
               <Introduce>
-                <H>괴도 김다현</H>
-                <Div>수영에 미친 나 😁😁😁</Div>
+                <H>{userProfile.user_nickname}</H>
+                <Div>{userProfile.bio}</Div>
               </Introduce>
               <Interest>
                 <B>관심종목</B>
                 <SportTagParent>
-                  <SportTag prop={"스쿠버다이빙"} />
-                  <SportTag prop={"서핑"} />
-                  <SportTag prop={"스노쿨링"} />
+                  <SportsTag sport={userProfile.SPORT} />
                 </SportTagParent>
               </Interest>
             </IntroduceContents>
           </IntroduceBox>
-          <InfoBox>
-            <InfoItem>
+          <CountBox>
+            <CountItem>
               <FrameItem loading="lazy" alt="like" src="/icon/like.svg" />
               <B1>좋아요</B1>
-              <Div1>00개</Div1>
-            </InfoItem>
-            <InfoItem>
+              <Div>{userProfile.countLikes}개</Div>
+            </CountItem>
+            <CountItem>
               <FrameItem loading="lazy" alt="review" src="/icon/edit.svg" />
               <B1>후기</B1>
-              <Div1>00개</Div1>
-            </InfoItem>
-            <InfoItem>
+              <Div>{userProfile.countReviews}개</Div>
+            </CountItem>
+            <CountItem>
               <FrameItem loading="lazy" alt="matching" src="/icon/smile.svg" />
               <B1>매칭</B1>
-              <Div1>00개</Div1>
-            </InfoItem>
-          </InfoBox>
+              <Div>{userProfile.countMatches}개</Div>
+            </CountItem>
+          </CountBox>
         </ProfileBox>
-      </ProfileWrapper>
-    </>
+      )}
+    </ProfileWrapper>
   );
-};
-
-export default Profile;
+}

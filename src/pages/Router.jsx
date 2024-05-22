@@ -12,8 +12,13 @@ import Home from "./root/Home";
 import Login from "./root/Login";
 import Signup from "./root/Signup";
 import Program from "./program/Program";
-import Mypage from "./mypage/Mypage";
 import CommonLayout from "../components/layout/CommonLayout";
+import MypageLayout from "../components/layout/MypageLayout";
+import MypageUpdate from "./mypage/MypageUpdate";
+import MypageReview from "./mypage/MypageReview";
+import MypageMatching from "./mypage/MypageMatching";
+import MypageCommunity from "./mypage/MypageCommunity";
+import MypageSetting from "./mypage/MypageSetting";
 
 export default function Router() {
   return (
@@ -23,9 +28,13 @@ export default function Router() {
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
-      </Route>
-      <Route path="/mypage">
-        <Route index element={<Mypage />} />
+        <Route path="/mypage" element={<MypageLayout />}>
+          <Route index element={<MypageUpdate />} />
+          <Route path="review" element={<MypageReview />} />
+          <Route path="community" element={<MypageCommunity />} />
+          <Route path="matching" element={<MypageMatching />} />
+          <Route path="setting" element={<MypageSetting />} />
+        </Route>
       </Route>
     </Routes>
   );
