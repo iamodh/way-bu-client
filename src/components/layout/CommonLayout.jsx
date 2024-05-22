@@ -55,6 +55,27 @@ export default function CommonLayout() {
     console.log("로그아웃 되었습니다.");
   };
 
+  const Nav = styled.div`
+    --color-hover: #2a6888;
+
+    display: flex;
+    justify-content: center;
+
+    a { 
+      font-weight: bold;
+      color: var(--color-navy);
+      text-decoration: none;
+      margin-right: 20px;
+      padding: 8px 15px;
+
+      &:hover {
+        color: var(--color-hover);
+        transform: scale(1.15);
+      }
+      transition: all 0.2s ease-in-out;
+    }
+  `;
+
   return (
     <>
       <Header>
@@ -74,6 +95,7 @@ export default function CommonLayout() {
           {loggedInUser ? (
             <button onClick={handleLogout}>로그아웃</button>
           ) : null}
+          {/* <button onClick={handleDarkMode}>다크모드 ON</button> */}
         </Nav>
       </Header>
       <Outlet />

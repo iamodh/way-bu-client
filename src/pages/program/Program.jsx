@@ -1,7 +1,20 @@
-import { useQuery } from "react-query";
-import { getPrograms } from "../../../apis/program";
+import { styled } from "styled-components";
+
+import SearchContainer from "./components/SearchContainer";
+import FilterContainer from "./components/FilterContainer";
+
+// export default function Program() {
+//   const { isLoading, data } = useQuery(["programs"], getPrograms);
+//   return <>{isLoading ? "Loading..." : <ul>{JSON.stringify(data)}</ul>}</>;
+// }
+
+const Wrapper = styled.div``;
 
 export default function Program() {
-  const { isLoading, data } = useQuery(["programs"], getPrograms);
-  return <>{isLoading ? "Loading..." : <ul>{JSON.stringify(data)}</ul>}</>;
+  return (
+    <Wrapper>
+      <SearchContainer />
+      <FilterContainer />
+    </Wrapper>
+  );
 }
