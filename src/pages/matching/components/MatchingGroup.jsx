@@ -9,6 +9,7 @@ const MatchingIcon = styled.img`
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
+  margin-left: 15px;
   min-height: 100px;
   @media screen and (max-width: 450px) {
     flex: 1;
@@ -131,6 +132,9 @@ const MatchingContainer = styled.div`
   gap: var(--gap-base);
   background-color: white;
   cursor: pointer;
+  &:hover {
+    background-color: var(--color-skyblue-main);
+  }
 `;
 
 const ContainerDetails = styled.div`
