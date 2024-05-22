@@ -124,10 +124,74 @@ export default function Login() {
     setIsLoading(false);
   }
 
-  console.log(loggedInUserProfile);
   useEffect(() => {
     checkLogin();
   }, []);
+
+  const [avatarFile, setAvatarFile] = useState(null);
+
+  const uploadFile = async () => {
+    if (!avatarFile) {
+      console.log("no file exist");
+      return;
+    }
+    const filePath = `${loggedInUser.id}-${new Date().getTime()}`;
+    console.log("path = ", loggedInUserProfile);
+    if (loggedInUserProfile[0].avatar_url) {
+      const oldPath = loggedInUserProfile[0].avatar_url.replace(
+        import.meta.env.VITE_STORE_URL + "avatar/",
+        ""
+      );
+      const { data: deleteData, error: deleteError } = await client.storage
+        .from("avatar")
+        .remove([oldPath]);
+      if (deleteError) {
+        console.error("Error deleting file:", deleteError);
+        return;
+      }
+      console.log("File deleted successfully:", deleteData);
+    }
+
+    const { data, error } = await client.storage
+      .from("avatar")
+      .upload(filePath, avatarFile, {
+        cacheControl: "no-cache, no-store, must-revalidate",
+        upsert: true,
+      });
+    const {
+      data: { publicUrl },
+    } = await client.storage.from("avatar").getPublicUrl(filePath);
+
+    updateUserAvatar(publicUrl);
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+      console.log("file uploaded");
+    }
+  };
+
+  const updateUserAvatar = async (url) => {
+    console.log("url = ", url);
+    const { data, error } = await client
+      .from("USER_PROFILE")
+      .update({ avatar_url: url })
+      .eq("user_id", loggedInUser.id)
+      .select();
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+      console.log("avatar url is changed");
+
+      setLoggedInUserProfile(data);
+    }
+  };
+
+  const handleImage = (e) => {
+    console.log(e.target.files[0]);
+    setAvatarFile(e.target.files[0]);
+  };
 
   /* Login Error 처리 */
   const [alert, setAlert] = useState({ cnt: 0, err: null });
@@ -199,6 +263,15 @@ export default function Login() {
         <img width={"150px"} height={"200px"} src={avatarUrl} alt="프사" />
         <p>{birthDate}</p>
         <p>{joinPath}</p>
+        <form action="/">
+          <input
+            type="file"
+            accept="image/jpeg, image/png"
+            name="input_avatar"
+            onChange={handleImage}
+          />
+        </form>
+        <button onClick={uploadFile}>변경</button>
       </Wrapper>
     );
   };
