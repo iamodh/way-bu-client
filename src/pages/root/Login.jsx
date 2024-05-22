@@ -14,7 +14,7 @@ const Wrapper = styled.div`
 `;
 
 const Form = styled.form`
-  width: 500px;
+  width: 600px;
   padding: 60px;
   background-color: #fff;
   border-radius: 10px;
