@@ -1,11 +1,3 @@
-/*
-
-/ -> 인덱스
-/login -> 로그인
-/signup -> 회원가입
-
-*/
-
 import { Route, Routes } from "react-router-dom";
 /* root pages */
 import Home from "./root/Home";
@@ -19,6 +11,8 @@ import MypageReview from "./mypage/MypageReview";
 import MypageMatching from "./mypage/MypageMatching";
 import MypageCommunity from "./mypage/MypageCommunity";
 import MypageSetting from "./mypage/MypageSetting";
+import FindId from "./root/FindId";
+import FindPwd from "./root/FindPwd";
 
 export default function Router() {
   return (
@@ -26,6 +20,8 @@ export default function Router() {
       <Route path="/" element={<CommonLayout />}>
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
+        <Route path="find-id" element={<FindId />} />
+        <Route path="find-pwd" element={<FindPwd />} />
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
         <Route path="/mypage" element={<MypageLayout />}>
