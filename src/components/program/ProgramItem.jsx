@@ -34,7 +34,7 @@ const Button = styled.button`
   font-size: var(--font-size-m);
   color: white;
   height: 40px;
-  background-color: ${(props) => props.theme.buttonColor};
+  background-color: var(--color-blue-main);
   &:hover {
     background-color: #1758b9;
   }
