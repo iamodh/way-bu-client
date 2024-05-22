@@ -26,7 +26,7 @@ const Button = styled.button`
   align-items: center;
   justify-content: center;
   &:hover {
-    background-color: var(--color-navy);
+    background-color: var(--color-blue-dark);
     box-sizing: border-box;
   }
   @media screen and (max-width: 768px) {
@@ -34,7 +34,7 @@ const Button = styled.button`
   }
 `;
 
-const IndexButton = ({ text, size }) => {
+const ButtonBlue = ({ text, size }) => {
   /* default */
   let width = "160px";
   let fontsize = "var(--font-size-m)";
@@ -54,4 +54,4 @@ const IndexButton = ({ text, size }) => {
   );
 };
 
-export default IndexButton;
+export default ButtonBlue;

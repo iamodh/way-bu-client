@@ -1,198 +1,199 @@
+import styled from "styled-components";
+import ProgramItem from "../../components/program/ProgramItem";
+import SportsTag from "../../components/global/SportsTag";
+import { useState } from "react";
 import { useQuery } from "react-query";
-import { styled } from "styled-components";
-import SportTag from "../../components/SportTag";
-import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import ProgramItem from "../../components/ProgramItem";
-import { client } from "../../../libs/supabase";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { getPrograms } from "../../../apis/programs";
+import { getSports } from "../../../apis/sports";
 import ButtonBlue from "../../components/ButtonBlue";
 
-const Span = styled.span`
-  font-size: var(--font-size-m);
-  line-height: 1.5rem;
+const Body = styled.main`
+  background-color: ${(props) => props.theme.backgroundColor};
+  color: ${(props) => props.theme.textColor};
+  transition: all ease-in-out 0.1s;
 `;
-const SpanBold = styled(Span)`
-  font-weight: bold;
-  margin: 0 var(--padding-3xs);
-`;
-const Wrapper = styled.div`
-  max-width: 1400px;
-  margin: 0 auto;
-  font-size: var(--font-size-m);
-  font-family: "Pretendard-regular";
-`;
-const SearchContainer = styled.form`
-  display: flex;
-  height: 60px;
-  width: 50%;
-  max-width: 500px;
-  min-width: 300px;
-  margin: var(--padding-xl) auto;
-  border: 1px solid var(--color-blue-main);
-  border-radius: var(--br-mini);
 
-  @media screen and (max-width: 768px) {
-    height: 40px;
-  }
-`;
-const SearchInput = styled.input`
-  width: 100%;
-  border: none;
-  border-radius: var(--br-mini) 0 0 var(--br-mini);
-  padding: var(--padding-3xs);
-  font-size: inherit;
-`;
-const IconBox = styled.button`
-  width: 80px;
-  background-color: var(--color-blue-main);
-  border: none;
-  border-radius: 0 var(--br-mini) var(--br-mini) 0;
-  &:hover {
-    background-color: var(--color-navy);
-  }
-`;
-const Message = styled.div`
-  margin-top: 20px;
-  text-align: center;
-  font-weight: bold;
-  color: var(--color-blue-main);
-  background-color: var(--color-skyblue-background);
-`;
-const FilterContainer = styled.form`
-  width: 80%;
-  max-width: 800px;
+const Wrapper = styled.div`
+  max-width: 850px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  margin-bottom: 80px;
+  gap: 10px;
+`;
+
+/* Search */
+const SearchContainer = styled.form`
+  margin-top: 20px;
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
 `;
-const Sports = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-const SprotsList = styled.div`
-  display: flex;
-  align-content: center;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin: var(--padding-xs) auto;
-  white-space: normal;
-`;
-const MainFilter = styled.div`
-  display: flex;
-  justify-content: space-around;
+
+const Input = styled.input`
   width: 100%;
-  height: 80px;
-  margin: var(--padding-xl) auto;
-  @media screen and (max-width: 768px) {
-    height: 60px;
+  height: 50px;
+  border-style: none;
+  padding-left: 10px;
+  padding-right: 70px;
+  border-radius: var(--br-mini);
+  border: 2px solid var(--color-blue-main);
+  font-size: var(--font-size-ml);
+  &:focus {
+    outline: none;
+    border: 2px solid var(--color-blue-dark);
   }
+
+  transition: all 0.1s ease-in-out;
+`;
+
+const SearchButton = styled.button`
+  height: 100%;
+  width: 60px;
+  position: absolute;
+  right: 0;
+  border: none;
+  background-color: var(--color-blue-main);
+  color: white;
+  border-top-right-radius: var(--br-mini);
+  border-bottom-right-radius: var(--br-mini);
+  cursor: pointer;
+  &:hover {
+    background-color: var(--color-blue-dark);
+  }
+  transition: all 0.1s ease-in-out;
+`;
+
+/* Program */
+const ProgramContainer = styled.div`
+  width: 80%;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+`;
+
+/* Filters */
+
+const FilterContainer = styled.form`
+  width: 80%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const SportsFilter = styled.form`
+  height: 40px;
+  align-items: center;
+  gap: 10px;
+  display: flex;
+  justify-content: flex-end;
+  h3 {
+    font-weight: bold;
+  }
+`;
+
+const MainFilter = styled.div`
+  height: 50px;
+  display: flex;
+  gap: 10px;
+  padding-bottom: 10px;
+  font-weight: bold;
 `;
 
 const DateAndTime = styled.div`
+  flex: 2;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 60px;
-  width: 48%;
-  font-size: var(--font-size-m);
+
+  div {
+    &:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right: 1px solid var(--color-gray);
+    }
+    &:nth-child(2) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+`;
+
+const SmallFilterBox = styled.div`
   border: 1px solid var(--color-gray);
+  border-bottom: 3px solid var(--color-gray);
+  border-right: 3px solid var(--color-gray);
   border-radius: var(--br-mini);
-`;
-const Date = styled.input`
-  width: 50%;
-  border: none;
-  border-radius: 0px;
-  border-right: 1px solid var(--color-gray);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 30px;
-  font-size: var(--font-size-m);
-  cursor: pointer;
-  @media screen and (max-width: 768px) {
-    min-width: 15px;
-  }
-`;
-const Time = styled.input`
-  width: 50%;
-  border: none;
-  border-radius: 0px;
-  border-right: 1px solid var(--color-gray);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 30px;
-  font-size: var(--font-size-m);
-  cursor: pointer;
-  @media screen and (max-width: 768px) {
-    min-width: 15px;
-  }
-`;
-const Price = styled.input`
-  display: flex;
-  min-width: 30px;
-  width: 24%;
   height: 100%;
-  padding: 0 var(--padding-base);
-  font-size: var(--font-size-m);
-  border: 1px solid var(--color-gray);
-  border-radius: var(--br-mini);
+  flex: 1;
+  gap: 4px;
   cursor: pointer;
-  @media screen and (max-width: 768px) {
-    min-width: 15px;
-  }
-`;
-const Dropdown = styled.select`
   display: flex;
-  min-width: 30px;
-  width: 24%;
-  height: 100%;
-  padding: 0 var(--padding-xl);
-  font-size: var(--font-size-m);
-  border: 1px solid var(--color-gray);
-  border-radius: var(--br-mini);
-  cursor: pointer;
-  @media screen and (max-width: 8px) {
-    min-width: 15px;
+  justify-content: center;
+  align-items: center;
+
+  transition: all 0.1s ease-in-out;
+  input,
+  select {
+    width: 100px;
+    border: none;
   }
 `;
+
 const DetailFilter = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--padding-base);
-  width: 100%;
-  min-width: 500px;
-  margin: 0 auto;
-  padding: var(--padding-13xl) 0;
-  background-color: var(--color-white);
-  border: 1px solid var(--color-gray);
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border: 2px solid var(--color-gray);
   border-radius: var(--br-mini);
-  @media screen and (max-width: 768px) {
-    font-size: var(--font-size-m);
-    min-width: 320px;
+  position: relative;
+`;
+
+const FilterRow = styled.div`
+  height: 40px;
+  width: 90%;
+  display: flex;
+`;
+
+const FilterCol = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:first-child {
+    flex: 0.6;
+    font-weight: bold;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  &:nth-child(2) {
+    flex: 2;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  input {
+    margin-right: 10px;
   }
 `;
-const InputRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin: 0 5%;
-`;
-const RowName = styled.label`
-  font-weight: 900;
-  width: 20%;
-  min-width: 100px;
-`;
-const Checkbox = styled.input`
+
+const CheckBox = styled.input`
   display: none;
   &:checked + label {
     color: var(--color-blue-main);
     font-weight: 900;
   }
 `;
-const CheckboxLabel = styled.label`
+
+const CheckBoxLabel = styled.label`
   color: var(--color-gray);
   cursor: pointer;
   margin-right: var(--padding-base);
@@ -200,230 +201,622 @@ const CheckboxLabel = styled.label`
     color: var(--color-navy);
   }
 `;
-const NumberInput = styled.input`
-  font-size: var(--font-size-l);
-  min-width: 100px;
-  width: 10%;
-  padding: 2px var(--padding-3xs);
-`;
-const ButtonContainer = styled.div`
+
+const FilterSubmit = styled.div`
   display: flex;
+  gap: 10px;
   position: absolute;
-  right: 20px;
-  bottom: 20px;
+  right: 50px;
+  bottom: 30px;
 `;
-const ProgramContainer = styled.div`
-  width: 80%;
-  margin: 0 auto;
-  background-color: cyan;
+
+const ResetBtn = styled.button`
+  cursor: pointer;
 `;
-const SortOption = styled(Span)`
+
+/* Order */
+const OrderContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin: var(--padding-base);
+  width: 80%;
+  div {
+    margin-right: var(--padding-base);
+    cursor: pointer;
+  }
 `;
-const GridBox = styled.div`
-  display: grid;
-  width: 100%;
-  margin: 0 auto;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-column-gap: var(--padding-base);
-  grid-row-gap: var(--padding-xl);
-  justify-items: center;
-  @media screen and (max-width: 900px) {
-    grid-template-columns: 1fr 1fr 1fr;
+
+/* Compare */
+const FixedBox = styled.div`
+  position: fixed;
+`;
+
+const CompareBox = styled.div`
+  width: 300px;
+  background-color: var(--color-skyblue-main);
+  position: absolute;
+  top: 20px;
+  right: -680px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 20px;
+`;
+
+const CompareTitle = styled.h3`
+  font-size: var(--font-size-l);
+  margin-top: 20px;
+  font-weight: bold;
+  span {
+    color: var(--color-blue-main);
   }
-  @media screen and (max-width: 426px) {
-    width: 400px;
-    grid-template-columns: 1fr;
-  }
+`;
+
+const CompareProgramBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const CompareProgram = styled.div`
+  width: 250px;
+  height: 100px;
+  background-color: var(--color-white);
+  border-radius: 20px;
+  position: relative;
+`;
+
+const CompareProgramContents = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  margin-left: 20px;
+  gap: 4px;
+`;
+
+const CompareProgramTitle = styled.h4`
+  font-size: var(--font-size-m);
+  font-weight: bold;
+`;
+
+const CompareProgramRates = styled.span``;
+
+const CompareProgramPrice = styled.span`
+  font-size: var(--font-size-s);
+`;
+
+const CompareProgramDelete = styled.span`
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
 `;
 
 export default function Program() {
-  /* DB - sports */
-  const [sports, setSports] = useState();
-  const [sportsLoading, setSportsLoading] = useState(true);
+  /* 검색 기능 */
+  const [searchKeyword, setSearchKeyword] = useState("");
 
-  useEffect(() => {
-    getSports();
-    getPrograms();
-  }, []);
+  const {
+    register: searchRegister,
+    handleSubmit: handleSearchSubmit,
+    reset: searchReset,
+  } = useForm();
 
-  async function getSports() {
-    const { data, error } = await client.from("SPORT").select();
-    setSports(data);
-    setSportsLoading(false);
-    if (error) {
-      console.log(error.message);
-      return;
-    }
-  }
-
-  /* Date */
-  const [selectedDate, setSelectedDate] = useState();
-  const handleDateChange = (event) => {
-    setSelectedDate(event.target.value);
+  // Search button 클릭 시 keyword를 setSearchKeyword에 저장
+  const onSearchSubmit = (data) => {
+    setSearchKeyword(data.keyword);
+    searchReset();
   };
 
-  /* Dropdown */
+  /* 프로그램 필터링 1. 스포츠 태그 */
+  const { isLoading: sportsLoading, data: sportsData } = useQuery(
+    ["sports"],
+    getSports
+  );
 
-  /* DB - programs */
-  const [programs, setPrograms] = useState([]);
-  const [programLoading, setProgramLoading] = useState(true);
+  const [clickedTags, setClickedTags] = useState([]);
 
-  async function getPrograms() {
-    const { data, error } = await client.from("PROGRAM").select();
-    setPrograms(data);
-    setProgramLoading(false);
-    if (error) {
-      console.log(error.message);
-      return;
+  // 스포츠 태그 클릭 시 clickedTags 배열에서 해당 id 토글
+  const hanldeTagClicked = (id) => {
+    if (clickedTags.includes(id)) {
+      setClickedTags((prev) => prev.filter((it) => it !== id));
+    } else {
+      setClickedTags((prev) => [...prev, id]);
     }
-  }
+  };
 
-  // function getPrograms() {
-  //   return fetch("http://localhost:4000/api/program").then((response) =>
-  //     response.json()
-  //   );
-  // }
+  /* 프로그램 필터링 2. 세부 필터 */
+  const [filterDetails, setFilterDetails] = useState({
+    diff: [],
+    booking: [],
+    age: [],
+    max: 0,
+    term: [],
+  });
 
-  // const { isLoading: programLoading, data: programData } = useQuery(
-  //   ["programs"],
-  //   getPrograms
-  // );
-
-  /* form */
   const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
+    register: filterRegister,
+    handleSubmit: handleFilterSubmit,
+    reset: filterReset,
   } = useForm();
-  const onValid = (data) => {
-    console.log(data);
-    reset();
+
+  const onFilterValid = (data) => {
+    setFilterDetails(data);
+  };
+
+  /* 프로그램 필터링 3. order */
+
+  const [order, setOrder] = useState({
+    popularity: true,
+    price: true,
+    reviews: true,
+    popOn: false,
+    priceOn: false,
+    reviewsOn: false,
+  });
+
+  // searchKeyword가 적용된 programsData에서 스포츠 태그, 디테일 필터링 적용 후 select
+  const filterProgramBySports = (programs) => {
+    return clickedTags.length === 0
+      ? programs
+      : programs.filter((program) => clickedTags.includes(program.sport_id));
+  };
+
+  const filterProgramByDetails = (programs) => {
+    let result = programs;
+
+    /* Main Filter */
+    // 날짜
+    if (filterDetails.date) {
+      const filterMonth = Number(filterDetails.date.substring(5, 7));
+      result = result.filter((program) => {
+        return (
+          filterMonth >= Number(program.open_month) &&
+          filterMonth <= Number(program.close_month)
+        );
+      });
+    }
+
+    // 시간
+    if (filterDetails.time) {
+      result = result.filter(
+        (program) =>
+          filterDetails.time >= program.open_time &&
+          filterDetails.time <= program.close_time
+      );
+    }
+
+    // 가격
+    if (filterDetails.minPrice) {
+      result = result.filter((program) => {
+        return (
+          Number(filterDetails.minPrice.replace(",", "")) >=
+          Number(program.price.replace(",", ""))
+        );
+      });
+    }
+
+    // 해수욕장
+    if (filterDetails.beach) {
+      result = result.filter((program) => {
+        return filterDetails.beach === program.BEACH.beach_name;
+      });
+    }
+
+    /* Detail Filter */
+    // 난이도
+    if (filterDetails.diff) {
+      result =
+        filterDetails.diff.length === 0
+          ? programs
+          : programs.filter((program) =>
+              filterDetails.diff.includes(program.difficulty)
+            );
+    }
+
+    // 예약방식
+    if (filterDetails.booking) {
+      result =
+        filterDetails.booking.length === 0
+          ? result
+          : result.filter((program) => {
+              return program.booking.some((e) =>
+                filterDetails.booking.includes(e)
+              );
+            });
+    }
+
+    // 나이대
+    if (filterDetails.age) {
+      result =
+        filterDetails.age.length === 0
+          ? result
+          : result.filter((program) =>
+              program.age.some((e) => filterDetails.age.includes(e))
+            );
+    }
+
+    // 인원
+    if (filterDetails.max) {
+      result = result.filter(
+        (program) => program.max_people >= filterDetails.max
+      );
+    }
+
+    // 프로그램 기간
+    if (filterDetails.term) {
+      result =
+        filterDetails.term.length === 0
+          ? result
+          : result.filter((program) => {
+              return filterDetails.term.includes(program.term);
+            });
+    }
+
+    return result;
+  };
+
+  const filterProgramByOrder = (programs) => {
+    let result = programs;
+
+    // 가격
+    if (order.priceOn) {
+      result;
+    }
+    return result;
+  };
+
+  const { isLoading: programsLoading, data: programsData } = useQuery(
+    ["programs", searchKeyword],
+    () => getPrograms(searchKeyword),
+    {
+      select: (programsData) =>
+        filterProgramByDetails(filterProgramBySports(programsData)),
+    }
+  );
+
+  /* 비교하기 */
+  const [compareItem, setCompareItem] = useState([]);
+
+  const onCompareBtnClicked = (program) => {
+    if (compareItem.length >= 4) return;
+
+    let alreadyExist = false;
+    compareItem.forEach((item) => {
+      if (item.id === program.id) alreadyExist = true;
+    });
+    if (alreadyExist) return;
+
+    setCompareItem((prev) => [...prev, program]);
+  };
+
+  const onDeleteBtnClicked = (id) => {
+    setCompareItem((prev) => prev.filter((item) => id !== item.id));
   };
 
   return (
-    <Wrapper>
-      <Message>{errors?.keyword?.message}</Message>
-      <SearchContainer onSubmit={handleSubmit(onValid)}>
-        <SearchInput
-          {...register("keyword", {
-            required: "검색어가 입력되지 않았습니다!!",
-          })}
-          type="text"
-          placeholder="검색어를 입력해주세요."
-        />
-        <IconBox>
-          <img src="/icon/search_white.svg" alt="search" />
-        </IconBox>
-      </SearchContainer>
-      <FilterContainer>
-        <Sports>
-          <SpanBold>종목</SpanBold>
+    <Body>
+      <Wrapper>
+        <SearchContainer onSubmit={handleSearchSubmit(onSearchSubmit)}>
+          <Input
+            placeholder="검색어를 입력해주세요."
+            {...searchRegister("keyword")}
+          />
+          <SearchButton>
+            <svg
+              width="25"
+              height="26"
+              viewBox="0 0 25 26"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M11.1201 0.5C9.34671 0.500151 7.5991 0.924367 6.02305 1.73725C4.447 2.55014 3.0882 3.72813 2.06002 5.17294C1.03184 6.61775 0.364097 8.28748 0.112499 10.0428C-0.139099 11.7982 0.0327433 13.5882 0.61369 15.2637C1.19464 16.9391 2.16784 18.4513 3.45211 19.6741C4.73638 20.897 6.29446 21.795 7.99638 22.2932C9.6983 22.7914 11.4947 22.8755 13.2357 22.5383C14.9767 22.2011 16.6118 21.4524 18.0046 20.3548L22.7827 25.1327C23.0295 25.3711 23.36 25.5029 23.703 25.5C24.0461 25.497 24.3742 25.3594 24.6168 25.1168C24.8594 24.8742 24.997 24.5461 25 24.2031C25.0029 23.86 24.8711 23.5295 24.6327 23.2828L19.8546 18.5049C21.1473 16.8651 21.9521 14.8945 22.1771 12.8186C22.402 10.7428 22.038 8.64553 21.1266 6.7669C20.2153 4.88827 18.7934 3.30416 17.0237 2.19586C15.2541 1.08757 13.2081 0.49986 11.1201 0.5ZM2.61576 11.6206C2.61576 9.36519 3.51175 7.20217 5.10661 5.60736C6.70148 4.01256 8.86458 3.11661 11.1201 3.11661C13.3755 3.11661 15.5386 4.01256 17.1335 5.60736C18.7284 7.20217 19.6244 9.36519 19.6244 11.6206C19.6244 13.876 18.7284 16.039 17.1335 17.6338C15.5386 19.2286 13.3755 20.1246 11.1201 20.1246C8.86458 20.1246 6.70148 19.2286 5.10661 17.6338C3.51175 16.039 2.61576 13.876 2.61576 11.6206Z"
+                fill="var(--color-white)"
+              />
+            </svg>
+          </SearchButton>
+        </SearchContainer>
+        <SportsFilter>
+          <h3>종목</h3>
+          {sportsLoading
+            ? "Loading..."
+            : sportsData.map((sport) => {
+                return (
+                  <SportsTag
+                    themeColor={sport.theme_color}
+                    key={sport.id}
+                    color={"#ff4d4d"}
+                    text={sport.title}
+                    bgColor={"#ffcccc"}
+                    hoverColor={"#ffb8b8"}
+                    // handleTagClicked 함수를 onClick props로 전달
+                    onClick={() => hanldeTagClicked(sport.id)}
+                    hasClicked={clickedTags.includes(sport.id)}
+                  />
+                );
+              })}
+        </SportsFilter>
+        <FilterContainer onSubmit={handleFilterSubmit(onFilterValid)}>
+          <MainFilter>
+            <DateAndTime>
+              <SmallFilterBox>
+                <input type="date" {...filterRegister("date")} />
+              </SmallFilterBox>
+              <SmallFilterBox>
+                <input type="time" {...filterRegister("time")} />
+              </SmallFilterBox>
+            </DateAndTime>
+            <SmallFilterBox>
+              <input
+                type="number"
+                placeholder="원하는 가격대"
+                min={0}
+                {...filterRegister("minPrice")}
+              />
+            </SmallFilterBox>
+            <SmallFilterBox>
+              <select {...filterRegister("beach")}>
+                <option value="">해수욕장</option>
+                <option value="해운대해수욕장">해운대해수욕장</option>
+                <option value="광안리해수욕장">광안리해수욕장</option>
+                <option value="송정해수욕장">송정해수욕장</option>
+                <option value="임랑해수욕장">임랑해수욕장</option>
+                <option value="다대포해수욕장">다대포해수욕장</option>
+                <option value="일광해수욕장">일광해수욕장</option>
+                <option value="송도해수욕장">송도해수욕장</option>
+              </select>
+            </SmallFilterBox>
+          </MainFilter>
+          <DetailFilter>
+            <FilterRow>
+              <FilterCol>
+                <span>난이도</span>
+              </FilterCol>
+              <FilterCol>
+                <CheckBox
+                  id="high"
+                  name="difficulty"
+                  type="checkbox"
+                  value="어려움"
+                  {...filterRegister("diff")}
+                />
+                <CheckBoxLabel htmlFor="high">상</CheckBoxLabel>
+                <CheckBox
+                  id="mid"
+                  name="difficulty"
+                  type="checkbox"
+                  value="보통"
+                  {...filterRegister("diff")}
+                />
+                <CheckBoxLabel htmlFor="mid">중</CheckBoxLabel>
+                <CheckBox
+                  id="low"
+                  name="difficulty"
+                  type="checkbox"
+                  value="쉬움"
+                  {...filterRegister("diff")}
+                />
+                <CheckBoxLabel htmlFor="low">하</CheckBoxLabel>
+              </FilterCol>
+            </FilterRow>
+            <FilterRow>
+              <FilterCol>
+                <span>예약방식</span>
+              </FilterCol>
+              <FilterCol>
+                <CheckBox
+                  type="checkbox"
+                  id="call"
+                  value="call"
+                  {...filterRegister("booking")}
+                />
+                <CheckBoxLabel htmlFor="call">전화 예약</CheckBoxLabel>
+                <CheckBox
+                  type="checkbox"
+                  id="homepage"
+                  value="homepage"
+                  {...filterRegister("booking")}
+                />
+                <CheckBoxLabel htmlFor="homepage">홈페이지 예약</CheckBoxLabel>
+                <CheckBox
+                  type="checkbox"
+                  id="waybu"
+                  value="waybu"
+                  {...filterRegister("booking")}
+                />
+                <CheckBoxLabel htmlFor="waybu">웨이부 예약</CheckBoxLabel>
+              </FilterCol>
+            </FilterRow>
+            <FilterRow>
+              <FilterCol>
+                <span>나이대</span>
+              </FilterCol>
+              <FilterCol>
+                <CheckBox
+                  id="ten"
+                  type="checkbox"
+                  {...filterRegister("age")}
+                  value="14"
+                />
+                <CheckBoxLabel htmlFor="ten">14세 이하 포함</CheckBoxLabel>
 
-          {sportsLoading ? (
-            "Loading..."
+                <CheckBox
+                  id="elder"
+                  type="checkbox"
+                  {...filterRegister("age")}
+                  value="60"
+                />
+                <CheckBoxLabel htmlFor="elder">60세 이상 포함</CheckBoxLabel>
+              </FilterCol>
+            </FilterRow>
+            <FilterRow>
+              <FilterCol>
+                <span>인원</span>
+              </FilterCol>
+              <FilterCol>
+                <input
+                  min={0}
+                  style={{ width: "40px" }}
+                  type="number"
+                  {...filterRegister("max")}
+                />
+              </FilterCol>
+            </FilterRow>
+            <FilterRow>
+              <FilterCol>
+                <span>프로그램 기간</span>
+              </FilterCol>
+              <FilterCol>
+                <CheckBox
+                  id="day"
+                  type="checkbox"
+                  value="day"
+                  {...filterRegister("term")}
+                />
+                <CheckBoxLabel htmlFor="day">하루</CheckBoxLabel>
+                <CheckBox
+                  id="short"
+                  type="checkbox"
+                  value="short"
+                  {...filterRegister("term")}
+                />
+                <CheckBoxLabel htmlFor="short">단기</CheckBoxLabel>
+                <CheckBox
+                  id="long"
+                  type="checkbox"
+                  value="long"
+                  {...filterRegister("term")}
+                />
+                <CheckBoxLabel htmlFor="long">장기</CheckBoxLabel>
+              </FilterCol>
+            </FilterRow>
+            <FilterSubmit>
+              <input type="submit" value="필터 적용" />
+              <button
+                text={"초기화"}
+                onClick={() => {
+                  setClickedTags([]);
+                  setFilterDetails({ diff: [] });
+                  setSearchKeyword("");
+                  setOrder({
+                    popularity: true,
+                    price: true,
+                    reviews: true,
+                    popOn: false,
+                    priceOn: false,
+                    reviewsOn: false,
+                  });
+                  filterReset();
+                }}
+              >
+                초기화
+              </button>
+            </FilterSubmit>
+          </DetailFilter>
+        </FilterContainer>
+        <OrderContainer>
+          <div
+            onClick={() => {
+              setOrder((prev) => {
+                return { ...prev, popularity: !prev.popularity, popOn: true };
+              });
+            }}
+          >
+            <span>인기순</span>{" "}
+            {order.popOn ? (
+              <span>{order.popularity ? "asc" : "desc"}</span>
+            ) : null}
+          </div>
+          <div
+            onClick={() => {
+              setOrder((prev) => {
+                return { ...prev, price: !prev.price, priceOn: true };
+              });
+            }}
+          >
+            <span>가격순</span>
+            {order.priceOn ? <span>{order.price ? "asc" : "desc"}</span> : null}
+          </div>
+          <div
+            onClick={() => {
+              setOrder((prev) => {
+                return { ...prev, reviews: !prev.reviews, reviewsOn: true };
+              });
+            }}
+          >
+            <span>별점순</span>{" "}
+            {order.reviewsOn ? (
+              <span>{order.reviews ? "asc" : "desc"}</span>
+            ) : null}
+          </div>
+        </OrderContainer>
+        <ProgramContainer>
+          {programsLoading ? (
+            "Loading Programs..."
           ) : (
-            <SprotsList>
-              {sports.map((s) => (
-                <SportTag sport={s} key={s.id} />
-              ))}
-            </SprotsList>
+            <>
+              {programsData.length !== 0
+                ? programsData.map((program) => (
+                    <ProgramItem
+                      key={program.id}
+                      program={program}
+                      onBtnClicked={onCompareBtnClicked}
+                    />
+                  ))
+                : "데이터가 존재하지 않습니다."}
+            </>
           )}
-        </Sports>
-        <MainFilter>
-          <DateAndTime>
-            <Date
-              type="date"
-              name="dateCondition"
-              value={selectedDate}
-              onChange={handleDateChange}
-              min={"2024-01-01"}
-              max={"2024-12-31"}
-              defaultValue={"2024-05-20"}
-            />
-            <Time type="time" />
-          </DateAndTime>
-          <Price type="number" placeholder="가격" />
-          <Dropdown>
-            <option value="">지역</option>
-            <option value="location1">광안리</option>
-            <option value="location2">해운대</option>
-            <option value="location3">다대포</option>
-            <option value="location4">송정</option>
-            <option value="location5">송도</option>
-          </Dropdown>
-        </MainFilter>
-        <DetailFilter>
-          <InputRow>
-            <RowName>난이도</RowName>
-            <Checkbox type="checkbox" value="상" name="level" id="level1" />
-            <CheckboxLabel htmlFor="level1">상</CheckboxLabel>
-            <Checkbox type="checkbox" value="중" name="level" id="level2" />
-            <CheckboxLabel htmlFor="level2">중</CheckboxLabel>
-            <Checkbox type="checkbox" value="하" name="level" id="level3" />
-            <CheckboxLabel htmlFor="level3">하</CheckboxLabel>
-          </InputRow>
-          <InputRow>
-            <RowName>예약방식</RowName>
-            <Checkbox
-              type="checkbox"
-              value="way-bu"
-              name="method"
-              id="way-bu"
-            />
-            <CheckboxLabel htmlFor="way-bu">WAY-BU 예약</CheckboxLabel>
-            <Checkbox type="checkbox" value="link" name="method" id="link" />
-            <CheckboxLabel htmlFor="link">예약 링크</CheckboxLabel>
-          </InputRow>
-          <InputRow>
-            <RowName>나이대</RowName>
-            <Checkbox type="checkbox" value="10" name="age" id="10" />
-            <CheckboxLabel htmlFor="10">10세 이하 포함</CheckboxLabel>
-            <Checkbox type="checkbox" value="14" name="age" id="14" />
-            <CheckboxLabel htmlFor="14">14세 이하 포함</CheckboxLabel>
-          </InputRow>
-          <InputRow>
-            <RowName>인원</RowName>
-            <NumberInput type="number" />
-          </InputRow>
-          <InputRow>
-            <RowName>프로그램 기간</RowName>
-            <Checkbox type="checkbox" value="way-bu" name="term" id="long" />
-            <CheckboxLabel htmlFor="long">장기</CheckboxLabel>
-            <Checkbox type="checkbox" value="link" name="term" id="short" />
-            <CheckboxLabel htmlFor="short">단기</CheckboxLabel>
-            <Checkbox type="checkbox" value="link" name="term" id="oneday" />
-            <CheckboxLabel htmlFor="oneday">하루</CheckboxLabel>
-          </InputRow>
-        </DetailFilter>
-        <ButtonContainer>
-          <ButtonBlue text={"필터 적용하기"} size={"m"} />
-        </ButtonContainer>
-      </FilterContainer>
-      <ProgramContainer>
-        <SortOption>
-          {["인기순", "가격 높은순", "별점 높은순"].map((str, i) => {
-            return (
-              <div key={i}>
-                <Checkbox type="radio" value={str} name="sortOption" id={i} />
-                <CheckboxLabel htmlFor={i}>{str}</CheckboxLabel>
-              </div>
-            );
-          })}
-        </SortOption>
-        {programLoading ? (
-          "Loading..."
-        ) : (
-          <GridBox>
-            {programs.map((p) => (
-              <ProgramItem program={p} key={p.id} />
-            ))}
-          </GridBox>
-        )}
-      </ProgramContainer>
-    </Wrapper>
+        </ProgramContainer>
+        {compareItem.length !== 0 ? (
+          <FixedBox>
+            <CompareBox>
+              <CompareTitle>
+                비교 상품 (<span>{compareItem.length}</span>/4)
+              </CompareTitle>
+              <CompareProgramBox>
+                {compareItem.map((item, index) => (
+                  <CompareProgram key={index}>
+                    <CompareProgramContents>
+                      <CompareProgramTitle>
+                        {item.program_name}
+                      </CompareProgramTitle>
+                      <CompareProgramRates>⭐⭐⭐⭐⭐(0)</CompareProgramRates>
+                      <CompareProgramPrice>{item.price}</CompareProgramPrice>
+                    </CompareProgramContents>
+                    <CompareProgramDelete
+                      onClick={() => {
+                        onDeleteBtnClicked(item.id);
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18 18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </CompareProgramDelete>
+                  </CompareProgram>
+                ))}
+              </CompareProgramBox>
+              <ButtonBlue text={"상세 비교"} size={"250px"} />
+            </CompareBox>
+          </FixedBox>
+        ) : null}
+      </Wrapper>
+    </Body>
   );
 }
