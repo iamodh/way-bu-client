@@ -4,7 +4,7 @@ import styled from "styled-components";
 const Wrapper = styled.div`
   height: 340px;
   border: 2px solid var(--color-gray);
-  border-radius: 12px;
+  border-radius: var(--br-mini);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,7 +39,7 @@ const Button = styled.button`
     background-color: #1758b9;
   }
   transition: all 0.2s ease-in-out;
-  border-radius: 12px;
+  border-radius: var(--br-3xs);
   border: none;
   cursor: pointer;
 `;

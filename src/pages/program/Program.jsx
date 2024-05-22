@@ -6,8 +6,7 @@ import { useQuery } from "react-query";
 import { useForm } from "react-hook-form";
 import { getPrograms } from "../../../apis/programs";
 import { getSports } from "../../../apis/sports";
-import { Link } from "react-router-dom";
-import IndexButton from "../../components/ButtonBlue";
+import ButtonBlue from "../../components/ButtonBlue";
 
 const Body = styled.main`
   background-color: ${(props) => props.theme.backgroundColor};
@@ -23,7 +22,6 @@ const Wrapper = styled.div`
   align-items: center;
   margin-bottom: 80px;
   gap: 10px;
-  position: relative;
 `;
 
 /* Search */
@@ -38,16 +36,16 @@ const SearchContainer = styled.form`
 
 const Input = styled.input`
   width: 100%;
-  height: 40px;
+  height: 50px;
   border-style: none;
   padding-left: 10px;
   padding-right: 70px;
-  border-radius: 10px;
+  border-radius: var(--br-mini);
   border: 2px solid var(--color-blue-main);
-
+  font-size: var(--font-size-ml);
   &:focus {
     outline: none;
-    border: 2px solid #1758b9;
+    border: 2px solid var(--color-blue-dark);
   }
 
   transition: all 0.1s ease-in-out;
@@ -61,11 +59,11 @@ const SearchButton = styled.button`
   border: none;
   background-color: var(--color-blue-main);
   color: white;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-top-right-radius: var(--br-mini);
+  border-bottom-right-radius: var(--br-mini);
   cursor: pointer;
   &:hover {
-    background-color: #1758b9;
+    background-color: var(--color-blue-dark);
   }
   transition: all 0.1s ease-in-out;
 `;
@@ -83,7 +81,7 @@ const ProgramContainer = styled.div`
 
 const FilterContainer = styled.form`
   width: 80%;
-  height: 340px;
+  height: 300px;
   display: flex;
   flex-direction: column;
 `;
@@ -128,7 +126,7 @@ const SmallFilterBox = styled.div`
   border: 1px solid var(--color-gray);
   border-bottom: 3px solid var(--color-gray);
   border-right: 3px solid var(--color-gray);
-  border-radius: 10px;
+  border-radius: var(--br-mini);
   height: 100%;
   flex: 1;
   gap: 4px;
@@ -136,12 +134,12 @@ const SmallFilterBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  &:hover {
-    background-color: rgb(241 245 249);
-  }
+
   transition: all 0.1s ease-in-out;
-  input {
+  input,
+  select {
     width: 100px;
+    border: none;
   }
 `;
 
@@ -153,7 +151,7 @@ const DetailFilter = styled.div`
   align-items: center;
   padding: 20px;
   border: 2px solid var(--color-gray);
-  border-radius: 12px;
+  border-radius: var(--br-mini);
   position: relative;
 `;
 
@@ -187,6 +185,23 @@ const FilterCol = styled.div`
   }
 `;
 
+const CheckBox = styled.input`
+  display: none;
+  &:checked + label {
+    color: var(--color-blue-main);
+    font-weight: 900;
+  }
+`;
+
+const CheckBoxLabel = styled.label`
+  color: var(--color-gray);
+  cursor: pointer;
+  margin-right: var(--padding-base);
+  &:hover {
+    color: var(--color-navy);
+  }
+`;
+
 const FilterSubmit = styled.div`
   display: flex;
   gap: 10px;
@@ -197,6 +212,17 @@ const FilterSubmit = styled.div`
 
 const ResetBtn = styled.button`
   cursor: pointer;
+`;
+
+/* Order */
+const OrderContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 80%;
+  div {
+    margin-right: var(--padding-base);
+    cursor: pointer;
+  }
 `;
 
 /* Compare */
@@ -305,11 +331,10 @@ export default function Program() {
   /* 프로그램 필터링 2. 세부 필터 */
   const [filterDetails, setFilterDetails] = useState({
     diff: [],
-    booking: "",
+    booking: [],
     age: [],
     max: 0,
-    start: "",
-    end: "",
+    term: [],
   });
 
   const {
@@ -321,6 +346,17 @@ export default function Program() {
   const onFilterValid = (data) => {
     setFilterDetails(data);
   };
+
+  /* 프로그램 필터링 3. order */
+
+  const [order, setOrder] = useState({
+    popularity: true,
+    price: true,
+    reviews: true,
+    popOn: false,
+    priceOn: false,
+    reviewsOn: false,
+  });
 
   // searchKeyword가 적용된 programsData에서 스포츠 태그, 디테일 필터링 적용 후 select
   const filterProgramBySports = (programs) => {
@@ -353,21 +389,11 @@ export default function Program() {
       );
     }
 
-    // 최소금액
+    // 가격
     if (filterDetails.minPrice) {
       result = result.filter((program) => {
         return (
           Number(filterDetails.minPrice.replace(",", "")) >=
-          Number(program.price.replace(",", ""))
-        );
-      });
-    }
-
-    // 최대금액
-    if (filterDetails.maxPrice) {
-      result = result.filter((program) => {
-        return (
-          Number(filterDetails.maxPrice.replace(",", "")) >=
           Number(program.price.replace(",", ""))
         );
       });
@@ -393,9 +419,14 @@ export default function Program() {
 
     // 예약방식
     if (filterDetails.booking) {
-      result = result.filter((program) => {
-        return program.booking.includes(filterDetails.booking);
-      });
+      result =
+        filterDetails.booking.length === 0
+          ? result
+          : result.filter((program) => {
+              return program.booking.some((e) =>
+                filterDetails.booking.includes(e)
+              );
+            });
     }
 
     // 나이대
@@ -415,26 +446,25 @@ export default function Program() {
       );
     }
 
-    // 프로그램 기간 (시작)
-    if (filterDetails.end) {
-      const filterMonth = Number(filterDetails.end.substring(5, 7));
-      result = result.filter((program) => {
-        return (
-          filterMonth >= Number(program.open_month) &&
-          filterMonth <= Number(program.close_month)
-        );
-      });
+    // 프로그램 기간
+    if (filterDetails.term) {
+      result =
+        filterDetails.term.length === 0
+          ? result
+          : result.filter((program) => {
+              return filterDetails.term.includes(program.term);
+            });
     }
 
-    // 프로그램 기간 (끝)
-    if (filterDetails.start) {
-      const filterMonth = Number(filterDetails.start.substring(5, 7));
-      result = result.filter((program) => {
-        return (
-          filterMonth >= Number(program.open_month) &&
-          filterMonth <= Number(program.close_month)
-        );
-      });
+    return result;
+  };
+
+  const filterProgramByOrder = (programs) => {
+    let result = programs;
+
+    // 가격
+    if (order.priceOn) {
+      result;
     }
     return result;
   };
@@ -472,10 +502,25 @@ export default function Program() {
       <Wrapper>
         <SearchContainer onSubmit={handleSearchSubmit(onSearchSubmit)}>
           <Input
-            placeholder="키워드를 입력하세요"
+            placeholder="검색어를 입력해주세요."
             {...searchRegister("keyword")}
           />
-          <SearchButton>검색</SearchButton>
+          <SearchButton>
+            <svg
+              width="25"
+              height="26"
+              viewBox="0 0 25 26"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M11.1201 0.5C9.34671 0.500151 7.5991 0.924367 6.02305 1.73725C4.447 2.55014 3.0882 3.72813 2.06002 5.17294C1.03184 6.61775 0.364097 8.28748 0.112499 10.0428C-0.139099 11.7982 0.0327433 13.5882 0.61369 15.2637C1.19464 16.9391 2.16784 18.4513 3.45211 19.6741C4.73638 20.897 6.29446 21.795 7.99638 22.2932C9.6983 22.7914 11.4947 22.8755 13.2357 22.5383C14.9767 22.2011 16.6118 21.4524 18.0046 20.3548L22.7827 25.1327C23.0295 25.3711 23.36 25.5029 23.703 25.5C24.0461 25.497 24.3742 25.3594 24.6168 25.1168C24.8594 24.8742 24.997 24.5461 25 24.2031C25.0029 23.86 24.8711 23.5295 24.6327 23.2828L19.8546 18.5049C21.1473 16.8651 21.9521 14.8945 22.1771 12.8186C22.402 10.7428 22.038 8.64553 21.1266 6.7669C20.2153 4.88827 18.7934 3.30416 17.0237 2.19586C15.2541 1.08757 13.2081 0.49986 11.1201 0.5ZM2.61576 11.6206C2.61576 9.36519 3.51175 7.20217 5.10661 5.60736C6.70148 4.01256 8.86458 3.11661 11.1201 3.11661C13.3755 3.11661 15.5386 4.01256 17.1335 5.60736C18.7284 7.20217 19.6244 9.36519 19.6244 11.6206C19.6244 13.876 18.7284 16.039 17.1335 17.6338C15.5386 19.2286 13.3755 20.1246 11.1201 20.1246C8.86458 20.1246 6.70148 19.2286 5.10661 17.6338C3.51175 16.039 2.61576 13.876 2.61576 11.6206Z"
+                fill="var(--color-white)"
+              />
+            </svg>
+          </SearchButton>
         </SearchContainer>
         <SportsFilter>
           <h3>종목</h3>
@@ -484,6 +529,7 @@ export default function Program() {
             : sportsData.map((sport) => {
                 return (
                   <SportsTag
+                    themeColor={sport.theme_color}
                     key={sport.id}
                     color={"#ff4d4d"}
                     text={sport.title}
@@ -508,19 +554,10 @@ export default function Program() {
             </DateAndTime>
             <SmallFilterBox>
               <input
-                style={{ width: "60px" }}
                 type="number"
-                placeholder="최소금액"
+                placeholder="원하는 가격대"
                 min={0}
                 {...filterRegister("minPrice")}
-              />
-              ~
-              <input
-                style={{ width: "60px" }}
-                type="number"
-                placeholder="최대금액"
-                min={0}
-                {...filterRegister("maxPrice")}
               />
             </SmallFilterBox>
             <SmallFilterBox>
@@ -542,30 +579,30 @@ export default function Program() {
                 <span>난이도</span>
               </FilterCol>
               <FilterCol>
-                <label htmlFor="high">상</label>
-                <input
+                <CheckBox
                   id="high"
                   name="difficulty"
                   type="checkbox"
                   value="어려움"
                   {...filterRegister("diff")}
                 />
-                <label htmlFor="mid">중</label>
-                <input
+                <CheckBoxLabel htmlFor="high">상</CheckBoxLabel>
+                <CheckBox
                   id="mid"
                   name="difficulty"
                   type="checkbox"
                   value="보통"
                   {...filterRegister("diff")}
                 />
-                <label htmlFor="low">하</label>
-                <input
+                <CheckBoxLabel htmlFor="mid">중</CheckBoxLabel>
+                <CheckBox
                   id="low"
                   name="difficulty"
                   type="checkbox"
                   value="쉬움"
                   {...filterRegister("diff")}
                 />
+                <CheckBoxLabel htmlFor="low">하</CheckBoxLabel>
               </FilterCol>
             </FilterRow>
             <FilterRow>
@@ -573,47 +610,49 @@ export default function Program() {
                 <span>예약방식</span>
               </FilterCol>
               <FilterCol>
-                <select {...filterRegister("booking")}>
-                  <option value="">선택</option>
-                  <option value="call">전화 예약</option>
-                  <option value="homepage">홈페이지 예약</option>
-                  <option value="waybu">웨이부에서 예약</option>
-                </select>
+                <CheckBox
+                  type="checkbox"
+                  id="call"
+                  value="call"
+                  {...filterRegister("booking")}
+                />
+                <CheckBoxLabel htmlFor="call">전화 예약</CheckBoxLabel>
+                <CheckBox
+                  type="checkbox"
+                  id="homepage"
+                  value="homepage"
+                  {...filterRegister("booking")}
+                />
+                <CheckBoxLabel htmlFor="homepage">홈페이지 예약</CheckBoxLabel>
+                <CheckBox
+                  type="checkbox"
+                  id="waybu"
+                  value="waybu"
+                  {...filterRegister("booking")}
+                />
+                <CheckBoxLabel htmlFor="waybu">웨이부 예약</CheckBoxLabel>
               </FilterCol>
             </FilterRow>
             <FilterRow>
               <FilterCol>
-                <span>추천 나이대</span>
+                <span>나이대</span>
               </FilterCol>
               <FilterCol>
-                <label htmlFor="ten">10대</label>
-                <input
+                <CheckBox
                   id="ten"
                   type="checkbox"
                   {...filterRegister("age")}
-                  value="10"
+                  value="14"
                 />
-                <label htmlFor="twenty">20대</label>
-                <input
-                  id="twenty"
-                  type="checkbox"
-                  {...filterRegister("age")}
-                  value="20"
-                />
-                <label htmlFor="thirty">30대</label>
-                <input
-                  id="thirty"
-                  type="checkbox"
-                  {...filterRegister("age")}
-                  value="30"
-                />
-                <label htmlFor="elder">40대 이상</label>
-                <input
+                <CheckBoxLabel htmlFor="ten">14세 이하 포함</CheckBoxLabel>
+
+                <CheckBox
                   id="elder"
                   type="checkbox"
                   {...filterRegister("age")}
-                  value="40"
+                  value="60"
                 />
+                <CheckBoxLabel htmlFor="elder">60세 이상 포함</CheckBoxLabel>
               </FilterCol>
             </FilterRow>
             <FilterRow>
@@ -634,27 +673,89 @@ export default function Program() {
                 <span>프로그램 기간</span>
               </FilterCol>
               <FilterCol>
-                <input type="date" {...filterRegister("start")} />
-                <span style={{ marginRight: "10px" }}>~</span>
-                <input type="date" {...filterRegister("end")} />
+                <CheckBox
+                  id="day"
+                  type="checkbox"
+                  value="day"
+                  {...filterRegister("term")}
+                />
+                <CheckBoxLabel htmlFor="day">하루</CheckBoxLabel>
+                <CheckBox
+                  id="short"
+                  type="checkbox"
+                  value="short"
+                  {...filterRegister("term")}
+                />
+                <CheckBoxLabel htmlFor="short">단기</CheckBoxLabel>
+                <CheckBox
+                  id="long"
+                  type="checkbox"
+                  value="long"
+                  {...filterRegister("term")}
+                />
+                <CheckBoxLabel htmlFor="long">장기</CheckBoxLabel>
               </FilterCol>
             </FilterRow>
             <FilterSubmit>
               <input type="submit" value="필터 적용" />
-              <ResetBtn
+              <button
+                text={"초기화"}
                 onClick={() => {
                   setClickedTags([]);
                   setFilterDetails({ diff: [] });
                   setSearchKeyword("");
+                  setOrder({
+                    popularity: true,
+                    price: true,
+                    reviews: true,
+                    popOn: false,
+                    priceOn: false,
+                    reviewsOn: false,
+                  });
                   filterReset();
                 }}
               >
-                {" "}
                 초기화
-              </ResetBtn>
+              </button>
             </FilterSubmit>
           </DetailFilter>
         </FilterContainer>
+        <OrderContainer>
+          <div
+            onClick={() => {
+              setOrder((prev) => {
+                return { ...prev, popularity: !prev.popularity, popOn: true };
+              });
+            }}
+          >
+            <span>인기순</span>{" "}
+            {order.popOn ? (
+              <span>{order.popularity ? "asc" : "desc"}</span>
+            ) : null}
+          </div>
+          <div
+            onClick={() => {
+              setOrder((prev) => {
+                return { ...prev, price: !prev.price, priceOn: true };
+              });
+            }}
+          >
+            <span>가격순</span>
+            {order.priceOn ? <span>{order.price ? "asc" : "desc"}</span> : null}
+          </div>
+          <div
+            onClick={() => {
+              setOrder((prev) => {
+                return { ...prev, reviews: !prev.reviews, reviewsOn: true };
+              });
+            }}
+          >
+            <span>별점순</span>{" "}
+            {order.reviewsOn ? (
+              <span>{order.reviews ? "asc" : "desc"}</span>
+            ) : null}
+          </div>
+        </OrderContainer>
         <ProgramContainer>
           {programsLoading ? (
             "Loading Programs..."
@@ -711,7 +812,7 @@ export default function Program() {
                   </CompareProgram>
                 ))}
               </CompareProgramBox>
-              <IndexButton prop={"상세 비교"} />
+              <ButtonBlue text={"상세 비교"} size={"250px"} />
             </CompareBox>
           </FixedBox>
         ) : null}

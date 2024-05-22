@@ -4,12 +4,12 @@ const Tag = styled.div`
   background-color: ${(props) => props.$bgColor};
   color: ${(props) => props.$color};
   padding: 4px 8px;
-  border-radius: 6px;
+  border-radius: var(--br-mini);
   border: 2px solid ${(props) => props.$hoverColor};
   font-size: var(--font-size-s);
   cursor: pointer;
   &:hover {
-    background-color: ${(props) => props.$hoverColor};
+    box-shadow: 1px 1px 1px var(--color-gray);
   }
   transition: all 0.2s ease-in-out;
   opacity: 0.7;
@@ -19,32 +19,17 @@ const ClickedTag = styled(Tag)`
   opacity: 1;
 `;
 
-export default function SportsTag({
-  color,
-  bgColor,
-  hoverColor,
-  text,
-  onClick,
-  hasClicked,
-}) {
+export default function SportsTag({ themeColor, text, onClick, hasClicked }) {
+  const frontColor = `var(--color-tag-${themeColor}-front)`;
+  const backColor = `var(--color-tag-${themeColor}-back)`;
   return (
     <>
       {hasClicked ? (
-        <ClickedTag
-          $bgColor={bgColor}
-          $hoverColor={hoverColor}
-          $color={color}
-          onClick={onClick}
-        >
+        <ClickedTag $bgColor={frontColor} $color={backColor} onClick={onClick}>
           {text}
         </ClickedTag>
       ) : (
-        <Tag
-          $bgColor={bgColor}
-          $hoverColor={hoverColor}
-          $color={color}
-          onClick={onClick}
-        >
+        <Tag $bgColor={backColor} $color={frontColor} onClick={onClick}>
           {text}
         </Tag>
       )}
