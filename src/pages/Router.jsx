@@ -17,6 +17,9 @@ import ProgramIntro from "./program/ProgramIntro";
 import ProgramReviews from "./program/ProgramReviews";
 import ProgramLayout from "./program/ProgramLayout";
 import ProgramDetail from "./program/ProgramDetail";
+import FindId from "./root/FindId";
+import FindPwd from "./root/FindPwd";
+import ChangePwd from "./root/ChangePwd";
 
 export default function Router() {
   return (
@@ -24,6 +27,9 @@ export default function Router() {
       <Route path="/" element={<CommonLayout />}>
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
+        <Route path="find-id" element={<FindId />} />
+        <Route path="find-pwd" element={<FindPwd />} />
+        <Route path="change-pwd" element={<ChangePwd />} />
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
         <Route path="program/:programId" element={<ProgramLayout />}>
