@@ -35,6 +35,7 @@ export default createGlobalStyle`
 --color-blue-vivid: #A1DBF1;
 --color-blue-light: #5ba6f3;
 --color-blue-bright: #6FCBF4;
+--color-blue-dark: #1758b9;
 --color-navy: #1B4965;
 --color-skyblue-main: #CEEBF3;
 --color-skyblue-light: #F4FCFF;
@@ -128,4 +129,12 @@ table {
 body {
     margin: 0; line-height: normal;
 }
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+a:visited {
+    color: inherit;
+} 
 `;
