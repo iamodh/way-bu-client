@@ -5,7 +5,7 @@ const Tag = styled.div`
   color: ${(props) => props.$color};
   padding: 4px 8px;
   border-radius: var(--br-mini);
-  border: 2px solid ${(props) => props.$hoverColor};
+  border: 1px solid ${(props) => props.$hoverColor};
   font-size: var(--font-size-s);
   cursor: pointer;
   &:hover {

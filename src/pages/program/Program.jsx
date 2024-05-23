@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import ProgramItem from "../../components/program/ProgramItem";
-import SportsTag from "../../components/global/SportsTag";
+import SportsTag from "./components/SportsTag";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useForm } from "react-hook-form";
 import { getPrograms } from "../../../apis/programs";
 import { getSports } from "../../../apis/sports";
 import ButtonBlue from "../../components/ButtonBlue";
+import ProgramItem from "./components/ProgramItem";
 
 const Body = styled.main`
   background-color: ${(props) => props.theme.backgroundColor};
@@ -38,8 +38,8 @@ const Input = styled.input`
   width: 100%;
   height: 50px;
   border-style: none;
-  padding-left: 10px;
-  padding-right: 70px;
+  padding-left: 20px;
+  padding-right: 80px;
   border-radius: var(--br-mini);
   border: 2px solid var(--color-blue-main);
   font-size: var(--font-size-ml);
@@ -98,7 +98,7 @@ const SportsFilter = styled.form`
 `;
 
 const MainFilter = styled.div`
-  height: 50px;
+  height: 80px;
   display: flex;
   gap: 10px;
   padding-bottom: 10px;
@@ -124,8 +124,8 @@ const DateAndTime = styled.div`
 
 const SmallFilterBox = styled.div`
   border: 1px solid var(--color-gray);
-  border-bottom: 3px solid var(--color-gray);
-  border-right: 3px solid var(--color-gray);
+  border-bottom: 1px solid var(--color-gray);
+  border-right: 1px solid var(--color-gray);
   border-radius: var(--br-mini);
   height: 100%;
   flex: 1;
@@ -150,7 +150,7 @@ const DetailFilter = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  border: 2px solid var(--color-gray);
+  border: 1px solid var(--color-gray);
   border-radius: var(--br-mini);
   position: relative;
 `;
@@ -208,6 +208,15 @@ const FilterSubmit = styled.div`
   position: absolute;
   right: 50px;
   bottom: 30px;
+
+  button {
+    padding: 8px 16px;
+    border: 1px solid var(--color-gray);
+    background-color: var(--color-white);
+    &:hover {
+      background-color: var(--color-blue-vivid);
+    }
+  }
 `;
 
 const ResetBtn = styled.button`
@@ -502,7 +511,7 @@ export default function Program() {
       <Wrapper>
         <SearchContainer onSubmit={handleSearchSubmit(onSearchSubmit)}>
           <Input
-            placeholder="검색어를 입력해주세요."
+            placeholder="키워드를 입력하세요"
             {...searchRegister("keyword")}
           />
           <SearchButton>
@@ -555,7 +564,7 @@ export default function Program() {
             <SmallFilterBox>
               <input
                 type="number"
-                placeholder="원하는 가격대"
+                placeholder="가격대"
                 min={0}
                 {...filterRegister("minPrice")}
               />
@@ -697,7 +706,7 @@ export default function Program() {
               </FilterCol>
             </FilterRow>
             <FilterSubmit>
-              <input type="submit" value="필터 적용" />
+              <button>필터 적용</button>
               <button
                 text={"초기화"}
                 onClick={() => {

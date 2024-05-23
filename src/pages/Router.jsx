@@ -13,6 +13,10 @@ import MypageReview from "./mypage/MypageReview";
 import MypageMatching from "./mypage/MypageMatching";
 import MypageCommunity from "./mypage/MypageCommunity";
 import MypageSetting from "./mypage/MypageSetting";
+import ProgramIntro from "./program/ProgramIntro";
+import ProgramReviews from "./program/ProgramReviews";
+import ProgramLayout from "./program/ProgramLayout";
+import ProgramDetail from "./program/ProgramDetail";
 
 export default function Router() {
   return (
@@ -22,6 +26,12 @@ export default function Router() {
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
+        <Route path="program/:programId" element={<ProgramLayout />}>
+          <Route index element={<ProgramIntro />} />
+          <Route path="detail" element={<ProgramDetail />} />
+          <Route path="reviews" element={<ProgramReviews />} />
+        </Route>
+        {/* My page */}
         <Route path="/mypage" element={<MypageLayout />}>
           <Route index element={<MypageUpdate />} />
           <Route path="review" element={<MypageReview />} />

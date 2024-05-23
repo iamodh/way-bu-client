@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
   height: 340px;
-  border: 2px solid var(--color-gray);
+  border: 1px solid var(--color-gray);
   border-radius: var(--br-mini);
   display: flex;
   flex-direction: column;
@@ -17,13 +17,18 @@ const Wrapper = styled.div`
   h3 {
     font-size: var(--font-size-l);
     font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 160px;
   }
   a {
     cursor: pointer;
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    padding-left: 30px;
     justify-content: center;
     gap: 5px;
   }
