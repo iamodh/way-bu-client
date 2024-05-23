@@ -15,6 +15,7 @@ import MypageCommunity from "./mypage/MypageCommunity";
 import MypageSetting from "./mypage/MypageSetting";
 import FindId from "./root/FindId";
 import FindPwd from "./root/FindPwd";
+import ChangePwd from "./root/ChangePwd";
 
 export default function Router() {
   return (
@@ -24,6 +25,7 @@ export default function Router() {
         <Route path="login" element={<Login />} />
         <Route path="find-id" element={<FindId />} />
         <Route path="find-pwd" element={<FindPwd />} />
+        <Route path="change-pwd" element={<ChangePwd />} />
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
         <Route path="/mypage" element={<MypageLayout />}>

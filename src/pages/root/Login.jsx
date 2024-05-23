@@ -43,6 +43,7 @@ const InputBox = styled.div`
 `;
 
 const Input = styled.input`
+  display: block;
   width: 75%;
   padding: 15px;
   border: 1px solid #ccc;
@@ -173,8 +174,8 @@ export default function Login() {
             id="email"
             type="email"
           />
+          {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
         </InputBox>
-        {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
         <InputBox>
           <Label htmlFor="password">비밀번호</Label>
           <Input
