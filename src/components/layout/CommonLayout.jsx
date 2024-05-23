@@ -14,6 +14,9 @@ const Sign = styled.div`
   justify-content: space-between;
   align-items: center;
   font-size: var(--font-size-m);
+  @media screen and (max-width: 768px) {
+    font-size: var(--font-size-s);
+  }
 `;
 const Logo = styled.img`
   width: 120px;
@@ -31,6 +34,9 @@ const SignItem = styled.div`
   padding: var(--padding-9xs) var(--padding-xs);
   cursor: pointer;
   font-size: inherit;
+  @media screen and (max-width: 768px) {
+    padding: var(--padding-9xs) var(--padding-5xs);
+  }
 `;
 const Search = styled.div``;
 const SearchInput = styled.input`
@@ -65,7 +71,7 @@ const ProfileImage = styled.img`
   @media screen and (max-width: 768px) {
     width: 40px;
     height: 40px;
-    margin: var(--padding-9xs) var(--padding-xs) var(--padding-9xs);
+    margin: var(--padding-5xs) var(--padding-xs) var(--padding-5xs);
   }
 `;
 const Nav = styled.div`
@@ -86,11 +92,15 @@ const Nav = styled.div`
 const NavItem = styled.div`
   padding: var(--padding-9xs) var(--padding-xl);
   cursor: pointer;
+  @media screen and (max-width: 768px) {
+    font-size: var(--font-size-s);
+  }
 `;
 const StyledLink = styled(Link)`
   text-decoration: none;
   color: black;
 `;
+const Footer = styled.footer``;
 
 export default function CommonLayout() {
   return (
@@ -132,6 +142,7 @@ export default function CommonLayout() {
         </Nav>
       </Header>
       <Outlet />
+      <Footer></Footer>
     </>
   );
 }
