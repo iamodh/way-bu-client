@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./root/Home";
 import Login from "./root/Login";
 import Signup from "./root/Signup";
+
+/* program pagse */
 import Program from "./program/Program";
 import CommonLayout from "../components/layout/CommonLayout";
 import MypageLayout from "../components/layout/MypageLayout";
