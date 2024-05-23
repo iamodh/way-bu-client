@@ -1,14 +1,10 @@
 import styled from "styled-components";
 
 const Div = styled.div`
-  position: relative;
+  display: flex;
   font-size: inherit;
-  line-height: 20px;
-  font-family: inherit;
-  color: inherit;
   text-align: center;
-  display: inline-block;
-  white-space: nowrap;
+  flex-wrap: wrap;
 `;
 
 const Button = styled.button`
@@ -30,7 +26,7 @@ const Button = styled.button`
     box-sizing: border-box;
   }
   @media screen and (max-width: 768px) {
-    padding: var(--padding-3xs) var(--padding-3xs);
+    padding: var(--padding-5xs) var(--padding-xs);
   }
 `;
 
