@@ -128,7 +128,7 @@ export default function CommonLayout() {
             <StyledLink to={"/matcing"}>
               <NavItem>매칭</NavItem>
             </StyledLink>
-            <StyledLink to={"/"}>
+            <StyledLink to={"/community"}>
               <NavItem>커뮤니티</NavItem>
             </StyledLink>
           </Nav>

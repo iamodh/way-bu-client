@@ -117,8 +117,8 @@ export default function Login() {
         if (profileError) {
           console.error("Error fetching user profile:", profileError);
         } else {
-          setLoggedInUserProfile(userProfile);
-          console.log("User profile:", userProfile);
+          setLoggedInUserProfile(userProfile[0]);
+          console.log("User profile:", userProfile[0]);
         }
       }
     } else {
@@ -143,9 +143,9 @@ export default function Login() {
     // 저장하는 파일명을 user_id로 해서 주인을 구분하고
     // 동일한 파일명을 사용시 변경을 인지하지 못해 page가 rendering되지 않는 문제를 해결하기 위해 뒤에 시간 값을 추가
 
-    if (loggedInUserProfile[0].avatar_url) {
+    if (loggedInUserProfile.avatar_url) {
       // 기존의 avatar가 존재할 경우 삭제
-      const oldPath = loggedInUserProfile[0].avatar_url.replace(
+      const oldPath = loggedInUserProfile.avatar_url.replace(
         import.meta.env.VITE_STORE_URL + "avatar/",
         ""
       );
@@ -251,10 +251,7 @@ export default function Login() {
   const LoggedPage = () => {
     if (isLoading) return <>Loading...</>;
 
-    const user =
-      loggedInUserProfile && loggedInUserProfile.length > 0
-        ? loggedInUserProfile[0]
-        : null;
+    const user = loggedInUserProfile ? loggedInUserProfile : null;
     const userName = user
       ? user.user_nickname
       : loggedInUser.user_metadata.name;
