@@ -129,7 +129,7 @@ const FrameParent1 = styled.div`
 
 const Divbox = styled.div`
   padding: 10px;
-  border: 1px solid var(--color-blue-main);
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   text-align: center;
   font-weight: bold;
@@ -145,7 +145,7 @@ const Textbox = styled.textarea`
   padding: 10px;
   box-sizing: border-box;
   font-size: var(--font-size-m);
-  border: 1px solid var(--color-blue-main);
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   border-radius: 15px;
   resize: none;
 `;
@@ -214,7 +214,7 @@ const RadioLabel = styled.label`
 const Dropdown = styled.select`
   height: 45px;
   flex: 1;
-  border-radius: var(--br-8xs);
+  border-radius: 5px;
   border: 1px solid var(--color-blue-main);
   box-sizing: border-box;
   overflow: hidden;

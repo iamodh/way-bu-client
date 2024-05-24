@@ -21,13 +21,14 @@ const Div = styled.div`
   color: var(--gray);
   text-align: center;
   display: inline-block;
+  font-weight: bold;
 `;
 
 const Title = styled.div`
   margin: 10px;
   box-sizing: border-box;
   max-width: 100%;
-  border: 1px solid var(--color-blue-main);
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   height: 50px;
   width: 95%;
@@ -40,8 +41,8 @@ const FrameGroup = styled.nav`
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  gap: var(--gap-xl);
+  justify-content: center;
+  gap: var(--gap-9xs);
   white-space: nowrap;
   margin-bottom: 10px;
   @media screen and (max-width: 750px) {
@@ -50,15 +51,14 @@ const FrameGroup = styled.nav`
 `;
 
 const Schedulebox = styled.div`
-  height: 54px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  height: 45px;
   flex: 1;
   border-radius: var(--br-8xs);
-  border: 1px solid var(--color-blue-main);
   box-sizing: border-box;
   overflow: hidden;
   min-width: 374px;
   max-width: 100%;
-  background-color: aliceblue;
   @media screen and (max-width: 675px) {
     min-width: 100%;
   }
@@ -69,13 +69,14 @@ const FrameDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--gap-3xs);
   box-sizing: border-box;
   max-width: 100%;
   padding: 5px 10px;
 `;
 const FrameParent1 = styled.div`
+  margin-top: 10px;
   margin-bottom: 0px;
   display: flex;
   flex-direction: column;
@@ -83,11 +84,10 @@ const FrameParent1 = styled.div`
   justify-content: center;
   max-width: 100%;
   height: 200px;
-  gap: var(--gap-9xs);
 `;
 const Divbox = styled.div`
   padding: 10px;
-  border: 1px solid var(--color-blue-main);
+  border: none;
   border-radius: 5px;
   text-align: center;
   font-weight: bold;
@@ -95,17 +95,20 @@ const Divbox = styled.div`
   line-height: 20px;
   background-color: var(--color-blue-vivid);
   width: 70px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
 `
 const Textbox = styled.div`
   height: 256px;
   width: 100%;
   box-sizing: border-box;
   font-size: var(--font-size-xs);
-  border: 1px solid var(--color-blue-main);
+  background-color: aliceblue;
   border-radius: 15px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
 `;
 
 const Textbox1 = styled.textarea`
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   width: 100%;
   height: 100px;
   border-radius: 5px;
@@ -129,7 +132,6 @@ const Textbox1 = styled.textarea`
 `;
 
 const Button = styled.button`
-  cursor: pointer;
   border: none;
   min-width: 150px;
   padding: var(--padding-base) var(--padding-base);
@@ -146,7 +148,8 @@ const Button = styled.button`
   }
 `;
 const DivRoot = styled.div`
-  margin: 0 auto auto auto;
+  margin: 0;
+  margin-top: 10px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -165,26 +168,45 @@ const Div2 = styled.div`
   display: inline-block;
   white-space: nowrap;
 `;
+const Divbox1 = styled.div`
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  height: 20px;
+  line-height: 20px;
 
+  width: 70px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+`
 
 const MatchingWatch = () => {
   return (
     <FrameWrapperRoot>
       <FrameParent1>
         <Title>
-            <Div>제목</Div>
+            <Div>안녕하세요안옇</Div>
         </Title>
         <FrameGroup>
-          <Divbox>종목</Divbox>
-          <Divbox>난이도</Divbox>
-          <Divbox>위치</Divbox>
+          <Divbox1>#종목</Divbox1>
+          <Divbox1>#난이도</Divbox1>
+          <Divbox1>#위치</Divbox1>
         {/* <SportTagWrapper>
           <SportTag>
             <B2>광안리</B2>
           </SportTag>
         </SportTagWrapper> */}
-          <Divbox>인원</Divbox>
-          <Divbox>모집상태</Divbox>
+        </FrameGroup>
+        <FrameGroup>
+          <FrameDiv>
+            <Divbox>참가인원</Divbox>
+            <Divbox1>3</Divbox1>
+          </FrameDiv>
+          <FrameDiv>
+            <Divbox>모집상태</Divbox>
+            <Divbox1>모집중</Divbox1>
+          </FrameDiv>
         </FrameGroup>
         <FrameDiv>
           <Divbox>일정</Divbox>
