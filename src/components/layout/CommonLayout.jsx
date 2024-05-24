@@ -150,6 +150,7 @@ export default function CommonLayout() {
         <Sign>
           <StyledLink to={"/"}>
             <Logo src="/img/logo.png" />
+
           </StyledLink>
           <Div />
           <StyledLink to={"/login"}>
