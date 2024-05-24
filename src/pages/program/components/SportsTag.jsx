@@ -12,7 +12,10 @@ const Tag = styled.div`
     box-shadow: 1px 1px 1px var(--color-gray);
   }
   transition: all 0.2s ease-in-out;
-  opacity: 0.7;
+  &:active {
+    background-color: ${(props) => props.$color};
+    color: ${(props) => props.$bgColor};
+  }
 `;
 
 const ClickedTag = styled(Tag)`

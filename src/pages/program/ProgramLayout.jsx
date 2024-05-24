@@ -2,6 +2,7 @@ import { Link, Outlet, useParams } from "react-router-dom";
 import { client } from "../../../libs/supabase";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import SportsTag from "./components/SportsTag";
 
 const Wrapper = styled.div``;
 
@@ -14,7 +15,6 @@ const Main = styled.div`
 /* Header: 프로그램명, nav */
 const Header = styled.div`
   height: 159px;
-  background-color: teal;
 `;
 
 const Title = styled.div`
@@ -32,6 +32,7 @@ const ProgramName = styled.h1`
 
 const Tags = styled.div`
   gap: 8px;
+  display: flex;
 `;
 
 const Nav = styled.nav`
@@ -62,7 +63,9 @@ export default function ProgramLayout() {
   const getProgram = async () => {
     const { data, error } = await client
       .from("PROGRAM")
-      .select(`*, SPORT (title), BEACH (beach_name)`)
+      .select(
+        `*, SPORT (title, id, theme_color), BEACH (beach_name, id, theme_color), BUSINESS (business_address)`
+      )
       .eq("id", programId);
     if (error) {
       console.log(error.message);
@@ -85,7 +88,16 @@ export default function ProgramLayout() {
               <Title>
                 <ProgramName>{program[0].program_name}</ProgramName>
                 <Tags>
-                  {program[0].SPORT.title}, {program[0].BEACH.beach_name}
+                  <SportsTag
+                    themeColor={program[0].SPORT.theme_color}
+                    key={program[0].SPORT.id}
+                    text={program[0].SPORT.title}
+                  />
+                  <SportsTag
+                    themeColor={program[0].BEACH.theme_color}
+                    key={program[0].BEACH.id}
+                    text={program[0].BEACH.beach_name}
+                  />
                 </Tags>
               </Title>
               <Nav>
