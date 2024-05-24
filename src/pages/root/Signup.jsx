@@ -75,6 +75,8 @@ export default function Signup() {
       email: formData.email,
       password: formData.password,
     });
+    console.log(data.user.id);
+    addUserProfile(data.user.id, formData);
     if (error) {
       setAlert((prev) => {
         return { ...prev, cnt: prev.cnt + 1, err: error.message };
@@ -82,6 +84,20 @@ export default function Signup() {
       return;
     }
     console.log(data);
+  };
+
+  const addUserProfile = async (id, formData) => {
+    const { data, error } = await client
+      .from("USER_PROFILE")
+      .insert([
+        {
+          user_id: id,
+          user_nickname: formData.nickName,
+          birth_date: formData.birthDate,
+          join_path: formData.joinPath,
+        },
+      ])
+      .select();
   };
 
   /* Error 처리 */
@@ -117,6 +133,37 @@ export default function Signup() {
               type="password"
             />
             <ErrorMsg>{errors?.password?.message}</ErrorMsg>
+          </InputBox>
+          <InputBox>
+            <label htmlFor="text">닉네임</label>
+            <input
+              {...register("nickName", {
+                required: "비밀번호를 입력해 주세요.",
+                minLength: {
+                  value: 2,
+                  message: "닉네임은 최소 2자리 입니다.",
+                },
+              })}
+              id="nickName"
+              type="text"
+            />
+            <ErrorMsg>{errors?.nickName?.message}</ErrorMsg>
+          </InputBox>
+          <InputBox>
+            <label htmlFor="date">생일</label>
+            <input
+              {...register("birthDate", {
+                required: "생일을 입력해 주세요.",
+              })}
+              id="birthDate"
+              type="date"
+            />
+            <ErrorMsg>{errors?.birthDate?.message}</ErrorMsg>
+          </InputBox>
+          <InputBox>
+            <label htmlFor="text">가입경로</label>
+            <input {...register("joinPath")} id="joinPath" type="text" />
+            <ErrorMsg>{errors?.joinPath?.message}</ErrorMsg>
           </InputBox>
           <button style={{ padding: "10px" }}>회원가입</button>
         </Form>

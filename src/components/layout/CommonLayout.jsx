@@ -1,5 +1,9 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { styled } from "styled-components";
+import { client } from "../../../libs/supabase";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { loggedInUserState, loggedInUserProfileState } from "../../atom";
+import { useEffect, useState } from "react";
 
 const Header = styled.header`
   display: flex;
@@ -103,6 +107,43 @@ const StyledLink = styled(Link)`
 const Footer = styled.footer``;
 
 export default function CommonLayout() {
+  /* 새로고침 마다 getSession 해서 로그인 체크 */
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
+    loggedInUserProfileState
+  );
+
+  useEffect(() => {
+    getCurrentSession();
+  }, []);
+
+  const getCurrentSession = async () => {
+    const { data, error } = await client.auth.getSession();
+    if (!data.session) {
+      return;
+    }
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+    if (data.session) {
+      setLoggedInUser(data.session.user);
+    }
+  };
+
+  /* logout */
+  const handleLogout = async () => {
+    const { error } = await client.auth.signOut();
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+    setLoggedInUser(null);
+    setLoggedInUserProfile(null);
+    console.log("로그아웃 되었습니다.");
+  };
+
   return (
     <>
       <Header>
@@ -114,9 +155,33 @@ export default function CommonLayout() {
           <StyledLink to={"/login"}>
             <SignItem>로그인</SignItem>
           </StyledLink>
-          <StyledLink to={"/signup"}>
-            <SignItem>회원가입</SignItem>
+          {loggedInUser ? (
+            <button onClick={handleLogout}>로그아웃</button>
+          ) : null}
+          {!loggedInUser ? (
+            <Link to={"/signup"}>
+              <NavItem>Signup</NavItem>
+            </Link>
+          ) : null}
+        </Sign>
+        <Menubar>
+          <StyledLink to={"/"}>
+            <Logo />
           </StyledLink>
+          <Nav>
+            <StyledLink to={"/program"}>
+              <NavItem>프로그램</NavItem>
+            </StyledLink>
+            <StyledLink to={"/sports"}>
+              <NavItem>스포츠</NavItem>
+            </StyledLink>
+            <StyledLink to={"/matcing"}>
+              <NavItem>매칭</NavItem>
+            </StyledLink>
+            <StyledLink to={"/"}>
+              <NavItem>커뮤니티</NavItem>
+            </StyledLink>
+          </Nav>
           <Search>
             <SearchInput type="text" />
             <SearchButton />
