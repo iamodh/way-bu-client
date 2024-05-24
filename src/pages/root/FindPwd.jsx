@@ -10,6 +10,7 @@ import {
   ErrorMsg,
   ButtonContainer,
   Button,
+  LinkBtn,
 } from "../../components/layout/LoginLayout";
 
 export default function FindPwd() {
@@ -54,7 +55,7 @@ export default function FindPwd() {
         {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
         <ButtonContainer>
           <Button type="submit">비밀번호 찾기</Button>
-          <Link to="/change-pwd">비밀번호 변경하기</Link>
+          <LinkBtn to="/change-pwd">비밀번호 변경하기</LinkBtn>
         </ButtonContainer>
       </form>
     </LoginLayout>

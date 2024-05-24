@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const Wrapper = styled.div`
   display: flex;
@@ -9,7 +10,7 @@ const Wrapper = styled.div`
 `;
 
 const Form = styled.form`
-  width: 600px;
+  width: 100%;
   padding: 60px;
   background-color: #fff;
   border-radius: 10px;
@@ -122,6 +123,25 @@ const LoginLayout = ({ children, title, alert }) => (
   </Wrapper>
 );
 
+const LinkBtn = styled(Link)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  padding: 15px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
 export {
   LoginLayout,
   InputBox,
@@ -133,4 +153,5 @@ export {
   ErrorMsg,
   ButtonContainer,
   Button,
+  LinkBtn,
 };

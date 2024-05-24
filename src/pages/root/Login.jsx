@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { client } from "../../../libs/supabase";
@@ -6,6 +5,7 @@ import { useRecoilState } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { LinkBtn } from "../../components/layout/LoginLayout";
 
 const Wrapper = styled.div`
   display: flex;
@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 `;
 
 const Form = styled.form`
-  width: 600px;
+  width: 1000px;
   padding: 60px;
   background-color: #fff;
   border-radius: 10px;
@@ -65,6 +65,8 @@ const Find = styled.div`
 `;
 
 const Remember = styled.div`
+  display: flex;
+  align-items: center;
   margin-left: 90px;
   padding: 1px;
 `;
@@ -134,8 +136,8 @@ export default function Login() {
 
   const onSubmit = async (formData) => {
     signInWithEmail(formData);
-  }
-    
+  };
+
   async function signInWithEmail(formData) {
     const { data, error } = await client.auth.signInWithPassword({
       email: formData.email,
@@ -148,6 +150,12 @@ export default function Login() {
     setLoggedInUser(data.session.user);
     checkLogin();
     console.log("로그인 정보", data.session.user);
+
+    const rememberMe = () => formData.rememberMe;
+
+    if (rememberMe) {
+      await saveCredentials(formData.email, formData.password);
+    }
   }
 
   async function googleLogin() {
@@ -193,8 +201,8 @@ export default function Login() {
         if (profileError) {
           console.error("Error fetching user profile:", profileError);
         } else {
-          setLoggedInUserProfile(userProfile);
-          console.log("User profile:", userProfile);
+          setLoggedInUserProfile(userProfile[0]);
+          console.log("User profile:", userProfile[0]);
         }
       }
     } else {
@@ -219,9 +227,9 @@ export default function Login() {
     // 저장하는 파일명을 user_id로 해서 주인을 구분하고
     // 동일한 파일명을 사용시 변경을 인지하지 못해 page가 rendering되지 않는 문제를 해결하기 위해 뒤에 시간 값을 추가
 
-    if (loggedInUserProfile[0].avatar_url) {
+    if (loggedInUserProfile.avatar_url) {
       // 기존의 avatar가 존재할 경우 삭제
-      const oldPath = loggedInUserProfile[0].avatar_url.replace(
+      const oldPath = loggedInUserProfile.avatar_url.replace(
         import.meta.env.VITE_STORE_URL + "avatar/",
         ""
       );
@@ -279,11 +287,6 @@ export default function Login() {
 
   /* Login Error 처리 */
   const [alert, setAlert] = useState({ cnt: 0, err: null });
-   const rememberMe = formData.rememberMe;
-    if (rememberMe) {
-      await saveCredentials(formData.email, formData.password);
-    }
-  };
 
   const saveCredentials = async (email, password) => {
     try {
@@ -300,27 +303,24 @@ export default function Login() {
     }
   };
 
-
   const UnLoggedPage = () => {
     return (
       <Wrapper>
-        {alert.cnt !== 0 && alert ? (
-          <Alert>{alert.err + " (횟수: " + alert.cnt + ")"}</Alert>
-        ) : null}
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Title>로그인</Title>
+          <GreyHR />
           <InputBox>
-            <label htmlFor="email">이메일</label>
-            <input
+            <Label htmlFor="email">이메일</Label>
+            <Input
               {...register("email", { required: "이메일을 입력해 주세요." })}
               id="email"
               type="email"
             />
-            <ErrorMsg>{errors?.email?.message}</ErrorMsg>
+            {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
           </InputBox>
           <InputBox>
-            <label htmlFor="password">비밀번호</label>
-            <input
+            <Label htmlFor="password">비밀번호</Label>
+            <Input
               {...register("password", {
                 required: "비밀번호를 입력해 주세요.",
                 minLength: {
@@ -331,9 +331,29 @@ export default function Login() {
               id="password"
               type="password"
             />
-            <ErrorMsg>{errors?.password?.message}</ErrorMsg>
+            {errors?.password && <ErrorMsg>{errors.password.message}</ErrorMsg>}
           </InputBox>
-          <button style={{ padding: "10px" }}>로그인</button>
+          <Check>
+            <Remember>
+              <input
+                type="checkbox"
+                id="remember"
+                {...register("rememberMe")}
+              />
+              <Label htmlFor="remember">기억하기</Label>
+            </Remember>
+            <Find>
+              <Link to="/find-id">이메일 찾기</Link> |{" "}
+              <Link to="/find-pwd">비밀번호 찾기</Link>
+            </Find>
+          </Check>
+          <ButtonContainer>
+            <Button type="submit">로그인</Button>
+            <Link to="/signup"></Link>
+            <LinkBtn to="/signup" type="button">
+              회원가입
+            </LinkBtn>
+          </ButtonContainer>
         </Form>
         <button onClick={kakaoLogin} style={{ padding: "10px" }}>
           카카오 로그인
@@ -348,10 +368,7 @@ export default function Login() {
   const LoggedPage = () => {
     if (isLoading) return <>Loading...</>;
 
-    const user =
-      loggedInUserProfile && loggedInUserProfile.length > 0
-        ? loggedInUserProfile[0]
-        : null;
+    const user = loggedInUserProfile ? loggedInUserProfile : null;
     const userName = user
       ? user.user_nickname
       : loggedInUser.user_metadata.name;
@@ -382,49 +399,5 @@ export default function Login() {
   };
 
   return <>{loggedInUser ? <LoggedPage /> : <UnLoggedPage />}</>;
-//         <Title>로그인</Title>
-//         <GreyHR />
-//         <InputBox>
-//           <Label htmlFor="email">이메일</Label>
-//           <Input
-//             {...register("email", { required: "이메일을 입력해 주세요." })}
-//             id="email"
-//             type="email"
-//           />
-//           {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
-//         </InputBox>
-//         <InputBox>
-//           <Label htmlFor="password">비밀번호</Label>
-//           <Input
-//             {...register("password", {
-//               required: "비밀번호를 입력해 주세요.",
-//               minLength: {
-//                 value: 6,
-//                 message: "비밀번호는 최소 6자리 입니다.",
-//               },
-//             })}
-//             id="password"
-//             type="password"
-//           />
-//           {errors?.password && <ErrorMsg>{errors.password.message}</ErrorMsg>}
-//         </InputBox>
-//         <Check>
-//           <Remember>
-//             <input type="checkbox" {...register("rememberMe")} />
-//             기억하기
-//           </Remember>
-//           <Find>
-//             <Link to="/find-id">이메일 찾기</Link> |{" "}
-//             <Link to="/find-pwd">비밀번호 찾기</Link>
-//           </Find>
-//         </Check>
-//         <ButtonContainer>
-//           <Button type="submit">로그인</Button>
-//           <Link to="/signup"></Link>
-//           <Button type="button">회원가입</Button>
-//           <Link to="/signup"></Link>
-//         </ButtonContainer>
-//       </Form>
-//     </Wrapper>
-//   );
 }
+//   );

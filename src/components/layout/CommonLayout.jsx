@@ -163,8 +163,6 @@ export default function CommonLayout() {
               <NavItem>Signup</NavItem>
             </Link>
           ) : null}
-        </Sign>
-        <Menubar>
           <StyledLink to={"/"}>
             <Logo />
           </StyledLink>
@@ -178,7 +176,7 @@ export default function CommonLayout() {
             <StyledLink to={"/matcing"}>
               <NavItem>매칭</NavItem>
             </StyledLink>
-            <StyledLink to={"/"}>
+            <StyledLink to={"/community"}>
               <NavItem>커뮤니티</NavItem>
             </StyledLink>
           </Nav>
@@ -191,20 +189,6 @@ export default function CommonLayout() {
             <ProfileImage src="/img/ellipse-13@2x.png" />
           </StyledLink>
         </Sign>
-        <Nav>
-          <StyledLink to={"/program"}>
-            <NavItem>프로그램</NavItem>
-          </StyledLink>
-          <StyledLink to={"/sports"}>
-            <NavItem>스포츠</NavItem>
-          </StyledLink>
-          <StyledLink to={"/matcing"}>
-            <NavItem>매칭</NavItem>
-          </StyledLink>
-          <StyledLink to={"/"}>
-            <NavItem>커뮤니티</NavItem>
-          </StyledLink>
-        </Nav>
       </Header>
       <Outlet />
       <Footer></Footer>

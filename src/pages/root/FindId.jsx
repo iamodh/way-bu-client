@@ -10,6 +10,7 @@ import {
   ErrorMsg,
   ButtonContainer,
   Button,
+  LinkBtn,
 } from "../../components/layout/LoginLayout";
 
 export default function FindId() {
@@ -64,7 +65,7 @@ export default function FindId() {
         </InputBox>
         <ButtonContainer>
           <Button type="submit">이메일 찾기</Button>
-          <Link to="/login">로그인</Link>
+          <LinkBtn to="/login">로그인</LinkBtn>
         </ButtonContainer>
       </form>
     </LoginLayout>
