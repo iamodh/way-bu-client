@@ -55,7 +55,7 @@ const DateButton = styled.button`
   height: 70px;
   color: var(--color-blue-main);
   border-radius: 15px;
-  border: 2px var(--color-blue-main) solid;
+  border: 1px var(--color-blue-main) solid;
   background-color: transparent;
   cursor: pointer;
   &:hover {

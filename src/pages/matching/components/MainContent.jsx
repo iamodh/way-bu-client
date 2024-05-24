@@ -42,12 +42,13 @@ const HotMatching = styled.div`
   flex-wrap: wrap;
 `;
 const HotMatchingBox = styled.div`
-  border: 3px solid var(--color-blue-vivid);
+  border: 1px solid var(--color-blue-vivid);
   background-color: var(--color-white);
   height: 200px;
   width: 200px;
   border-radius: var(--br-xl);
   box-sizing: border-box;
+  box-shadow: 0 4px 6px gray;
 `;
 const MainContentRoot = styled.section`
   align-self: stretch;

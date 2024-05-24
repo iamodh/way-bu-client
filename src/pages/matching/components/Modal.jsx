@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import MatchingWatch from './MatchingWatch';
+import MatchingWrite from './MatchingWrite';
 
 const Button = styled.button`
   cursor: pointer;
@@ -49,7 +50,7 @@ const ModalContent = styled.div`
   background: white;
   padding: 20px;
   border-radius: var(--br-3xs);
-  height: 700px;
+  height: 650px;
   width: 600px;
   text-align: center;
   position: relative;
@@ -79,7 +80,7 @@ const Modal = () => {
   return (
     <>
       <Button onClick={openModal}><Div>내 매칭 보러가기</Div></Button>
-      <Button><Div>매칭 만들기</Div></Button>
+      <Button onClick={openModal}><Div>매칭 만들기</Div></Button>
       
       {isOpen && (
         <ModalWrapper>

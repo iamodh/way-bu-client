@@ -50,34 +50,7 @@ const MatchingActions = styled.div`
     flex-wrap: wrap;
   }
 `;
-const Button = styled.button`
-  cursor: pointer;
-  border: none;
-  min-width: 170px;
-  padding: var(--padding-base) var(--padding-9xs);
-  background-color: var(--color-blue-main);
-  color: var(--color-white);
-  border-radius: var(--br-3xs);
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  &:hover {
-    background-color: var(--color-navy);
-    box-sizing: border-box;
-  }
-`;
-const Div = styled.div`
-  position: relative;
-  font-size: var(--font-size-ml);
-  line-height: 20px;
-  font-family: inherit;
-  color: inherit;
-  text-align: center;
-  display: inline-block;
-  white-space: nowrap;
-`;
+
 const MatchingContainer = styled.div`
   width: 80%;
   display: grid;
