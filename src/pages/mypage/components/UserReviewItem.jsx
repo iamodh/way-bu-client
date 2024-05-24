@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Button from "../../../components/ButtonBlue";
 
 const Wrapper = styled.li`
   display: flex;
@@ -23,7 +22,6 @@ const Row = styled.div`
   flex-direction: row;
 `;
 const StarRating = styled.div`
-  /* background-color: yellow; */
   display: flex;
   justify-content: center;
 `;

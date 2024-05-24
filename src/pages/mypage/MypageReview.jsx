@@ -1,11 +1,6 @@
 import styled from "styled-components";
 import UserProgramItem from "./components/UserProgramItem";
 import UserReviewItem from "./components/UserReviewItem";
-import Button from "../../components/ButtonBlue";
-import { client } from "../../../libs/supabase";
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
 
 const MypageReviewWrapper = styled.form`
   width: 90%;
@@ -69,11 +64,13 @@ const ButtonRight = styled.button`
 const UserReviewArea = styled(UserProgramArea)`
   width: 90%;
   flex-direction: column;
+  margin-bottom: var(--padding-base);
 `;
 const UserReviewList = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: var(--padding-9xs);
+  gap: var(--padding-5xs);
+  margin-bottom: var(--padding-xs);
 `;
 const Hr = styled.div`
   width: 100%;
@@ -82,8 +79,15 @@ const Hr = styled.div`
 `;
 const PageIndex = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: var(--padding-9xs);
 `;
-
+const Page = styled.a`
+  font-size: var(--font-size-m);
+  padding: var(--padding-9xs);
+`;
 const test = [
   {
     program_name: "test",
@@ -114,7 +118,12 @@ export default function MypageReview() {
           <UserReviewItem />
           <UserReviewItem />
         </UserReviewList>
-        <PageIndex />
+        <PageIndex>
+          <Page>1</Page>
+          <Page>2</Page>
+          <Page>3</Page>
+          <Page>4</Page>
+        </PageIndex>
       </UserReviewArea>
     </MypageReviewWrapper>
   );
