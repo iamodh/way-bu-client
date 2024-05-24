@@ -207,7 +207,7 @@ const MatchingGroup = () => {
               <ContainerDetails>
                 <Title>
                   <H>{m.title}</H>
-                  {/* <MatchingTag>
+                  <MatchingTag>
                     <People>
                       <Div>
                         <SportTag prop = "서핑" />
@@ -221,7 +221,7 @@ const MatchingGroup = () => {
                       <Div>
                         <SportTag prop = "서핑" />
                       </Div>
-                  </MatchingTag> */}
+                  </MatchingTag>
                 </Title>
                 <P>상세 위치 : <div style={{fontWeight:"normal"}}>{m.location}</div></P>
                 <P>시간 : <div style={{fontWeight:"normal"}}>{m.matching_time}</div></P>

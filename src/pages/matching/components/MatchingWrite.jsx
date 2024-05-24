@@ -28,7 +28,8 @@ const Title = styled.input`
   height: 45px;
   flex: 1;
   border-radius: var(--br-8xs);
-  border: 1px solid var(--color-blue-main);
+  border: none;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   overflow: hidden;
   min-width: 374px;
@@ -81,7 +82,8 @@ const Schedulebox = styled.input`
   height: 45px;
   flex: 1;
   border-radius: var(--br-8xs);
-  border: 1px solid var(--color-blue-main);
+  border: none;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   overflow: hidden;
   max-width: 30%;
@@ -96,7 +98,8 @@ const NumberInput = styled.input`
   height: 45px;
   flex: 1;
   border-radius: var(--br-8xs);
-  border: 1px solid var(--color-blue-main);
+  border: none;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   overflow: hidden;
   max-width: 30%;
@@ -140,7 +143,7 @@ const Divbox = styled.div`
 `;
 
 const Textbox = styled.textarea`
-  height: 150px;
+  height: 200px;
   width: 100%;
   padding: 10px;
   box-sizing: border-box;
@@ -148,6 +151,9 @@ const Textbox = styled.textarea`
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   border-radius: 15px;
   resize: none;
+  border: none;
+  outline: none;
+  background-color: aliceblue;
 `;
 
 const Button = styled.button`
@@ -201,6 +207,8 @@ const Radio = styled.input`
 `;
 
 const RadioLabel = styled.label`
+  margin-left: 0px;
+  margin-right: 0px;
   height: 45px;
   line-height: 45px;
   font-weight: bold;
@@ -215,7 +223,8 @@ const Dropdown = styled.select`
   height: 45px;
   flex: 1;
   border-radius: 5px;
-  border: 1px solid var(--color-blue-main);
+  border: none;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   overflow: hidden;
   max-width: 60%;
@@ -227,6 +236,7 @@ const Dropdown = styled.select`
 `;
 
 const Necessity = styled.input`
+  margin-left: 23px;
   height: 45px;
   flex: 1;
   border-radius: var(--br-8xs);
@@ -322,6 +332,7 @@ const MatchingWrite = () => {
               value="필요"
               name="necessity"
               id="yes"
+              style={{ opacity: '0' }}
               onChange={handleNecessityChange}
             />
             <RadioLabel htmlFor="yes">필요</RadioLabel>
@@ -330,6 +341,7 @@ const MatchingWrite = () => {
               value="불필요"
               name="necessity"
               id="no"
+              style={{ opacity: '0' }}
               onChange={handleNecessityChange}
             />
             <RadioLabel htmlFor="no">불필요</RadioLabel>

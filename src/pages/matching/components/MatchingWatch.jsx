@@ -112,7 +112,7 @@ const Textbox1 = styled.textarea`
   width: 100%;
   height: 100px;
   border-radius: 5px;
-  border: 1px solid var(--color-blue-main);
+  border: none;
   box-sizing: border-box;
   overflow: hidden;
   display: flex;
@@ -121,9 +121,10 @@ const Textbox1 = styled.textarea`
   justify-content: flex-start;
   text-align: left;
   font-size: var(--font-size-m);
-  color: gray;
+  color: var(--color-navy);
   padding: 10px;
   resize: none;
+  outline: none;
   @media screen and (max-width: 750px) {
     padding-left: var(--padding-13xl);
     padding-right: var(--padding-12xl);
@@ -215,7 +216,7 @@ const MatchingWatch = () => {
       </FrameParent1>
       <DivRoot>
         <Textbox />
-        <Textbox1>신청 메세지를 입력해주세요.</Textbox1>
+        <Textbox1 placeholder="신청 메세지를 입력해주세요."></Textbox1>
       </DivRoot>
       <Button>
         <Div2>신청하기</Div2>

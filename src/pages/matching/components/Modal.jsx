@@ -86,7 +86,7 @@ const Modal = () => {
         <ModalWrapper>
           <ModalContent onClick={e => e.stopPropagation()}>
             <CloseButton onClick={closeModal}>&times;</CloseButton>
-            <MatchingWatch />
+            <MatchingWrite />
           </ModalContent>
         </ModalWrapper>
       )}
