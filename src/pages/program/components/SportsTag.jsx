@@ -1,6 +1,8 @@
 import { styled } from "styled-components";
 
 const Tag = styled.div`
+  white-space: nowrap;
+  width: fit-content;
   background-color: ${(props) => props.$bgColor};
   color: ${(props) => props.$color};
   padding: 4px 8px;

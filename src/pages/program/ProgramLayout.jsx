@@ -38,17 +38,16 @@ const Tags = styled.div`
 const Nav = styled.nav`
   height: 56px;
   display: flex;
-`;
-
-const NavItem = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: var(--font-size-l);
-  font-weight: 500;
-  border: 1px solid var(--color-blue-light);
-  background-color: var(--color-skyblue-light);
+  a {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--font-size-l);
+    font-weight: 500;
+    border: 1px solid var(--color-blue-light);
+    background-color: var(--color-skyblue-light);
+  }
 `;
 
 export default function ProgramLayout() {
@@ -68,7 +67,6 @@ export default function ProgramLayout() {
       )
       .eq("id", programId);
     if (error) {
-      console.log(error.message);
       return;
     }
     if (data) {
@@ -80,6 +78,23 @@ export default function ProgramLayout() {
   return (
     <>
       <Wrapper>
+        {/* <Main>
+          <Header>
+            <Title>
+              <ProgramName>프로그램명</ProgramName>
+              <Tags>
+                <SportsTag themeColor={"green"} key={1} text={"수영"} />
+                <SportsTag themeColor={"red"} key={2} text={"해운대해수욕장"} />
+              </Tags>
+            </Title>
+            <Nav>
+              <Link to={`/program/${programId}`}>소개</Link>
+              <Link to="detail">상세정보</Link>
+              <Link to="reviews">후기</Link>
+            </Nav>
+          </Header>
+          <Outlet context={{ program }} />
+        </Main> */}
         {isLoading ? (
           "Loading..."
         ) : (
@@ -101,15 +116,9 @@ export default function ProgramLayout() {
                 </Tags>
               </Title>
               <Nav>
-                <NavItem>
-                  <Link to={`/program/${programId}`}>소개</Link>
-                </NavItem>
-                <NavItem>
-                  <Link to="detail">상세정보</Link>
-                </NavItem>
-                <NavItem>
-                  <Link to="reviews">후기</Link>
-                </NavItem>
+                <Link to={`/program/${programId}`}>소개</Link>
+                <Link to="detail">상세정보</Link>
+                <Link to="reviews">후기</Link>
               </Nav>
             </Header>
             <Outlet

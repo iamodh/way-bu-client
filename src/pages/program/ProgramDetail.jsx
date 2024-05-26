@@ -1,3 +1,10 @@
+import { useOutletContext } from "react-router-dom";
+
 export default function ProgramDetail() {
-  return <h1>Description</h1>;
+  const { program } = useOutletContext();
+  return (
+    <>
+      <img style={{ width: "100%" }} src={program[0].details} />
+    </>
+  );
 }

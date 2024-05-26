@@ -179,6 +179,7 @@ export default function ProgramIntro() {
   const [image, setImage] = useState(program[0].thumbnail);
 
   return (
+    // <h1>intro</h1>
     <Wrapper>
       <Main>
         <ImageContainer>

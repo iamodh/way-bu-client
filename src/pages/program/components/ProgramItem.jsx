@@ -2,14 +2,12 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
-  height: 380px;
   border: 1px solid var(--color-gray);
   border-radius: var(--br-mini);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
   &:hover {
     background-color: rgb(241 245 249);
   }
@@ -20,22 +18,44 @@ const Wrapper = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    width: 160px;
+    width: 100%;
   }
   a {
+    padding-top: 20px;
     cursor: pointer;
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding-left: 30px;
+    align-items: center;
     justify-content: center;
-    gap: 5px;
   }
 `;
 
+const Thumbnail = styled.div`
+  align-self: center;
+  width: 180px;
+  height: 180px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url(${(props) => props.$imageUrl});
+  margin-bottom: 20px;
+  @media only screen and (max-width: 376px) {
+    width: 260px;
+    height: 260px;
+  }
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: calc(100% - 40px);
+`;
+
 const Button = styled.button`
-  width: 160px;
+  width: calc(100% - 40px);
+  margin: 10px 0 20px 0;
   font-size: var(--font-size-m);
   color: white;
   height: 40px;
@@ -53,21 +73,9 @@ export default function ProgramItem({ program, onBtnClicked }) {
   return (
     <Wrapper>
       <Link to={`/program/${program.id}`}>
-        <div
-          style={{
-            width: "160px",
-            height: "160px",
-            backgroundColor: "rgb(203 213 225)",
-            backgroundImage: `${
-              program.thumbnail ? `url(${program.thumbnail})` : ""
-            }`,
-            backgroundPosition: "center",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-          }}
-        />
-        <h3>{program.program_name}</h3>
-        <div>
+        <Thumbnail $imageUrl={program.thumbnail} />
+        <Content>
+          <h3>{program.program_name}</h3>
           <div>
             <svg
               width="121"
@@ -116,9 +124,9 @@ export default function ProgramItem({ program, onBtnClicked }) {
                   width="22"
                   height="22"
                   filterUnits="userSpaceOnUse"
-                  color-interpolation-filters="sRGB"
+                  colorInterpolationFilters="sRGB"
                 >
-                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                  <feFlood floodOpacity="0" result="BackgroundImageFix" />
                   <feColorMatrix
                     in="SourceAlpha"
                     type="matrix"
@@ -151,9 +159,9 @@ export default function ProgramItem({ program, onBtnClicked }) {
                   width="24"
                   height="24"
                   filterUnits="userSpaceOnUse"
-                  color-interpolation-filters="sRGB"
+                  colorInterpolationFilters="sRGB"
                 >
-                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                  <feFlood floodOpacity="0" result="BackgroundImageFix" />
                   <feColorMatrix
                     in="SourceAlpha"
                     type="matrix"
@@ -186,9 +194,9 @@ export default function ProgramItem({ program, onBtnClicked }) {
                   width="24"
                   height="24"
                   filterUnits="userSpaceOnUse"
-                  color-interpolation-filters="sRGB"
+                  colorInterpolationFilters="sRGB"
                 >
-                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                  <feFlood floodOpacity="0" result="BackgroundImageFix" />
                   <feColorMatrix
                     in="SourceAlpha"
                     type="matrix"
@@ -221,9 +229,9 @@ export default function ProgramItem({ program, onBtnClicked }) {
                   width="24"
                   height="24"
                   filterUnits="userSpaceOnUse"
-                  color-interpolation-filters="sRGB"
+                  colorInterpolationFilters="sRGB"
                 >
-                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                  <feFlood floodOpacity="0" result="BackgroundImageFix" />
                   <feColorMatrix
                     in="SourceAlpha"
                     type="matrix"
@@ -252,13 +260,13 @@ export default function ProgramItem({ program, onBtnClicked }) {
               </defs>
             </svg>
           </div>
-        </div>
-        <span>{program.price} 원</span>
-        <div>
-          <span>{program.open_time.substring(0, 5)}</span>
-          <span> ~ </span>
-          <span>{program.close_time.substring(0, 5)}</span>
-        </div>
+          <span>{program.price} 원</span>
+          <div>
+            <span>{program.open_time.substring(0, 5)}</span>
+            <span> ~ </span>
+            <span>{program.close_time.substring(0, 5)}</span>
+          </div>
+        </Content>
       </Link>
       <Button
         onClick={() => {

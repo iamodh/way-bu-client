@@ -20,7 +20,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   margin-bottom: 80px;
-  gap: 10px;
+  gap: 20px;
 `;
 
 /* Search */
@@ -74,55 +74,94 @@ const ProgramContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
+
+  @media only screen and (max-width: 376px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 /* Filters */
 
 const FilterContainer = styled.form`
   width: 80%;
-  height: 300px;
   display: flex;
   flex-direction: column;
 `;
 
 const SportsFilter = styled.form`
-  height: 40px;
+  width: 80%;
+  flex-wrap: wrap;
+
   align-items: center;
   gap: 10px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   h3 {
+    width: fit-content;
+
+    white-space: nowrap;
     font-weight: bold;
+  }
+
+  @media only screen and (max-width: 376px) {
+    h3 {
+      display: none;
+    }
   }
 `;
 
 const MainFilter = styled.div`
-  height: 80px;
   display: flex;
   gap: 10px;
   padding-bottom: 10px;
   font-weight: bold;
+  @media only screen and (max-width: 376px) {
+    flex-direction: column;
+  }
 `;
 
-const DateAndTime = styled.div`
-  flex: 2;
+const FilterDiv = styled.div`
   display: flex;
-  border-radius: var(--br-mini);
-  border: none;
-  box-shadow: 1px 1px 1px var(--color-gray);
+  flex: 1;
+  gap: 10px;
 
-  div {
-    &:first-child {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      border-right: 1px solid var(--color-gray);
+  &:first-child {
+    gap: 0;
+    box-shadow: 1px 1px 1px var(--color-gray);
+    border-radius: var(--br-mini);
+
+    div {
       box-shadow: none;
+
+      &:first-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      &:last-child {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left: 0;
+      }
     }
-    &:nth-child(2) {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      border-left: none;
+  }
+
+  @media only screen and (max-width: 376px) {
+    gap: 0;
+    box-shadow: 1px 1px 1px var(--color-gray);
+    border-radius: var(--br-mini);
+
+    div {
       box-shadow: none;
+
+      &:first-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      &:last-child {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left: 0;
+      }
     }
   }
 `;
@@ -132,9 +171,8 @@ const SmallFilterBox = styled.div`
   border-bottom: 1px solid var(--color-gray);
   border-right: 1px solid var(--color-gray);
   border-radius: var(--br-mini);
-  height: 100%;
-  flex: 1;
   gap: 4px;
+  flex: 1;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -143,7 +181,8 @@ const SmallFilterBox = styled.div`
   transition: all 0.1s ease-in-out;
   input,
   select {
-    width: 100px;
+    height: 40px;
+    width: 80%;
     border: none;
   }
 
@@ -190,6 +229,13 @@ const FilterCol = styled.div`
   input {
     margin-right: 10px;
   }
+
+  @media only screen and (max-width: 376px) {
+    font-size: var(--font-size-s);
+    &:first-child {
+      flex: 1;
+    }
+  }
 `;
 
 const CheckBox = styled.input`
@@ -224,6 +270,10 @@ const FilterSubmit = styled.div`
       background-color: var(--color-blue-vivid);
     }
   }
+  @media only screen and (max-width: 376px) {
+    position: static;
+    margin-top: 20px;
+  }
 `;
 
 /* Order */
@@ -234,6 +284,9 @@ const OrderContainer = styled.div`
   div {
     margin-right: var(--padding-base);
     cursor: pointer;
+  }
+  @media only screen and (max-width: 376px) {
+    font-size: var(--font-size-s);
   }
 `;
 
@@ -559,10 +612,7 @@ export default function Program() {
                   <SportsTag
                     themeColor={sport.theme_color}
                     key={sport.id}
-                    color={"#ff4d4d"}
                     text={sport.title}
-                    bgColor={"#ffcccc"}
-                    hoverColor={"#ffb8b8"}
                     // handleTagClicked 함수를 onClick props로 전달
                     onClick={() => hanldeTagClicked(sport.id)}
                     hasClicked={clickedTags.includes(sport.id)}
@@ -572,34 +622,36 @@ export default function Program() {
         </SportsFilter>
         <FilterContainer onSubmit={handleFilterSubmit(onFilterValid)}>
           <MainFilter>
-            <DateAndTime>
+            <FilterDiv>
               <SmallFilterBox>
                 <input type="date" {...filterRegister("date")} />
               </SmallFilterBox>
               <SmallFilterBox>
                 <input type="time" {...filterRegister("time")} />
               </SmallFilterBox>
-            </DateAndTime>
-            <SmallFilterBox>
-              <input
-                type="number"
-                placeholder="가격대"
-                min={0}
-                {...filterRegister("minPrice")}
-              />
-            </SmallFilterBox>
-            <SmallFilterBox>
-              <select {...filterRegister("beach")}>
-                <option value="">해수욕장</option>
-                <option value="해운대해수욕장">해운대해수욕장</option>
-                <option value="광안리해수욕장">광안리해수욕장</option>
-                <option value="송정해수욕장">송정해수욕장</option>
-                <option value="임랑해수욕장">임랑해수욕장</option>
-                <option value="다대포해수욕장">다대포해수욕장</option>
-                <option value="일광해수욕장">일광해수욕장</option>
-                <option value="송도해수욕장">송도해수욕장</option>
-              </select>
-            </SmallFilterBox>
+            </FilterDiv>
+            <FilterDiv>
+              <SmallFilterBox>
+                <input
+                  type="number"
+                  placeholder="가격대"
+                  min={0}
+                  {...filterRegister("minPrice")}
+                />
+              </SmallFilterBox>
+              <SmallFilterBox>
+                <select {...filterRegister("beach")}>
+                  <option value="">해수욕장</option>
+                  <option value="해운대해수욕장">해운대해수욕장</option>
+                  <option value="광안리해수욕장">광안리해수욕장</option>
+                  <option value="송정해수욕장">송정해수욕장</option>
+                  <option value="임랑해수욕장">임랑해수욕장</option>
+                  <option value="다대포해수욕장">다대포해수욕장</option>
+                  <option value="일광해수욕장">일광해수욕장</option>
+                  <option value="송도해수욕장">송도해수욕장</option>
+                </select>
+              </SmallFilterBox>
+            </FilterDiv>
           </MainFilter>
           <DetailFilter>
             <FilterRow>
@@ -644,26 +696,26 @@ export default function Program() {
                   value="call"
                   {...filterRegister("booking")}
                 />
-                <CheckBoxLabel htmlFor="call">전화 예약</CheckBoxLabel>
+                <CheckBoxLabel htmlFor="call">전화</CheckBoxLabel>
                 <CheckBox
                   type="checkbox"
                   id="homepage"
                   value="homepage"
                   {...filterRegister("booking")}
                 />
-                <CheckBoxLabel htmlFor="homepage">홈페이지 예약</CheckBoxLabel>
+                <CheckBoxLabel htmlFor="homepage">홈페이지</CheckBoxLabel>
                 <CheckBox
                   type="checkbox"
                   id="waybu"
                   value="waybu"
                   {...filterRegister("booking")}
                 />
-                <CheckBoxLabel htmlFor="waybu">웨이부 예약</CheckBoxLabel>
+                <CheckBoxLabel htmlFor="waybu">웨이부</CheckBoxLabel>
               </FilterCol>
             </FilterRow>
             <FilterRow>
               <FilterCol>
-                <span>나이대</span>
+                <span>포함 나이대</span>
               </FilterCol>
               <FilterCol>
                 <CheckBox
@@ -672,7 +724,7 @@ export default function Program() {
                   {...filterRegister("age")}
                   value="14"
                 />
-                <CheckBoxLabel htmlFor="ten">14세 이하 포함</CheckBoxLabel>
+                <CheckBoxLabel htmlFor="ten">14세 이하</CheckBoxLabel>
 
                 <CheckBox
                   id="elder"
@@ -680,7 +732,7 @@ export default function Program() {
                   {...filterRegister("age")}
                   value="60"
                 />
-                <CheckBoxLabel htmlFor="elder">60세 이상 포함</CheckBoxLabel>
+                <CheckBoxLabel htmlFor="elder">60세 이상</CheckBoxLabel>
               </FilterCol>
             </FilterRow>
             <FilterRow>
