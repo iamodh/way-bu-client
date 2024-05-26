@@ -10,6 +10,7 @@ import {
   ErrorMsg,
   ButtonContainer,
   Button,
+  LinkBtn,
 } from "../../components/layout/LoginLayout";
 
 export default function ChangePwd() {
@@ -89,7 +90,7 @@ export default function ChangePwd() {
         </InputBox>
         <ButtonContainer>
           <Button type="submit">비밀번호 변경</Button>
-          <Link to="/login">로그인</Link>
+          <LinkBtn to="/login">로그인</LinkBtn>
         </ButtonContainer>
       </form>
     </LoginLayout>

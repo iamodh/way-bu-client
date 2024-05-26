@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./root/Home";
 import Login from "./root/Login";
 import Signup from "./root/Signup";
+import Coummunity from "./community/Community";
+import Post from "./community/Post";
 
 /* program pagse */
 import Program from "./program/Program";
@@ -32,12 +34,16 @@ export default function Router() {
         <Route path="change-pwd" element={<ChangePwd />} />
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
+        {/* Program detail */}
         <Route path="program/:programId" element={<ProgramLayout />}>
           <Route index element={<ProgramIntro />} />
           <Route path="detail" element={<ProgramDetail />} />
           <Route path="reviews" element={<ProgramReviews />} />
         </Route>
+        <Route path="community" element={<Coummunity />} />
+        <Route path="community/:id" element={<Post />} />
         {/* My page */}
+
         <Route path="/mypage" element={<MypageLayout />}>
           <Route index element={<MypageUpdate />} />
           <Route path="review" element={<MypageReview />} />
