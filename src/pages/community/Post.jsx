@@ -3,6 +3,7 @@ import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useState, useEffect } from "react";
 import { client } from "../../../libs/supabase";
 import { useRecoilState } from "recoil";
+import { useForm } from "react-hook-form";
 import styled from "styled-components";
 
 const PostWrapper = styled.div`
@@ -18,21 +19,75 @@ const PostWrapper = styled.div`
 `;
 
 export default function Post() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const { id: postId } = useParams();
 
   const [post, setPost] = useState([]);
+  const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
+    loggedInUserProfileState
+  );
 
   const getPost = async () => {
     let { data: post, error } = await client
       .from("POST")
       .select(
-        "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, created_at, updated_at"
+        "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, created_at, updated_at, comment_count"
       )
       .eq("post_id", postId);
-    console.log(post);
+    let { data: comments, error: commentError } = await client
+      .from("COMMENT")
+      .select("*")
+      .eq("post_id", postId);
     setPost(post[0]);
+    setComments(comments);
     setIsLoading(false);
+  };
+
+  const onCommentSubmit = async (formData) => {
+    console.log(loggedInUserProfile);
+    const { comment } = formData;
+    const { data, error } = await client.from("COMMENT").insert([
+      {
+        post_id: postId,
+        user_id: loggedInUser.id,
+        content: comment,
+        user_nickname: loggedInUserProfile.user_nickname,
+      },
+    ]);
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+    console.log(data, loggedInUser);
+    const { data: countData, error: countError } = await client
+      .from("POST")
+      .update({ comment_count: post.comment_count + 1 })
+      .eq("post_id", postId)
+      .select();
+    if (countError) {
+      console.log(countError.message);
+      return;
+    }
+    console.log(countData);
+    getPost();
+  };
+
+  const commentList = () => {
+    return comments.map((comment) => {
+      return (
+        <div key={comment.comment_id}>
+          <p>{comment.user_nickname}</p>
+          <p>{comment.content}</p>
+        </div>
+      );
+    });
   };
 
   useEffect(() => {
@@ -46,6 +101,16 @@ export default function Post() {
       <h1>{post.title}</h1>
       <p>{post.user_nickname}</p>
       <div>{post.contents}</div>
+      <form onSubmit={handleSubmit(onCommentSubmit)}>
+        <textarea
+          rows="3"
+          cols="50"
+          {...register("comment", { required: "댓글을 입력해주세요" })}
+          type="text"
+        ></textarea>
+        <button type="submit">댓글</button>
+      </form>
+      {commentList()}
     </PostWrapper>
   );
 }

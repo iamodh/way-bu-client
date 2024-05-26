@@ -80,7 +80,7 @@ export default function Community() {
     let { data: posts, error } = await client
       .from("POST")
       .select(
-        "post_id, title, post_type, user_nickname, user_id, views, thumbs"
+        "post_id, title, post_type, user_nickname, user_id, views, thumbs, comment_count, created_at, updated_at"
       );
     console.log(posts);
     setPosts(posts);
@@ -100,6 +100,7 @@ export default function Community() {
           <ComponentBox>
             <Link to={`${post.post_id}`}>{post.title}</Link>
           </ComponentBox>
+          <ComponentBox>{post.comment_count} </ComponentBox>
           <ComponentBox>{post.user_nickname} </ComponentBox>
         </PostBox>
       );
@@ -175,6 +176,7 @@ export default function Community() {
             <ComponentBox>조회수</ComponentBox>
             <ComponentBox>추천수</ComponentBox>
             <ComponentBox>제목</ComponentBox>
+            <ComponentBox>댓글수</ComponentBox>
             <ComponentBox>작성자</ComponentBox>
           </PostBox>
           {postList()}
