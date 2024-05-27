@@ -47,6 +47,7 @@ export default function FindId() {
             {...register("name", { required: "이름을 입력해 주세요." })}
             id="name"
             type="text"
+            placeholder="이름을 입력하세요"
           />
           {errors.name && <ErrorMsg>{errors.name.message}</ErrorMsg>}
         </InputBox>
@@ -58,6 +59,7 @@ export default function FindId() {
             })}
             id="phoneNumber"
             type="tel"
+            placeholder="전화번호를 입력하세요"
           />
           {errors.phoneNumber && (
             <ErrorMsg>{errors.phoneNumber.message}</ErrorMsg>
@@ -65,7 +67,7 @@ export default function FindId() {
         </InputBox>
         <ButtonContainer>
           <Button type="submit">이메일 찾기</Button>
-          <LinkBtn to="/login">로그인</LinkBtn>
+          <Link to="/login">로그인</Link>
         </ButtonContainer>
       </form>
     </LoginLayout>

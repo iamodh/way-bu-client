@@ -16,7 +16,8 @@ const Wrapper = styled.div`
 `;
 
 const Form = styled.form`
-  width: 1000px;
+  width: 100%;
+  max-width: 800px;
   padding: 60px;
   background-color: #fff;
   border-radius: 10px;
@@ -54,7 +55,7 @@ const Input = styled.input`
 `;
 
 const Check = styled.div`
-  margin-bottom: 30px;
+  /* margin-bottom: 20px; */
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -68,8 +69,8 @@ const Find = styled.div`
 const Remember = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 90px;
-  padding: 1px;
+  margin-left: 150px;
+  /* padding: 1px; */
 `;
 
 const Label = styled.label`
@@ -90,19 +91,19 @@ const ButtonContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%; /* 부모 컨테이너의 너비를 100%로 설정 */
-  padding: 20px 0; /* 옵션: 상하좌우 패딩 추가 */
+  width: 100%;
+  padding: 20px 0;
 `;
 
 const Button = styled.button`
-  width: 70%;
-  padding: 15px; /* 변경된 부분 */
+  width: 50%;
+  padding: 15px;
   background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 4px;
-  font-size: 16px;
-  margin-bottom: 12px; /* 아래쪽 여백 추가 */
+  font-size: 19px;
+  margin-bottom: 12px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   &:hover {
@@ -355,6 +356,7 @@ export default function Login() {
               {...register("email", { required: "이메일을 입력해 주세요." })}
               id="email"
               type="email"
+              placeholder="이메일을 입력하세요"
             />
             {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
           </InputBox>
@@ -370,6 +372,7 @@ export default function Login() {
               })}
               id="password"
               type="password"
+              placeholder="비밀번호를 입력하세요"
             />
             {errors?.password && <ErrorMsg>{errors.password.message}</ErrorMsg>}
           </InputBox>

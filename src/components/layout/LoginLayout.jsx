@@ -11,6 +11,7 @@ const Wrapper = styled.div`
 
 const Form = styled.form`
   width: 100%;
+  max-width: 800px;
   padding: 60px;
   background-color: #fff;
   border-radius: 10px;
@@ -86,13 +87,13 @@ const ButtonContainer = styled.div`
 `;
 
 const Button = styled.button`
-  width: 70%;
+  width: 50%;
   padding: 15px;
   background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 19px;
   margin-bottom: 12px;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -127,19 +128,12 @@ const LinkBtn = styled(Link)`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 70%;
   padding: 15px;
-  background-color: #007bff;
   color: #fff;
   border: none;
-  border-radius: 4px;
   font-size: 16px;
   margin-bottom: 12px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  &:hover {
-    background-color: #0056b3;
-  }
 `;
 
 export {
