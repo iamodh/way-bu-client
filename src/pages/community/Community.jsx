@@ -113,10 +113,6 @@ export default function Community() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (formData) => {
-    addComPost(formData);
-  };
-
   const addComPost = async (formData) => {
     const { data, error } = await client
       .from("POST")
@@ -134,13 +130,14 @@ export default function Community() {
       console.error(error);
       return;
     }
+    getPosts();
     console.log("작성완료", data);
   };
 
   return (
     <>
       <ComWrapper>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={handleSubmit(addComPost)}>
           <Title>글쓰기</Title>
           <InputBox>
             <label htmlFor="title">제목</label>

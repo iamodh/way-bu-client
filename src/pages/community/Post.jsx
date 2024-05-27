@@ -33,6 +33,8 @@ export default function Post() {
   const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
     loggedInUserProfileState
   );
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editContent, setEditContent] = useState("");
 
   const getPost = async () => {
     let { data: post, error } = await client
@@ -79,12 +81,49 @@ export default function Post() {
     getPost();
   };
 
+  const startEditComment = (comment) => {
+    setEditingCommentId(comment.comment_id);
+    setEditContent(comment.content);
+  };
+
+  const saveEditComment = async (commentId) => {
+    const { data, error } = await client
+      .from("COMMENT")
+      .update({ content: editContent, updated_at: new Date() })
+      .eq("comment_id", commentId)
+      .select();
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+    setEditingCommentId(null);
+    setEditContent("");
+    getPost();
+  };
+
   const commentList = () => {
-    return comments.map((comment) => {
+    return comments.map((comment, key) => {
       return (
         <div key={comment.comment_id}>
           <p>{comment.user_nickname}</p>
-          <p>{comment.content}</p>
+          {editingCommentId === comment.comment_id ? (
+            <div>
+              <input
+                type="text"
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+              />
+              <button onClick={() => saveEditComment(comment.comment_id)}>
+                Save
+              </button>
+              <button onClick={() => setEditingCommentId(null)}>Cancel</button>
+            </div>
+          ) : (
+            <p>{comment.content}</p>
+          )}
+          {loggedInUser && comment.user_id === loggedInUser.id && (
+            <button onClick={() => startEditComment(comment)}>수정하기 </button>
+          )}
         </div>
       );
     });
