@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
-const MypageUpdateWarpper = styled.form`
+const MypageUpdateWrapper = styled.form`
   width: 80%;
   margin: var(--padding-base) auto;
   display: flex;
@@ -132,7 +132,7 @@ export default function MypageUpdate() {
     });
   }
   return (
-    <MypageUpdateWarpper onSubmit={handleSubmit(onSubmit)}>
+    <MypageUpdateWrapper onSubmit={handleSubmit(onSubmit)}>
       <Title>개인정보 수정하기</Title>
       {isLoading ? (
         "Loading..."
@@ -167,6 +167,6 @@ export default function MypageUpdate() {
       )}
 
       <Button type="submit" text={"저장하기"} size={"m"} />
-    </MypageUpdateWarpper>
+    </MypageUpdateWrapper>
   );
 }
