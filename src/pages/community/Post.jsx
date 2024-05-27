@@ -37,19 +37,44 @@ export default function Post() {
   const [editContent, setEditContent] = useState("");
 
   const getPost = async () => {
-    let { data: post, error } = await client
-      .from("POST")
-      .select(
-        "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, created_at, updated_at, comment_count"
-      )
-      .eq("post_id", postId);
-    let { data: comments, error: commentError } = await client
-      .from("COMMENT")
-      .select("*")
-      .eq("post_id", postId);
-    setPost(post[0]);
-    setComments(comments);
-    setIsLoading(false);
+    try {
+      const { data: post, error: fetchError } = await client
+        .from("POST")
+        .select(
+          "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, created_at, updated_at, comment_count, user_recommend"
+        )
+        .eq("post_id", postId)
+        .single();
+
+      if (fetchError) {
+        throw new Error(fetchError.message);
+      }
+
+      const { data: updatedPost, error: updateError } = await client
+        .from("POST")
+        .update({ views: post.views + 1 })
+        .eq("post_id", postId)
+        .select();
+
+      if (updateError) {
+        throw new Error(updateError.message);
+      }
+
+      const { data: comments, error: commentError } = await client
+        .from("COMMENT")
+        .select("*")
+        .eq("post_id", postId);
+
+      if (commentError) {
+        throw new Error(commentError.message);
+      }
+
+      setPost(updatedPost[0]);
+      setComments(comments);
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const onCommentSubmit = async (formData) => {
@@ -70,7 +95,7 @@ export default function Post() {
     console.log(data, loggedInUser);
     const { data: countData, error: countError } = await client
       .from("POST")
-      .update({ comment_count: comment_count + 1 })
+      .update({ comment_count: post.comment_count + 1 })
       .eq("post_id", postId)
       .select();
     if (countError) {
@@ -109,7 +134,7 @@ export default function Post() {
       .select();
     const { postData, postError } = await client
       .from("POST")
-      .update({ comment_count: comment_count - 1 })
+      .update({ comment_count: post.comment_count - 1 })
       .eq("post_id", postId)
       .select();
     if (error || postError) {
@@ -133,6 +158,27 @@ export default function Post() {
     console.log(data, "게시글 삭제 완료");
     // window.history.pushState("", "", "/community");
     window.history.back();
+  };
+
+  const clickThumb = async () => {
+    if (!loggedInUser || post.user_recommend.includes(loggedInUser.id)) {
+      console.log("no");
+      return;
+    }
+    const { data, error } = await client
+      .from("POST")
+      .update({
+        thumbs: post.thumbs + 1,
+        user_recommend: [...post.user_recommend, loggedInUser.id],
+      })
+      .eq("post_id", postId)
+      .select();
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+    console.log(data, "추천 완료");
+    getPost();
   };
 
   const commentList = () => {
@@ -178,9 +224,13 @@ export default function Post() {
 
   return (
     <PostWrapper>
-      <h1>{post.title}</h1>
-      <p>{post.user_nickname}</p>
-      <div>{post.contents}</div>
+      <h1>제목: {post.title}</h1>
+      <p>작성자: {post.user_nickname}</p>
+      <div>내용: {post.contents}</div>
+      <p>조회수: {post.views}</p>
+      <p>추천수: {post.thumbs}</p>
+      <p>{post.created_at}</p>
+      <button onClick={() => clickThumb()}>추천하기</button>
       {loggedInUser && post.user_id == loggedInUser.id && (
         <button onClick={() => deletePost()}>삭제하기</button>
       )}
