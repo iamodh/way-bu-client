@@ -9,7 +9,7 @@ import styled from "styled-components";
 const PostWrapper = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   width: 1000px;
   margin: 0 auto;
   flex-direction: column;
@@ -185,8 +185,24 @@ export default function Post() {
     getPost();
   };
 
+  const formatTime = (time) => {
+    const date = new Date(time);
+    const koreanDate = new Date(
+      date.toLocaleString("en-US", { timeZone: "Asia/Seoul" })
+    );
+    const padZero = (num) => String(num).padStart(2, "0");
+    const formattedDate = `${koreanDate.getFullYear()}.${padZero(
+      koreanDate.getMonth() + 1
+    )}.${padZero(koreanDate.getDate())}.${padZero(
+      koreanDate.getHours()
+    )}:${padZero(koreanDate.getMinutes())}:${padZero(koreanDate.getSeconds())}`;
+
+    return formattedDate;
+  };
+
   const commentList = () => {
-    return comments.map((comment, key) => {
+    comments.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    const list = comments.map((comment, key) => {
       return (
         <div key={comment.comment_id}>
           <p>{comment.user_nickname}</p>
@@ -203,21 +219,28 @@ export default function Post() {
               <button onClick={() => setEditingCommentId(null)}>Cancel</button>
             </div>
           ) : (
-            <p>{comment.content}</p>
-          )}
-          {loggedInUser && comment.user_id === loggedInUser.id && (
-            <div>
-              <button onClick={() => startEditComment(comment)}>
-                수정하기
-              </button>
-              <button onClick={() => deleteComment(comment.comment_id)}>
-                삭제하기
-              </button>
-            </div>
+            <>
+              <p>{comment.content}</p>
+              <p>{formatTime(comment.created_at)} 작성됨</p>
+              {comment.updated_at && (
+                <p> {formatTime(comment.updated_at)} 수정됨 </p>
+              )}
+              {loggedInUser && comment.user_id === loggedInUser.id && (
+                <div>
+                  <button onClick={() => startEditComment(comment)}>
+                    수정하기
+                  </button>
+                  <button onClick={() => deleteComment(comment.comment_id)}>
+                    삭제하기
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       );
     });
+    return list;
   };
 
   useEffect(() => {
@@ -233,7 +256,7 @@ export default function Post() {
       <div>내용: {post.contents}</div>
       <p>조회수: {post.views}</p>
       <p>추천수: {post.thumbs}</p>
-      <p>{post.created_at}</p>
+      <p>{formatTime(post.created_at)} 작성됨</p>
       <button onClick={() => clickThumb()}>추천하기</button>
       {loggedInUser && post.user_id == loggedInUser.id && (
         <button onClick={() => deletePost()}>삭제하기</button>
