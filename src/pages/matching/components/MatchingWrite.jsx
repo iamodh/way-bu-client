@@ -25,7 +25,7 @@ const Div = styled.div`
 `;
 
 const Title = styled.input`
-  height: 45px;
+  height: 40px;
   flex: 1;
   border-radius: var(--br-8xs);
   border: none;
@@ -64,7 +64,7 @@ const B3 = styled.b`
   }
 `;
 
-const FrameGroup = styled.nav`
+const FrameGroup = styled.div`
   margin: 0;
   width: 100%;
   display: flex;
@@ -79,7 +79,7 @@ const FrameGroup = styled.nav`
 `;
 
 const Schedulebox = styled.input`
-  height: 45px;
+  height: 40px;
   flex: 1;
   border-radius: var(--br-8xs);
   border: none;
@@ -95,7 +95,7 @@ const Schedulebox = styled.input`
 `;
 
 const NumberInput = styled.input`
-  height: 45px;
+  height: 40px;
   flex: 1;
   border-radius: var(--br-8xs);
   border: none;
@@ -120,14 +120,13 @@ const FrameDiv = styled.div`
 `;
 
 const FrameParent1 = styled.div`
-  margin-bottom: 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   max-width: 100%;
   height: 60%;
-  gap: var(--gap-9xs);
+  margin-top: 25px;
 `;
 
 const Divbox = styled.div`
@@ -143,7 +142,7 @@ const Divbox = styled.div`
 `;
 
 const Textbox = styled.textarea`
-  height: 200px;
+  height: 230px;
   width: 100%;
   padding: 10px;
   box-sizing: border-box;
@@ -220,7 +219,7 @@ const RadioLabel = styled.label`
 `;
 
 const Dropdown = styled.select`
-  height: 45px;
+  height: 40px;
   flex: 1;
   border-radius: 5px;
   border: none;

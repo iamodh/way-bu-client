@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import Modal from "./Modal"
+import Modal from "./Modal";
+import React, { useState } from 'react';
 
 const ExploreMatchesBarRoot = styled.div`
   display: flex;
@@ -58,17 +59,54 @@ const MatchingContainer = styled.div`
   gap: 10px;
 `;
 
+const Button = styled.button`
+  cursor: pointer;
+  border: none;
+  min-width: 170px;
+  padding: var(--padding-base) var(--padding-9xs);
+  background-color: var(--color-blue-main);
+  color: var(--color-white);
+  border-radius: var(--br-3xs);
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background-color: var(--color-navy);
+    box-sizing: border-box;
+  }
+`;
+
+const Div = styled.div`
+  position: relative;
+  font-size: var(--font-size-ml);
+  line-height: 20px;
+  font-family: inherit;
+  color: inherit;
+  text-align: center;
+  display: inline-block;
+  white-space: nowrap;
+`;
+
 const ExploreMatchesBar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
+
   return (
     <ExploreMatchesBarRoot>
       <H>매칭 둘러보기</H>
       <MatchingActionsWrapper>
         <MatchingActions>
-          <Modal />
+          <Button><Div>내 매칭 보러가기</Div></Button>
+          <Button><Div>매칭 만들기</Div></Button>
         </MatchingActions>
       </MatchingActionsWrapper>
       <MatchingContainer />
     </ExploreMatchesBarRoot>
+    
   );
 };
 

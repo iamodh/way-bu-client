@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { client } from "../../../../libs/supabase";
 import SportTag from "../../../components/SportTag";
+import MatchingWrite from "./MatchingWrite";
+import MatchingWatch from "./MatchingWatch";
 
 const MatchingIcon = styled.img`
   height: 100px;
@@ -15,6 +17,7 @@ const MatchingIcon = styled.img`
     flex: 1;
   }
 `;
+
 const Div = styled.div`
   position: relative;
   font-size: var(--m-size);
@@ -25,6 +28,7 @@ const Div = styled.div`
   display: inline-block;
   min-width: 30px;
 `;
+
 const People = styled.button`
   cursor: pointer;
   border: none;
@@ -40,6 +44,7 @@ const People = styled.button`
     background-color: var(--color-thistle-200);
   }
 `;
+
 const Div1 = styled.div`
   position: relative;
   font-size: var(--m-size);
@@ -50,6 +55,7 @@ const Div1 = styled.div`
   display: inline-block;
   min-width: 45px;
 `;
+
 const Place = styled.button`
   cursor: pointer;
   border: none;
@@ -65,6 +71,7 @@ const Place = styled.button`
     background-color: var(--color-lightsteelblue-200);
   }
 `;
+
 const Button = styled.button`
   cursor: pointer;
   border: none;
@@ -80,6 +87,7 @@ const Button = styled.button`
     background-color: var(--color-pink-200);
   }
 `;
+
 const MatchingTag = styled.div`
   display: flex;
   flex-direction: row;
@@ -104,16 +112,6 @@ const Wrapper = styled.div`
     padding: 0 5%;
   }
 `;
-
-// const MatchingGroupRoot = styled.div`
-//   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.25);
-//   min-width: 277px;
-//   max-width: 100%;
-//   text-align: left;
-//   @media screen and (max-width: 450px) {
-//     flex-wrap: wrap;
-//   }
-// `;
 
 const MatchingContainer = styled.div`
   max-width: 500px;
@@ -172,10 +170,47 @@ const P = styled.div`
   gap: var(--gap-5xs);
 `;
 
+const ModalWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: var(--br-3xs);
+  height: 700px;
+  width: 600px;
+  text-align: center;
+  position: relative;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--color-dark);
+  &:hover {
+    color: var(--color-navy);
+  }
+`;
 
 const MatchingGroup = () => {
   const [matchings, setMatchings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedMatching, setSelectedMatching] = useState(null);
 
   useEffect(() => {
     getMatchings();
@@ -184,7 +219,7 @@ const MatchingGroup = () => {
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
-      .select(`title, matching_time, difficulty, location`);
+      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date`);
     setMatchings(data);
     setIsLoading(false);
     if (error) {
@@ -192,46 +227,49 @@ const MatchingGroup = () => {
       return;
     }
   }
+
+  const openModal = (matching) => {
+    setSelectedMatching(matching);
+  };
+
+  const closeModal = () => {
+    setSelectedMatching(null);
+  };
+
   return (
-    <Wrapper >
+    <Wrapper>
       {isLoading ? (
         "Loading..."
       ) : (
         matchings.map((m) => (
-          <MatchingContainer key={m.id}>
+          <MatchingContainer onClick={() => openModal(m)} key={m.id}>
             <MatchingIcon
               loading="lazy"
               alt=""
               src="../img/matchingSurfing.png"
             />
-              <ContainerDetails>
-                <Title>
-                  <H>{m.title}</H>
-                  <MatchingTag>
-                    <People>
-                      <Div>
-                        <SportTag prop = "서핑" />
-                      </Div>
-                    </People>
-                    <Place>
-                      <Div1>
-                        <SportTag prop = "서핑" />
-                      </Div1>
-                    </Place>
-                      <Div>
-                        <SportTag prop = "서핑" />
-                      </Div>
-                  </MatchingTag>
-                </Title>
-                <P>상세 위치 : <div style={{fontWeight:"normal"}}>{m.location}</div></P>
-                <P>시간 : <div style={{fontWeight:"normal"}}>{m.matching_time}</div></P>
-                <P>난이도 : <div style={{fontWeight:"normal"}}>{m.difficulty}</div></P>
-              </ContainerDetails>
-            </MatchingContainer>
+            <ContainerDetails>
+              <Title>
+                <H>{m.title}</H>
+              </Title>
+              <P>상세 위치 : <div style={{ fontWeight: "normal" }}>{m.location}</div></P>
+              <P>시간 : <div style={{ fontWeight: "normal" }}>{m.matching_time}</div></P>
+              <P>난이도 : <div style={{ fontWeight: "normal" }}>{m.difficulty}</div></P>
+            </ContainerDetails>
+          </MatchingContainer>
         ))
+      )}
+      {selectedMatching && (
+        <ModalWrapper onClick={closeModal}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <CloseButton onClick={closeModal}>&times;</CloseButton>
+            <MatchingWatch matching={selectedMatching} />
+          </ModalContent>
+        </ModalWrapper>
       )}
     </Wrapper>
   );
 };
 
 export default MatchingGroup;
+

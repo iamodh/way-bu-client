@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { useState, useEffect } from "react";
+import { client } from "../../../../libs/supabase";
 
 const FrameWrapperRoot = styled.div`
   align-self: stretch;
@@ -34,6 +36,7 @@ const Title = styled.div`
   width: 95%;
   line-height: 50px;
   text-align: center;
+  background-color: aliceblue;
 `;
 
 const FrameGroup = styled.nav`
@@ -51,8 +54,10 @@ const FrameGroup = styled.nav`
 `;
 
 const Schedulebox = styled.div`
+  font-weight: bold;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   height: 45px;
+  line-height: 45px;
   flex: 1;
   border-radius: var(--br-8xs);
   box-sizing: border-box;
@@ -98,10 +103,13 @@ const Divbox = styled.div`
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
 `
 const Textbox = styled.div`
+  font-weight: bold;
   height: 256px;
   width: 100%;
+  padding: 20px;
+  text-align: left;
   box-sizing: border-box;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-m);
   background-color: aliceblue;
   border-radius: 15px;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
@@ -143,6 +151,7 @@ const Button = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   &:hover {
     background-color: var(--color-navy);
     box-sizing: border-box;
@@ -182,27 +191,61 @@ const Divbox1 = styled.div`
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
 `
 
-const MatchingWatch = () => {
+const ModalWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: var(--br-3xs);
+  height: 700px;
+  width: 600px;
+  text-align: center;
+  position: relative;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--color-dark);
+  &:hover {
+    color: var(--color-navy);
+  }
+`;
+
+const MatchingWatch = ({ matching }) => {
+  if (!matching) return null;
+
   return (
     <FrameWrapperRoot>
-      <FrameParent1>
+      <FrameParent1 key={matching.id}>
         <Title>
-            <Div>안녕하세요안옇</Div>
+          <Div>{matching.title}</Div>
         </Title>
         <FrameGroup>
           <Divbox1>#종목</Divbox1>
-          <Divbox1>#난이도</Divbox1>
-          <Divbox1>#위치</Divbox1>
-        {/* <SportTagWrapper>
-          <SportTag>
-            <B2>광안리</B2>
-          </SportTag>
-        </SportTagWrapper> */}
+          <Divbox1>#{matching.difficulty}</Divbox1>
+          <Divbox1>#{matching.location}</Divbox1>
         </FrameGroup>
         <FrameGroup>
           <FrameDiv>
             <Divbox>참가인원</Divbox>
-            <Divbox1>3</Divbox1>
+            <Divbox1>{matching.total_people}명</Divbox1>
           </FrameDiv>
           <FrameDiv>
             <Divbox>모집상태</Divbox>
@@ -211,18 +254,20 @@ const MatchingWatch = () => {
         </FrameGroup>
         <FrameDiv>
           <Divbox>일정</Divbox>
-          <Schedulebox />
+          <Schedulebox>{matching.matching_date} {matching.matching_time}</Schedulebox>
         </FrameDiv>
+        <DivRoot>
+          <Textbox>{matching.required}</Textbox>
+          <Textbox1 placeholder="신청 메세지를 입력해주세요." />
+          <Button>
+            <Div2>신청하기</Div2>
+          </Button>
+        </DivRoot>
+
       </FrameParent1>
-      <DivRoot>
-        <Textbox />
-        <Textbox1 placeholder="신청 메세지를 입력해주세요."></Textbox1>
-      </DivRoot>
-      <Button>
-        <Div2>신청하기</Div2>
-      </Button>
     </FrameWrapperRoot>
   );
 };
 
 export default MatchingWatch;
+
