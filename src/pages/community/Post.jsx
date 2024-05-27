@@ -80,29 +80,30 @@ export default function Post() {
   const onCommentSubmit = async (formData) => {
     console.log(loggedInUserProfile);
     const { comment } = formData;
-    const { data, error } = await client.from("COMMENT").insert([
-      {
-        post_id: postId,
-        user_id: loggedInUser.id,
-        content: comment,
-        user_nickname: loggedInUserProfile.user_nickname,
-      },
-    ]);
-    if (error) {
-      console.log(error.message);
+    try {
+      const { data, commentError } = await client.from("COMMENT").insert([
+        {
+          post_id: postId,
+          user_id: loggedInUser.id,
+          content: comment,
+          user_nickname: loggedInUserProfile.user_nickname,
+        },
+      ]);
+      if (commentError) {
+        throw new Error(commentError.message);
+      }
+      const { data: countData, error: countError } = await client
+        .from("POST")
+        .update({ comment_count: post.comment_count + 1 })
+        .eq("post_id", postId)
+        .select();
+      if (countError) {
+        throw new Error(countError.message);
+      }
+    } catch (error) {
+      console.error(error);
       return;
     }
-    console.log(data, loggedInUser);
-    const { data: countData, error: countError } = await client
-      .from("POST")
-      .update({ comment_count: post.comment_count + 1 })
-      .eq("post_id", postId)
-      .select();
-    if (countError) {
-      console.log(countError.message);
-      return;
-    }
-    console.log(countData);
     getPost();
   };
 
@@ -118,7 +119,7 @@ export default function Post() {
       .eq("comment_id", commentId)
       .select();
     if (error) {
-      console.log(error.message);
+      console.error(error.message);
       return;
     }
     setEditingCommentId(null);
@@ -127,22 +128,28 @@ export default function Post() {
   };
 
   const deleteComment = async (commentId) => {
-    const { data, error } = await client
-      .from("COMMENT")
-      .delete()
-      .eq("comment_id", commentId)
-      .select();
-    const { postData, postError } = await client
-      .from("POST")
-      .update({ comment_count: post.comment_count - 1 })
-      .eq("post_id", postId)
-      .select();
-    if (error || postError) {
-      console.log(error.message);
+    try {
+      const { data, deleteError } = await client
+        .from("COMMENT")
+        .delete()
+        .eq("comment_id", commentId)
+        .select();
+      if (deleteError) {
+        throw new Error(deleteError.message);
+      }
+      const { postData, postError } = await client
+        .from("POST")
+        .update({ comment_count: post.comment_count - 1 })
+        .eq("post_id", postId)
+        .select();
+      if (postError) {
+        throw new Error(postError.message);
+      }
+      getPost();
+    } catch (error) {
+      console.error(error.message);
       return;
     }
-    console.log(data, "댓글 삭제 완료");
-    getPost();
   };
 
   const deletePost = async () => {
@@ -152,17 +159,15 @@ export default function Post() {
       .eq("post_id", postId)
       .select();
     if (error) {
-      console.log(error.message);
+      console.error(error.message);
       return;
     }
     console.log(data, "게시글 삭제 완료");
-    // window.history.pushState("", "", "/community");
     window.history.back();
   };
 
   const clickThumb = async () => {
     if (!loggedInUser || post.user_recommend.includes(loggedInUser.id)) {
-      console.log("no");
       return;
     }
     const { data, error } = await client
@@ -174,10 +179,9 @@ export default function Post() {
       .eq("post_id", postId)
       .select();
     if (error) {
-      console.log(error.message);
+      console.error(error.message);
       return;
     }
-    console.log(data, "추천 완료");
     getPost();
   };
 
