@@ -70,7 +70,7 @@ export default function Post() {
     console.log(data, loggedInUser);
     const { data: countData, error: countError } = await client
       .from("POST")
-      .update({ comment_count: post.comment_count + 1 })
+      .update({ comment_count: comment_count + 1 })
       .eq("post_id", postId)
       .select();
     if (countError) {
@@ -101,6 +101,40 @@ export default function Post() {
     getPost();
   };
 
+  const deleteComment = async (commentId) => {
+    const { data, error } = await client
+      .from("COMMENT")
+      .delete()
+      .eq("comment_id", commentId)
+      .select();
+    const { postData, postError } = await client
+      .from("POST")
+      .update({ comment_count: comment_count - 1 })
+      .eq("post_id", postId)
+      .select();
+    if (error || postError) {
+      console.log(error.message);
+      return;
+    }
+    console.log(data, "댓글 삭제 완료");
+    getPost();
+  };
+
+  const deletePost = async () => {
+    const { data, error } = await client
+      .from("POST")
+      .delete()
+      .eq("post_id", postId)
+      .select();
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+    console.log(data, "게시글 삭제 완료");
+    // window.history.pushState("", "", "/community");
+    window.history.back();
+  };
+
   const commentList = () => {
     return comments.map((comment, key) => {
       return (
@@ -122,7 +156,14 @@ export default function Post() {
             <p>{comment.content}</p>
           )}
           {loggedInUser && comment.user_id === loggedInUser.id && (
-            <button onClick={() => startEditComment(comment)}>수정하기 </button>
+            <div>
+              <button onClick={() => startEditComment(comment)}>
+                수정하기
+              </button>
+              <button onClick={() => deleteComment(comment.comment_id)}>
+                삭제하기
+              </button>
+            </div>
           )}
         </div>
       );
@@ -140,6 +181,9 @@ export default function Post() {
       <h1>{post.title}</h1>
       <p>{post.user_nickname}</p>
       <div>{post.contents}</div>
+      {loggedInUser && post.user_id == loggedInUser.id && (
+        <button onClick={() => deletePost()}>삭제하기</button>
+      )}
       <form onSubmit={handleSubmit(onCommentSubmit)}>
         <textarea
           rows="3"
