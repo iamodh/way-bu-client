@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { client } from "../../../libs/supabase";
 import { useRecoilState } from "recoil";
@@ -75,11 +75,17 @@ const ComponentBox = styled.div`
 `;
 
 export default function Community() {
+  const postPerPage = 10;
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
     loggedInUserProfileState
   );
-  const [allPosts, setAllPosts] = useState([]);
+  const [originalPosts, setOriginalPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [postsCount, setPostsCount] = useState(0);
+  const [maxPage, setMaxPage] = useState(0);
+  const [postPage, setPostPage] = useState(1);
+  const [pageSection, setPageSection] = useState(1);
   const [sortWay, setSortWay] = useState("created_at");
   const [order, setOrder] = useState(true);
 
@@ -87,15 +93,15 @@ export default function Community() {
     let { data: posts, error } = await client
       .from("POST")
       .select(
-        "post_id, title, post_type, user_nickname, user_id, views, thumbs, comment_count, created_at, updated_at"
+        "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, comment_count, created_at, updated_at"
       );
     console.log(posts);
-    setAllPosts(posts);
+    posts.sort((a, b) => {
+      return b["created_at"] > a["created_at"] ? 1 : -1;
+    });
+    setOriginalPosts(posts);
+    setPosts(posts);
   };
-
-  useEffect(() => {
-    getPosts();
-  }, []);
 
   const handleSort = (way) => {
     if (sortWay === way) {
@@ -104,14 +110,14 @@ export default function Community() {
       setSortWay(way);
       setOrder(true);
     }
-    const sortedPosts = [...allPosts].sort((a, b) => {
+    const sortedPosts = [...posts].sort((a, b) => {
       if (order) {
         return a[sortWay] > b[sortWay] ? 1 : -1;
       } else {
         return a[sortWay] < b[sortWay] ? 1 : -1;
       }
     });
-    setAllPosts(sortedPosts);
+    setPosts(sortedPosts);
   };
 
   const formatTime = (time) => {
@@ -130,21 +136,23 @@ export default function Community() {
   };
 
   const postList = () => {
-    return allPosts.map((post) => {
-      return (
-        <PostBox>
-          <ComponentBox>{post.post_type}</ComponentBox>
-          <ComponentBox>{post.views}</ComponentBox>
-          <ComponentBox>{post.thumbs}</ComponentBox>
-          <ComponentBox>
-            <Link to={`${post.post_id}`}>{post.title}</Link>
-          </ComponentBox>
-          <ComponentBox>{post.comment_count} </ComponentBox>
-          <ComponentBox>{post.user_nickname} </ComponentBox>
-          <ComponentBox>{formatTime(post.created_at)} </ComponentBox>
-        </PostBox>
-      );
-    });
+    return posts
+      .slice((postPage - 1) * postPerPage, postPage * postPerPage - 1)
+      .map((post) => {
+        return (
+          <PostBox>
+            <ComponentBox>{post.post_type}</ComponentBox>
+            <ComponentBox>{post.views}</ComponentBox>
+            <ComponentBox>{post.thumbs}</ComponentBox>
+            <ComponentBox>
+              <Link to={`${post.post_id}`}>{post.title}</Link>
+            </ComponentBox>
+            <ComponentBox>{post.comment_count} </ComponentBox>
+            <ComponentBox>{post.user_nickname} </ComponentBox>
+            <ComponentBox>{formatTime(post.created_at)} </ComponentBox>
+          </PostBox>
+        );
+      });
   };
 
   const {
@@ -174,6 +182,66 @@ export default function Community() {
     console.log("작성완료", data);
   };
 
+  const handleTag = (tag) => {
+    if (tag === "전체") {
+      setPosts(originalPosts);
+      return;
+    }
+    const filteredPosts = originalPosts.filter(
+      (post) => post.post_type === tag
+    );
+    console.log(tag);
+    setPosts(filteredPosts);
+  };
+
+  const searchPost = (formData) => {
+    const { searchKeyword } = formData;
+    const filteredPosts1 = originalPosts.filter((post) =>
+      post.title.includes(searchKeyword)
+    );
+    const filteredPosts2 = originalPosts.filter((post) =>
+      post.user_nickname.includes(searchKeyword)
+    );
+    const filteredPosts3 = originalPosts.filter((post) =>
+      post.contents.includes(searchKeyword)
+    );
+    const filteredPosts = [
+      ...filteredPosts1,
+      ...filteredPosts2,
+      ...filteredPosts3,
+    ];
+    setPosts(filteredPosts);
+  };
+
+  const pageList = () => {
+    const pages = [];
+    const first = (pageSection - 1) * postPerPage + 1;
+    const last =
+      pageSection * postPerPage < maxPage ? pageSection * postPerPage : maxPage;
+    console.log(postPage);
+    for (let i = first; i <= last; i++) {
+      pages.push(
+        <ComponentBox onClick={() => setPostPage(i)}>{i}</ComponentBox>
+      );
+    }
+    return pages;
+  };
+
+  useEffect(() => {
+    const count = posts.length;
+    setPostsCount(count);
+    setMaxPage(Math.ceil(count / postPerPage));
+    console.log(count, maxPage);
+  }, [posts]);
+
+  useEffect(() => {
+    getPosts();
+  }, []);
+
+  useEffect(() => {
+    setPageSection(Math.ceil(postPage / postPerPage));
+  }, [postPage]);
+
   return (
     <>
       <ComWrapper>
@@ -181,11 +249,7 @@ export default function Community() {
           <Title>글쓰기</Title>
           <InputBox>
             <label htmlFor="title">제목</label>
-            <input
-              {...register("title", { required: "제목을 입력해 주세요." })}
-              id="title"
-              type="text"
-            />
+            <input {...register("title")} id="title" type="text" />
             <ErrorMsg>{errors?.email?.message}</ErrorMsg>
           </InputBox>
           <select name="tag" id="tag" {...register("tag")}>
@@ -198,9 +262,7 @@ export default function Community() {
             <label htmlFor="content">내용</label>
             <textarea
               rows="10"
-              {...register("content", {
-                required: "내용을 입력해 주세요.",
-              })}
+              {...register("content")}
               id="content"
             ></textarea>
             <ErrorMsg>{errors?.content?.message}</ErrorMsg>
@@ -208,6 +270,13 @@ export default function Community() {
           <button style={{ padding: "10px" }}>글쓰기</button>
         </Form>
         <PostNameBox>
+          <PostBox>
+            <ComponentBox onClick={() => handleTag("전체")}>전체</ComponentBox>
+            <ComponentBox onClick={() => handleTag("자유")}>자유</ComponentBox>
+            <ComponentBox onClick={() => handleTag("질문")}>질문</ComponentBox>
+            <ComponentBox onClick={() => handleTag("후기")}>후기</ComponentBox>
+            <ComponentBox onClick={() => handleTag("꿀팁")}>꿀팁</ComponentBox>
+          </PostBox>
           <PostBox>
             <ComponentBox>태그</ComponentBox>
             <ComponentBox onClick={() => handleSort("views")}>
@@ -227,6 +296,35 @@ export default function Community() {
           </PostBox>
           {postList()}
         </PostNameBox>
+        <PostBox>
+          {pageSection > 1 && (
+            <ComponentBox onClick={() => setPostPage(1)}>◀️◀️</ComponentBox>
+          )}
+          {pageSection > 1 && (
+            <ComponentBox
+              onClick={() => setPostPage((pageSection - 2) * postPerPage + 1)}
+            >
+              ◀️
+            </ComponentBox>
+          )}
+          {pageList()}
+          {pageSection < maxPage / postPerPage && (
+            <ComponentBox
+              onClick={() => setPostPage(pageSection * postPerPage + 1)}
+            >
+              ▶️
+            </ComponentBox>
+          )}
+          {pageSection < maxPage / postPerPage && (
+            <ComponentBox onClick={() => setPostPage(maxPage)}>
+              ▶️▶️
+            </ComponentBox>
+          )}
+        </PostBox>
+        <form onSubmit={handleSubmit(searchPost)}>
+          <input type="text" id="search" {...register("searchKeyword")} />
+          <button>검색</button>
+        </form>
       </ComWrapper>
     </>
   );
