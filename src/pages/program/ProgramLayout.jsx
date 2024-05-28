@@ -13,9 +13,7 @@ const Main = styled.div`
 `;
 
 /* Header: 프로그램명, nav */
-const Header = styled.div`
-  height: 159px;
-`;
+const Header = styled.div``;
 
 const Title = styled.div`
   height: 103px;
@@ -23,11 +21,20 @@ const Title = styled.div`
   align-items: center;
   padding-left: 32px;
   gap: 16px;
+  @media only screen and (max-width: 376px) {
+    flex-direction: column;
+    padding-left: 0;
+    margin-top: 20px;
+  }
 `;
 
 const ProgramName = styled.h1`
   font-size: var(--font-size-xxl);
   font-weight: 700;
+
+  @media only screen and (max-width: 376px) {
+    font-size: var(--font-size-xl);
+  }
 `;
 
 const Tags = styled.div`
@@ -47,6 +54,10 @@ const Nav = styled.nav`
     font-weight: 500;
     border: 1px solid var(--color-blue-light);
     background-color: var(--color-skyblue-light);
+
+    @media only screen and (max-width: 376px) {
+      font-size: var(--font-size-m);
+    }
   }
 `;
 

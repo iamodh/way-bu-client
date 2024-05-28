@@ -1,21 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { client } from "../../../libs/supabase";
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 810px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 32px;
+  padding: var(--padding-13xl);
+  border: 1.5px solid var(--color-blue-light);
 `;
 
 const Main = styled.div`
-  height: 514px;
   width: 100%;
   display: flex;
   justify-content: space-around;
+  @media only screen and (max-width: 376px) {
+    flex-direction: column;
+  }
 `;
 
 /* Image slide */
@@ -113,6 +117,11 @@ const IntroCol = styled.div`
   svg {
     margin-right: 16px;
   }
+  select {
+    width: 100%;
+    border: none;
+    height: 100%;
+  }
 `;
 
 const PriceBox = styled(Intro)`
@@ -177,9 +186,44 @@ export default function ProgramIntro() {
   const { program } = useOutletContext();
 
   const [image, setImage] = useState(program[0].thumbnail);
+  const [options, setOptions] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedOptions, setSelectedOptions] = useState({
+    opt1: "",
+    opt2: "",
+  });
 
+  useEffect(() => {
+    getOptions();
+  }, [program]);
+
+  const getOptions = async () => {
+    const { data, error } = await client
+      .from("PROGRAM_OPTION")
+      .select()
+      .eq("program_id", program[0].id);
+    if (error) {
+      return;
+    }
+    if (data) {
+      setOptions(data);
+    }
+    setIsLoading(false);
+  };
+
+  const onOption1Selected = (event) => {
+    // 기본값 선택했을 경우 초기화
+    if (!event.target.value) {
+      setSelectedOptions((prev) => {
+        return { ...prev, opt1: "" };
+      });
+    } else {
+      setSelectedOptions((prev) => {
+        return { ...prev, opt1: event.target.value };
+      });
+    }
+  };
   return (
-    // <h1>intro</h1>
     <Wrapper>
       <Main>
         <ImageContainer>
@@ -317,12 +361,25 @@ export default function ProgramIntro() {
           </Intro>
           <PriceBox>
             <h2>
-              {String(Number(program[0].price.replace(",", "")) + 5000)}원
+              {selectedOptions.opt1
+                ? Number(selectedOptions.opt1.replace(",", "")) +
+                  Number(program[0].price.replace(",", ""))
+                : program[0].price}
             </h2>
-            <span>추가요금</span>
             <IntroRow>
-              <IntroCol>구명조끼</IntroCol>
-              <IntroCol>5,000원</IntroCol>
+              <IntroCol>옵션 1</IntroCol>
+              <IntroCol>
+                <select onChange={onOption1Selected}>
+                  <option value="">선택</option>
+                  {isLoading
+                    ? "null"
+                    : options.map((option) => (
+                        <option key={option.id} value={option.option_price}>
+                          {option.option_name} : {option.option_price}원
+                        </option>
+                      ))}
+                </select>
+              </IntroCol>
             </IntroRow>
           </PriceBox>
           <Button>예약하기</Button>
