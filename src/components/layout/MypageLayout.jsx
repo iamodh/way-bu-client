@@ -1,10 +1,11 @@
 import styled from "styled-components";
 import Profile from "./MypageProfile";
 import IndexButton from "./MypageIndexButton";
+import { useState, useEffect } from "react";
+import { useRecoilState } from "recoil";
 import { NavLink, Outlet } from "react-router-dom";
-// import { useRecoilState } from "recoil";
-// import { mypageIndexState } from "../../atom";
-// import { useEffect } from "react";
+import { loggedInUserState, loggedInUserProfileState } from "../../atom";
+import { client } from "../../../libs/supabase";
 
 const MypageWrapper = styled.div`
   width: 100%;
@@ -12,6 +13,7 @@ const MypageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--gap-base);
+  margin: var(--padding-xl) 0;
   @media screen and (max-width: 768px) {
     gap: var(--gap-base);
   }
@@ -58,10 +60,37 @@ const StyledLink = styled(NavLink)`
 `;
 
 export default function MypageLayout() {
-  // Menubar 완성 후 Profile 위에 추가 예정
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
+    loggedInUserProfileState
+  );
+  console.log(loggedInUser);
+  console.log(loggedInUserProfile);
+
+  const [userPrograms, setUserPrograms] = useState();
+  const [isProgramsLoading, setIsProgramsLoading] = useState(true);
+
+  useEffect(() => {
+    getUserPrograms();
+  }, [loggedInUserProfile]);
+
+  // 사용자가 참여한 프로그램 목록 불러오기
+  async function getUserPrograms() {
+    const { data, error } = await client
+      .from("PROGRAM")
+      .select(`*`)
+      .in("id", loggedInUserProfile.joined_programs);
+    setUserPrograms(data);
+    setIsProgramsLoading(false);
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+  }
+
   return (
     <MypageWrapper>
-      <Profile />
+      <Profile data={loggedInUserProfile} />
       <Index>
         <StyledLink end to={"/mypage"}>
           <IndexButton edit="/icon/person.svg" text="개인정보" />
@@ -81,7 +110,11 @@ export default function MypageLayout() {
           <IndexButton edit="/icon/setting.svg" text="설정" />
         </StyledLink>
       </Index>
-      <Outlet />
+      {isProgramsLoading ? (
+        "Loading..."
+      ) : (
+        <Outlet context={{ loggedInUser, loggedInUserProfile, userPrograms }} />
+      )}
     </MypageWrapper>
   );
 }

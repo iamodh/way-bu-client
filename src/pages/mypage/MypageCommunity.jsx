@@ -3,6 +3,7 @@ import UserPostItem from "./components/UserPostItem";
 
 const MypageCommunityWrapper = styled.form`
   width: 80%;
+  max-width: 800px;
   margin: var(--padding-base) auto;
   display: flex;
   flex-direction: column;

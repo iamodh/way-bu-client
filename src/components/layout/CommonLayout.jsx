@@ -129,6 +129,11 @@ export default function CommonLayout() {
     if (data.session) {
       setLoggedInUser(data.session.user);
     }
+    const { data2 } = await client
+      .from("USER_PROFILE")
+      .select("*")
+      .eq("user_id", loggedInUser.id)
+      .single();
   };
 
   /* logout */

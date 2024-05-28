@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import UserMatchingItem from "./components/UserMatchingItem";
 import UserDoneMatchingItem from "./components/UserDoneMatchingItem";
+
 const MypageMatchingWrapper = styled.form`
   width: 90%;
+  max-width: 1000px;
   margin: var(--padding-base) auto;
   display: flex;
   flex-direction: column;

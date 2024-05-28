@@ -63,6 +63,7 @@ const Profile = styled.div`
   justify-content: center;
 `;
 const ProfileImg = styled.img`
+  margin: 0 auto;
   display: flex;
   width: 40px;
   height: 40px;

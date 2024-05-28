@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import UserProgramItem from "./components/UserProgramItem";
 import UserReviewItem from "./components/UserReviewItem";
+import { useOutletContext } from "react-router-dom";
 
 const MypageReviewWrapper = styled.form`
   width: 90%;
+  max-width: 1000px;
   margin: var(--padding-base) auto;
   display: flex;
   flex-direction: column;
@@ -98,15 +100,16 @@ const test = [
   },
 ];
 export default function MypageReview() {
+  const { userPrograms } = useOutletContext();
   return (
     <MypageReviewWrapper>
       <Title>후기 작성</Title>
       <UserProgramArea>
         <ButtonLeft>{"<"}</ButtonLeft>
         <UserProgramList>
-          <UserProgramItem program={test[0]} />
-          <UserProgramItem program={test[0]} />
-          <UserProgramItem program={test[0]} />
+          {userPrograms.map((program) => {
+            <UserProgramItem program={program} />;
+          })}
         </UserProgramList>
         <ButtonRight>{">"}</ButtonRight>
       </UserProgramArea>
