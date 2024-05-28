@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import UserProgramItem from "./components/UserProgramItem";
 import UserReviewItem from "./components/UserReviewItem";
 import { useOutletContext } from "react-router-dom";
@@ -41,6 +42,8 @@ const UserProgramList = styled.ul`
   width: 88%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  align-items: stretch;
+  overflow: hidden;
   gap: var(--padding-9xs);
 `;
 const ButtonLeft = styled.button`
@@ -108,7 +111,14 @@ export default function MypageReview() {
         <ButtonLeft>{"<"}</ButtonLeft>
         <UserProgramList>
           {userPrograms.map((program) => {
-            <UserProgramItem program={program} />;
+            return (
+              <Link to={"/program/" + program.id}>
+                <UserProgramItem
+                  key={"program" + program.id}
+                  program={program}
+                />
+              </Link>
+            );
           })}
         </UserProgramList>
         <ButtonRight>{">"}</ButtonRight>

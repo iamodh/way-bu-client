@@ -32,7 +32,7 @@ export default function Router() {
         <Route path="program" element={<Program />} />
         <Route path="community" element={<Coummunity />} />
         <Route path="community/:id" element={<Post />} />
-        <Route path="/mypage" element={<MypageLayout />}>
+        <Route path="/mypage/:id" element={<MypageLayout />}>
           <Route index element={<MypageUpdate />} />
           <Route path="review" element={<MypageReview />} />
           <Route path="community" element={<MypageCommunity />} />

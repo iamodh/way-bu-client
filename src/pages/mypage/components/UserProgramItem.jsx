@@ -8,6 +8,7 @@ const Wrapper = styled.li`
   flex-wrap: wrap;
   padding: var(--padding-13xl) var(--padding-5xs);
   width: 100%;
+  height: 100%;
   background: var(--color-skyblue-background, #edf4f7);
   border-radius: var(--br-8xs);
   @media screen and (max-width: 768px) {
@@ -51,16 +52,18 @@ const Button = styled.button`
     box-sizing: border-box;
   }
   @media screen and (max-width: 768px) {
-    padding: var(--padding-5xs) var(--padding-xs);
+    padding: var(--padding-5xs);
+    width: 60px;
+    font-size: var(--font-size-s);
   }
 `;
 
 export default function UserProgramItem({ program }) {
   return (
     <Wrapper>
-      \ <ProgramName>{program.program_name}</ProgramName>
+      <ProgramName>{program.program_name}</ProgramName>
       <Date>{"2024.05.22."}</Date>
-      <Button>후기 작성하기</Button>
+      <Button>후기쓰기</Button>
     </Wrapper>
   );
 }

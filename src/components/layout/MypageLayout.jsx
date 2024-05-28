@@ -64,14 +64,18 @@ export default function MypageLayout() {
   const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
     loggedInUserProfileState
   );
-  console.log(loggedInUser);
-  console.log(loggedInUserProfile);
 
   const [userPrograms, setUserPrograms] = useState();
+  const [userPosts, setUserPosts] = useState();
+  const [userComments, setUserComments] = useState();
   const [isProgramsLoading, setIsProgramsLoading] = useState(true);
+  const [isPostsLoading, setIsPostsLoading] = useState(true);
+  const [isCommentsLoading, setIsCommentsLoading] = useState(true);
 
   useEffect(() => {
     getUserPrograms();
+    getPosts();
+    getComments();
   }, [loggedInUserProfile]);
 
   // 사용자가 참여한 프로그램 목록 불러오기
@@ -88,32 +92,46 @@ export default function MypageLayout() {
     }
   }
 
+  // 사용자가 작성한 후기 목록 불러오기
+  const getPosts = async () => {
+    let { data: posts } = await client.from("POST").select("*");
+    setUserPosts(posts);
+    setIsPostsLoading(false);
+  };
+
+  // 사용자가 작성한 댓글 목록 불러오기
+  const getComments = async () => {
+    let { data: comments } = await client.from("COMMENT").select("*");
+    setUserComments(comments);
+    setIsCommentsLoading(false);
+  };
+
   return (
     <MypageWrapper>
       <Profile data={loggedInUserProfile} />
       <Index>
-        <StyledLink end to={"/mypage"}>
+        <StyledLink end to={"/mypage/" + loggedInUserProfile.id}>
           <IndexButton edit="/icon/person.svg" text="개인정보" />
         </StyledLink>
         {/* <IndexButton to={"/mypage/program"} edit="/icon/tube.svg" text="내 프로그램" /> */}
-        <StyledLink to={"/mypage/review"}>
+        <StyledLink to={"/mypage/" + loggedInUserProfile.id + "/review"}>
           <IndexButton edit="/icon/edit.svg" text="후기" />
         </StyledLink>
-        <StyledLink to={"/mypage/community"}>
+        <StyledLink to={"/mypage/" + loggedInUserProfile.id + "/community"}>
           <IndexButton edit="/icon/community.svg" text="커뮤니티" />
         </StyledLink>
-        <StyledLink to={"/mypage/matching"}>
+        <StyledLink to={"/mypage/" + loggedInUserProfile.id + "/matching"}>
           <IndexButton edit="/icon/smile.svg" text="매칭" />
         </StyledLink>
         {/* <IndexButton to={"/mypage/following"} edit="/icon/userplus.svg" text="팔로잉" /> */}
-        <StyledLink to={"/mypage/setting"}>
+        <StyledLink to={"/mypage/" + loggedInUserProfile.id + "/setting"}>
           <IndexButton edit="/icon/setting.svg" text="설정" />
         </StyledLink>
       </Index>
-      {isProgramsLoading ? (
+      {isProgramsLoading || isPostsLoading || isCommentsLoading ? (
         "Loading..."
       ) : (
-        <Outlet context={{ loggedInUser, loggedInUserProfile, userPrograms }} />
+        <Outlet context={{ userPrograms, userPosts, userComments }} />
       )}
     </MypageWrapper>
   );

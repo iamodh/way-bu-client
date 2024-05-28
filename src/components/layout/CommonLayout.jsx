@@ -130,7 +130,7 @@ export default function CommonLayout() {
         setLoggedInUser(user);
         const { data: userProfile, error: profileError } = await client
           .from("USER_PROFILE")
-          .select("*")
+          .select("*, SPORT(title, theme_color)")
           .eq("user_id", user.id);
 
         if (profileError) {
@@ -185,7 +185,7 @@ export default function CommonLayout() {
             <SearchButton />
           </Search>
           <Alarm />
-          <StyledLink to="/mypage">
+          <StyledLink to={"/mypage/" + loggedInUserProfile.id}>
             <ProfileImage src="/img/ellipse-13@2x.png" />
           </StyledLink>
         </Sign>

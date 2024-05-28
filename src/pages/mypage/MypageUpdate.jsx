@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { client } from "../../../libs/supabase";
-// import { useState, useEffect } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
 
 const MypageUpdateWrapper = styled.form`
   width: 80%;
@@ -102,9 +102,11 @@ const Button = styled.button`
 `;
 
 export default function MypageUpdate() {
-  const user_id = "aa4005a5-5f17-40d0-bce1-a022a2002f28";
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
+    loggedInUserProfileState
+  );
 
-  const { loggedInUserProfile, loggedInUser } = useOutletContext();
   const {
     register,
     handleSubmit,
@@ -119,7 +121,6 @@ export default function MypageUpdate() {
   };
 
   /* 개인정보 수정하는 함수 */
-  // !! FATCH 오류 !!
   async function updateUserInfo(formData) {
     // not null인 항목만 업데이트 되도록 함
     const updateProfile = {};
@@ -138,15 +139,12 @@ export default function MypageUpdate() {
     //   updateAccount.password = formData.password;
     // }
     if (formData.phone) {
-      updateAccount.phone = formData.phone;
+      updateProfile.phone = formData.phone;
     }
-    console.log(updateProfile);
     const { data1 } = await client
       .from("USER_PROFILE")
       .update(updateProfile)
-      .eq("user_id", user_id);
-    console.log(data1);
-
+      .eq("user_id", loggedInUser.id);
     const { data2 } = await client.auth.updateUser(updateAccount);
   }
 
@@ -185,7 +183,7 @@ export default function MypageUpdate() {
             {...register("phone")}
             type="text"
             id="myPhone"
-            placeholder={loggedInUser.phone}
+            placeholder={loggedInUserProfile.phone}
           />
           <BtnConfirm>인증</BtnConfirm>
         </InputWith>
