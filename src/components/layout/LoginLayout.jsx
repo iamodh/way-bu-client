@@ -115,7 +115,7 @@ const Alert = styled.span`
 const LoginLayout = ({ children, title, alert }) => (
   <Wrapper>
     <Form>
-      {alert && <Alert>{alert}</Alert>}
+      {/* {alert && <Alert>{alert}</Alert>} */}
       <Title>{title}</Title>
       <GreyHR />
       {children}

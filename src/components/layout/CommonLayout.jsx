@@ -113,28 +113,41 @@ export default function CommonLayout() {
     loggedInUserProfileState
   );
 
-  useEffect(() => {
-    getCurrentSession();
-  }, []);
+  async function checkLogin() {
+    // 세션 정보를 가져옵니다.
+    // 세션으로부터 현재 로그인된 유저 정보를 받고 로그인 유저가 변경될 시 반영
+    const { data: authData, error: authError } = await client.auth.getSession();
+    if (authError) {
+      console.error("Authentication error:", authError);
+      return;
+    }
+    const { session } = authData;
+    if (session) {
+      const { user } = session;
 
-  const getCurrentSession = async () => {
-    const { data, error } = await client.auth.getSession();
-    if (!data.session) {
-      return;
+      if (user) {
+        // session으로부터 auth.user 정보를 받아오고 auth.user로 부터 userProfle 정보를 받아옴
+        setLoggedInUser(user);
+        const { data: userProfile, error: profileError } = await client
+          .from("USER_PROFILE")
+          .select("*")
+          .eq("user_id", user.id);
+
+        if (profileError) {
+          console.error("Error fetching user profile:", profileError);
+        } else {
+          setLoggedInUserProfile(userProfile[0]);
+          console.log("User profile:", userProfile[0]);
+        }
+      }
+    } else {
+      console.log("No active session found");
     }
-    if (error) {
-      console.log(error.message);
-      return;
-    }
-    if (data.session) {
-      setLoggedInUser(data.session.user);
-    }
-    const { data2 } = await client
-      .from("USER_PROFILE")
-      .select("*")
-      .eq("user_id", loggedInUser.id)
-      .single();
-  };
+  }
+
+  useEffect(() => {
+    checkLogin();
+  }, []);
 
   /* logout */
   const handleLogout = async () => {

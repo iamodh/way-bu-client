@@ -5,12 +5,14 @@ import { useRecoilState } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { LinkBtn } from "../../components/layout/LoginLayout";
+import kakaoLogo from "/img/kakao.png";
+import googleLogo from "/img/google.png";
 
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   margin-top: 100px;
 `;
 
@@ -120,6 +122,45 @@ const Alert = styled.span`
   font-size: 16px;
 `;
 
+const LogoLoginContainer = styled.div`
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const StyledButton = styled.button`
+  padding: 10px;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+const KakaoButton = styled(StyledButton)`
+  background-color: #fee500;
+`;
+
+const GoogleButton = styled(StyledButton)`
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: gray;
+`;
+
 export default function Login() {
   /* Form */
   // 로그인 폼을 이용한 로그인
@@ -211,9 +252,9 @@ export default function Login() {
     setIsLoading(false);
   }
 
-  useEffect(() => {
-    checkLogin();
-  }, []);
+  // useEffect(() => {
+  //   checkLogin();
+  // }, []);
 
   const [avatarFile, setAvatarFile] = useState(null);
 
@@ -349,18 +390,17 @@ export default function Login() {
           </Check>
           <ButtonContainer>
             <Button type="submit">로그인</Button>
-            <Link to="/signup"></Link>
-            <LinkBtn to="/signup" type="button">
-              회원가입
-            </LinkBtn>
+            <Link to="/signup">회원가입</Link>
           </ButtonContainer>
+          <LogoLoginContainer>
+            <KakaoButton onClick={kakaoLogin}>
+              <img src={kakaoLogo} alt="카카오 로그인" />
+            </KakaoButton>
+            <GoogleButton onClick={googleLogin}>
+              <img src={googleLogo} alt="구글 로그인" />
+            </GoogleButton>
+          </LogoLoginContainer>
         </Form>
-        <button onClick={kakaoLogin} style={{ padding: "10px" }}>
-          카카오 로그인
-        </button>
-        <button onClick={googleLogin} style={{ padding: "10px" }}>
-          구글 로그인
-        </button>
       </Wrapper>
     );
   };
@@ -400,4 +440,3 @@ export default function Login() {
 
   return <>{loggedInUser ? <LoggedPage /> : <UnLoggedPage />}</>;
 }
-//   );
