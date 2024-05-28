@@ -40,6 +40,7 @@ const InputBox = styled.div`
 `;
 
 const Input = styled.input`
+  display: block;
   width: 75%;
   padding: 15px;
   border: 1px solid #ccc;
@@ -47,28 +48,12 @@ const Input = styled.input`
   font-size: 16px;
 `;
 
-const Check = styled.div`
-  margin-bottom: 30px;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 10px;
-`;
-
-const Find = styled.div`
-  padding: 1px;
-`;
-
-const Remember = styled.div`
-  margin-left: 90px;
-  padding: 1px;
-`;
-
 const Label = styled.label`
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 10px 20px;
   font-size: 18px;
   font-weight: bold;
+  width: 170px;
 `;
 
 const ErrorMsg = styled.span`
@@ -140,9 +125,6 @@ export {
   LoginLayout,
   InputBox,
   Input,
-  Check,
-  Find,
-  Remember,
   Label,
   ErrorMsg,
   ButtonContainer,

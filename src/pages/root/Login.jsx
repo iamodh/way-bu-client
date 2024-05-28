@@ -75,7 +75,7 @@ const Remember = styled.div`
 
 const Label = styled.label`
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 10px 20px;
   font-size: 18px;
   font-weight: bold;
 `;
@@ -353,10 +353,11 @@ export default function Login() {
           <InputBox>
             <Label htmlFor="email">이메일</Label>
             <Input
-              {...register("email", { required: "이메일을 입력해 주세요." })}
+              {...register("email")}
               id="email"
               type="email"
               placeholder="이메일을 입력하세요"
+              required
             />
             {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
           </InputBox>
@@ -364,7 +365,6 @@ export default function Login() {
             <Label htmlFor="password">비밀번호</Label>
             <Input
               {...register("password", {
-                required: "비밀번호를 입력해 주세요.",
                 minLength: {
                   value: 6,
                   message: "비밀번호는 최소 6자리 입니다.",
@@ -372,6 +372,7 @@ export default function Login() {
               })}
               id="password"
               type="password"
+              required
               placeholder="비밀번호를 입력하세요"
             />
             {errors?.password && <ErrorMsg>{errors.password.message}</ErrorMsg>}

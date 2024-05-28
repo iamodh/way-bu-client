@@ -10,7 +10,6 @@ import {
   ErrorMsg,
   ButtonContainer,
   Button,
-  LinkBtn,
 } from "../../components/layout/LoginLayout";
 
 export default function FindId() {
