@@ -51,7 +51,7 @@ const StyledLink = styled(NavLink)`
     transform: translate(-2px, -4px);
   }
   &.active {
-    background-color: var(--color-sand-bright);
+    background-color: var(--color-sand-light);
     box-shadow: 4px 4px 4px 0px var(--color-gray);
     transform: translate(-2px, -4px);
   }

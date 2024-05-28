@@ -55,7 +55,6 @@ const SearchButton = styled.button`
   background-size: contain;
   background-color: transparent;
   border: none;
-  margin: 0 var(--padding-5xs);
 `;
 const Alarm = styled.button`
   width: var(--font-size-m);
@@ -181,23 +180,6 @@ export default function CommonLayout() {
               <NavItem>Signup</NavItem>
             </Link>
           ) : null}
-          <StyledLink to={"/"}>
-            <Logo />
-          </StyledLink>
-          <Nav>
-            <StyledLink to={"/program"}>
-              <NavItem>프로그램</NavItem>
-            </StyledLink>
-            <StyledLink to={"/sports"}>
-              <NavItem>스포츠</NavItem>
-            </StyledLink>
-            <StyledLink to={"/matcing"}>
-              <NavItem>매칭</NavItem>
-            </StyledLink>
-            <StyledLink to={"/community"}>
-              <NavItem>커뮤니티</NavItem>
-            </StyledLink>
-          </Nav>
           <Search>
             <SearchInput type="text" />
             <SearchButton />
@@ -207,6 +189,20 @@ export default function CommonLayout() {
             <ProfileImage src="/img/ellipse-13@2x.png" />
           </StyledLink>
         </Sign>
+        <Nav>
+          <StyledLink to={"/program"}>
+            <NavItem>프로그램</NavItem>
+          </StyledLink>
+          <StyledLink to={"/sports"}>
+            <NavItem>스포츠</NavItem>
+          </StyledLink>
+          <StyledLink to={"/matcing"}>
+            <NavItem>매칭</NavItem>
+          </StyledLink>
+          <StyledLink to={"/community"}>
+            <NavItem>커뮤니티</NavItem>
+          </StyledLink>
+        </Nav>
       </Header>
       <Outlet />
       <Footer></Footer>
