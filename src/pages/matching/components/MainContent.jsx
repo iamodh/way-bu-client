@@ -49,6 +49,11 @@ const HotMatchingBox = styled.div`
   border-radius: var(--br-xl);
   box-sizing: border-box;
   box-shadow: 0 4px 6px gray;
+
+  @media screen and (max-width: 376px) {
+    width: 130px;
+    height: 130px;
+  }
 `;
 const MainContentRoot = styled.section`
   align-self: stretch;

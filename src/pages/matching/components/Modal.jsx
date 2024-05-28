@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import MatchingWatch from './MatchingWatch';
+import { Link } from 'react-router-dom';
 import MatchingWrite from './MatchingWrite';
 
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-base);
+`
 const Button = styled.button`
   cursor: pointer;
   border: none;
@@ -20,6 +25,11 @@ const Button = styled.button`
     background-color: var(--color-navy);
     box-sizing: border-box;
   }
+
+  @media screen and (max-width: 376px) {
+    min-width: 150px;
+    padding: var(--padding-3xs);
+  }
 `;
 
 const Div = styled.div`
@@ -31,6 +41,10 @@ const Div = styled.div`
   text-align: center;
   display: inline-block;
   white-space: nowrap;
+
+  @media screen and (max-width: 376px) {
+    font-size: var(--font-size-m);
+  }
 `;
 
 const ModalWrapper = styled.div`
@@ -70,6 +84,11 @@ const CloseButton = styled.button`
   }
 `;
 
+const StyledLink = styled(Link)`
+  color: white;
+  cursor: pointer;
+`
+
 
 const Modal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -79,8 +98,10 @@ const Modal = () => {
 
   return (
     <>
-      <Button onClick={openModal}><Div>내 매칭 보러가기</Div></Button>
-      <Button onClick={(openModal)}><Div>매칭 만들기</Div></Button>
+      <ButtonWrapper>
+        <Button><StyledLink to = {"/mypage"}><Div>내 매칭 보러가기</Div></StyledLink></Button>
+        <Button onClick={(openModal)}><Div>매칭 만들기</Div></Button>
+      </ButtonWrapper>
       
       {isOpen && (
         <ModalWrapper>

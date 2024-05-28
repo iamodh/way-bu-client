@@ -62,11 +62,20 @@ const DateButton = styled.button`
     background-color: var(--color-blue-light);
     color: white;
   }
+
+  @media screen and (max-width: 376px) {
+    width: 120px;
+    height: 50px;
+    padding-bottom: 50px;
+  }
 `;
 
 const DayLabel = styled.div`
   font-size: var(--font-size-s);
   color: ${props => props.isSunday ? 'red' : 'var(--color-navy)'&& props.isSaturday ? 'blue' : 'var(--color-navy)'};
+  @media screen and (max-width: 376px) {
+    margin-bottom: 10px;
+  }
 `;
 
 const ButtonContainer = styled.div`
@@ -148,7 +157,7 @@ const Calendar = () => {
         {nextDays.map((date, index) => (
           <Day key={index}>
             <DateButton>{date.getDate()}
-            <DayLabel isSunday={date.getDay() === 0} isSaturday={date.getDay() === 6}>{daysOfWeek[date.getDay()]}</DayLabel>
+              <DayLabel isSunday={date.getDay() === 0} isSaturday={date.getDay() === 6}>{daysOfWeek[date.getDay()]}</DayLabel>
             </DateButton>
           </Day>
         ))}

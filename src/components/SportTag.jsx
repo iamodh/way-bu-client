@@ -1,40 +1,39 @@
-import styled from "styled-components";
+// 
+import { styled } from "styled-components";
 
-const Div = styled.div`
-  position: relative;
-  font-size: 18px;
-  line-height: 20px;
-  font-family: inherit;
-  color: var(--color-blue-main);
-  text-align: center;
-  display: inline-block;
-  white-space: nowrap;
-`;
-
-const SportTag = styled.button`
-  cursor: pointer;
-  border: 1px solid var(--color-blue-main);
-  padding: var(--padding-9xs) var(--padding-3xs);
-  background-color: var(--color-skyblue-light);
+const Tag = styled.div`
+  background-color: ${(props) => props.$bgColor};
+  color: ${(props) => props.$color};
+  padding: 4px 8px;
   border-radius: var(--br-mini);
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  border: 2px solid ${(props) => props.$hoverColor};
+  font-size: var(--font-size-s);
+  cursor: pointer;
   &:hover {
-    border: 2px solid var(--color-blue-main);
     box-shadow: 1px 1px 1px var(--color-gray);
-    box-sizing: border-box;
   }
+  transition: all 0.2s ease-in-out;
+  opacity: 0.7;
 `;
 
-const IndexButton = ({ prop }) => {
-  return (
-    <SportTag>
-      <Div>{prop}</Div>
-    </SportTag>
-  );
-};
+const ClickedTag = styled(Tag)`
+  opacity: 1;
+`;
 
-export default IndexButton;
+export default function SportsTag({ themeColor, text, onClick, hasClicked }) {
+  const frontColor = `var(--color-tag-${themeColor}-front)`;
+  const backColor = `var(--color-tag-${themeColor}-back)`;
+  return (
+    <>
+      {hasClicked ? (
+        <ClickedTag $bgColor={frontColor} $color={backColor} onClick={onClick}>
+          {text}
+        </ClickedTag>
+      ) : (
+        <Tag $bgColor={backColor} $color={frontColor} onClick={onClick}>
+          {text}
+        </Tag>
+      )}
+    </>
+  );
+}

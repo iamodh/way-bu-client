@@ -24,7 +24,7 @@ const H = styled.h3`
   font-family: inherit;
   background-color: aliceblue;
   @media screen and (max-width: 450px) {
-    font-size: var(--font-size-l);
+    font-size: var(--font-size-xl);
   }
 `;
 const MatchingActionsWrapper = styled.div`
@@ -90,18 +90,13 @@ const Div = styled.div`
 `;
 
 const ExploreMatchesBar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
 
   return (
     <ExploreMatchesBarRoot>
       <H>매칭 둘러보기</H>
       <MatchingActionsWrapper>
         <MatchingActions>
-          <Button><Div>내 매칭 보러가기</Div></Button>
-          <Button><Div>매칭 만들기</Div></Button>
+          <Modal />
         </MatchingActions>
       </MatchingActionsWrapper>
       <MatchingContainer />

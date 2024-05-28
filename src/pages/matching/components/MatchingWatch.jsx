@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
-import { client } from "../../../../libs/supabase";
 
 const FrameWrapperRoot = styled.div`
   align-self: stretch;

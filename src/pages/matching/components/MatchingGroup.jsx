@@ -13,8 +13,10 @@ const MatchingIcon = styled.img`
   flex-shrink: 0;
   margin-left: 15px;
   min-height: 100px;
-  @media screen and (max-width: 450px) {
+  @media screen and (max-width: 376px) {
     flex: 1;
+    width: 100px;
+    
   }
 `;
 
@@ -133,12 +135,19 @@ const MatchingContainer = styled.div`
   &:hover {
     background-color: var(--color-skyblue-main);
   }
+
+  @media screen and (max-width: 376px) {
+    min-width: 300px;
+  }
 `;
 
 const ContainerDetails = styled.div`
   font-size: var(--font-size-m);
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 376px) {
+    margin-right: 30px;
+  }
 `;
 
 const Title = styled.div`
@@ -244,15 +253,13 @@ const MatchingGroup = () => {
         matchings.map((m) => (
           <MatchingContainer onClick={() => openModal(m)} key={m.id}>
             <MatchingIcon
-              loading="lazy"
-              alt=""
-              src="../img/matchingSurfing.png"
+         
             />
             <ContainerDetails>
               <Title>
                 <H>{m.title}</H>
               </Title>
-              <P>상세 위치 : <div style={{ fontWeight: "normal" }}>{m.location}</div></P>
+              <P>위치 : <div style={{ fontWeight: "normal" }}>{m.location}</div></P>
               <P>시간 : <div style={{ fontWeight: "normal" }}>{m.matching_time}</div></P>
               <P>난이도 : <div style={{ fontWeight: "normal" }}>{m.difficulty}</div></P>
             </ContainerDetails>

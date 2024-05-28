@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import SportTag from '../../../components/SportTag';
+import { client } from "../../../../libs/supabase";
 
 const FrameWrapperRoot = styled.div`
   align-self: stretch;
@@ -50,19 +51,6 @@ const SportTagWrapper = styled.div`
   gap: var(--gap-3xs);
 `;
 
-const B3 = styled.b`
-  width: 48px;
-  position: relative;
-  font-size: var(--xl-bold-size);
-  line-height: 29.33px;
-  display: inline-block;
-  font-family: var(--l-bold);
-  color: var(--black);
-  text-align: center;
-  @media screen and (max-width: 450px) {
-    font-size: var(--font-size-lgi);
-  }
-`;
 
 const FrameGroup = styled.div`
   margin: 0;
@@ -252,10 +240,42 @@ const Necessity = styled.input`
 `;
 const MatchingWrite = () => {
   const [isNecessityRequired, setIsNecessityRequired] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    location: '',
+    difficulty: '',
+    date: '',
+    time: '',
+    capacity: 1,
+    necessity: '',
+  });
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const handleNecessityChange = (event) => {
     setIsNecessityRequired(event.target.value === '필요');
   };
+
+  const handleSubmit = async () => {
+    try {
+      const { data, error } = await client.from('matching').insert([formData]).select();
+      if (error) {
+        console.error(error);
+      } else {
+        console.log('Data inserted successfully:', data);
+
+      }
+    } catch (error) {
+      console.error('Error inserting data:', error.message);
+    }
+  };
+
 
   return (
     <FrameWrapperRoot>
@@ -281,9 +301,15 @@ const MatchingWrite = () => {
             <FrameDiv>
               <Divbox>종목</Divbox>
               <Dropdown>
-                <option value="easy">쉬움</option>
-                <option value="nomal">보통</option>
-                <option value="difficult">어려움</option>
+                <option value="surfing">서핑</option>
+                <option value="waterskiing">수상스키</option>
+                <option value="wakeboarding">웨이크보드</option>
+                <option value="snorkeling">스노클링</option>
+                <option value="freediving">프리다이빙</option>
+                <option value="yacht">요트</option>
+                <option value="kayak">카약</option>
+                <option value="paddleboarding">패들보딩</option>
+                <option value="etc">기타</option>
               </Dropdown>
             </FrameDiv>
             <FrameDiv>
@@ -351,7 +377,7 @@ const MatchingWrite = () => {
       <DivRoot>
         <Textbox />
       </DivRoot>
-      <Button>
+      <Button onClick={handleSubmit}>
         <Div2>올리기</Div2>
       </Button>
     </FrameWrapperRoot>
