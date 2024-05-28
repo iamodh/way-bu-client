@@ -1,5 +1,9 @@
 import styled from "styled-components";
-import SportsTag from "../../../global/SportsTag";
+import SportsTag from "../../../components/SportTag";
+import { useState } from "react";
+import { useQuery } from "react-query";
+import { getSports } from "../../../../apis/sports";
+
 
 const SportsFilter = styled.div`
   padding: var(--padding-13xl);
@@ -15,20 +19,41 @@ const SportsFilter = styled.div`
 `;
 
 const Sports = () => {
+    const { isLoading: sportsLoading, data: sportsData } = useQuery(
+    ["sports"],
+    getSports
+  );
+
+  const [clickedTags, setClickedTags] = useState([]);
+
+  // 스포츠 태그 클릭 시 clickedTags 배열에서 해당 id 토글
+  const hanldeTagClicked = (id) => {
+    if (clickedTags.includes(id)) {
+      setClickedTags((prev) => prev.filter((it) => it !== id));
+    } else {
+      setClickedTags((prev) => [...prev, id]);
+    }
+  };
   return (
     <SportsFilter>
-          {["#서핑", "#스쿠버다이빙", "#패들보드", "#잠수", "#낚시"].map((e, i) => {
+      {sportsLoading
+        ? "Loading..."
+        : sportsData.map((sport) => {
             return (
               <SportsTag
-                key={i}
+                themeColor={sport.theme_color}
+                key={sport.id}
                 color={"#ff4d4d"}
-                text={e}
+                text={sport.title}
                 bgColor={"#ffcccc"}
                 hoverColor={"#ffb8b8"}
-                />
+                // handleTagClicked 함수를 onClick props로 전달
+                onClick={() => hanldeTagClicked(sport.id)}
+                hasClicked={clickedTags.includes(sport.id)}
+              />
             );
           })}
-        </SportsFilter>
+    </SportsFilter>
   );
 };
 

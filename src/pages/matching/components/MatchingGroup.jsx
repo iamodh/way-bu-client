@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { client } from "../../../../libs/supabase";
-import SportTag from "../../../components/SportTag";
-import MatchingWrite from "./MatchingWrite";
 import MatchingWatch from "./MatchingWatch";
 
 const MatchingIcon = styled.img`
