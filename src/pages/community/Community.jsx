@@ -61,8 +61,14 @@ const ComponentBox = styled.div`
   &:nth-child(4) {
     width: 200px;
   }
-  &:last-child {
+  &:nth-child(6) {
     width: 100px;
+  }
+  &:nth-child(2):hover,
+  &:nth-child(3):hover,
+  &:nth-child(5):hover,
+  &:nth-child(7):hover {
+    cursor: pointer;
   }
 `;
 
@@ -71,25 +77,58 @@ export default function Community() {
   const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
     loggedInUserProfileState
   );
-
-  const [posts, setPosts] = useState([]);
+  const [allPosts, setAllPosts] = useState([]);
+  const [sortWay, setSortWay] = useState("created_at");
+  const [order, setOrder] = useState(true);
 
   const getPosts = async () => {
     let { data: posts, error } = await client
       .from("POST")
       .select(
-        "post_id, title, post_type, user_nickname, user_id, views, thumbs"
+        "post_id, title, post_type, user_nickname, user_id, views, thumbs, comment_count, created_at, updated_at"
       );
     console.log(posts);
-    setPosts(posts);
+    setAllPosts(posts);
   };
 
   useEffect(() => {
     getPosts();
   }, []);
 
+  const handleSort = (way) => {
+    if (sortWay === way) {
+      setOrder(!order);
+    } else {
+      setSortWay(way);
+      setOrder(true);
+    }
+    const sortedPosts = [...allPosts].sort((a, b) => {
+      if (order) {
+        return a[sortWay] > b[sortWay] ? 1 : -1;
+      } else {
+        return a[sortWay] < b[sortWay] ? 1 : -1;
+      }
+    });
+    setAllPosts(sortedPosts);
+  };
+
+  const formatTime = (time) => {
+    const date = new Date(time);
+    const koreanDate = new Date(
+      date.toLocaleString("en-US", { timeZone: "Asia/Seoul" })
+    );
+    const padZero = (num) => String(num).padStart(2, "0");
+    const formattedDate = `${koreanDate.getFullYear()}.${padZero(
+      koreanDate.getMonth() + 1
+    )}.${padZero(koreanDate.getDate())}.${padZero(
+      koreanDate.getHours()
+    )}:${padZero(koreanDate.getMinutes())}:${padZero(koreanDate.getSeconds())}`;
+
+    return formattedDate;
+  };
+
   const postList = () => {
-    return posts.map((post) => {
+    return allPosts.map((post) => {
       return (
         <PostBox>
           <ComponentBox>{post.post_type}</ComponentBox>
@@ -98,7 +137,9 @@ export default function Community() {
           <ComponentBox>
             <Link to={`${post.post_id}`}>{post.title}</Link>
           </ComponentBox>
+          <ComponentBox>{post.comment_count} </ComponentBox>
           <ComponentBox>{post.user_nickname} </ComponentBox>
+          <ComponentBox>{formatTime(post.created_at)} </ComponentBox>
         </PostBox>
       );
     });
@@ -109,10 +150,6 @@ export default function Community() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
-  const onSubmit = (formData) => {
-    addComPost(formData);
-  };
 
   const addComPost = async (formData) => {
     const { data, error } = await client
@@ -131,13 +168,14 @@ export default function Community() {
       console.error(error);
       return;
     }
+    getPosts();
     console.log("작성완료", data);
   };
 
   return (
     <>
       <ComWrapper>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={handleSubmit(addComPost)}>
           <Title>글쓰기</Title>
           <InputBox>
             <label htmlFor="title">제목</label>
@@ -168,12 +206,22 @@ export default function Community() {
           <button style={{ padding: "10px" }}>글쓰기</button>
         </Form>
         <PostNameBox>
-          <PostBox className="hi">
+          <PostBox>
             <ComponentBox>태그</ComponentBox>
-            <ComponentBox>조회수</ComponentBox>
-            <ComponentBox>추천수</ComponentBox>
+            <ComponentBox onClick={() => handleSort("views")}>
+              조회수
+            </ComponentBox>
+            <ComponentBox onClick={() => handleSort("thumbs")}>
+              추천수
+            </ComponentBox>
             <ComponentBox>제목</ComponentBox>
+            <ComponentBox onClick={() => handleSort("comment_count")}>
+              댓글수
+            </ComponentBox>
             <ComponentBox>작성자</ComponentBox>
+            <ComponentBox onClick={() => handleSort("created_at")}>
+              작성일
+            </ComponentBox>
           </PostBox>
           {postList()}
         </PostNameBox>

@@ -12,6 +12,7 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   margin-top: 100px;
 `;
 
@@ -252,9 +253,9 @@ export default function Login() {
     setIsLoading(false);
   }
 
-  useEffect(() => {
-    checkLogin();
-  }, []);
+  // useEffect(() => {
+  //   checkLogin();
+  // }, []);
 
   const [avatarFile, setAvatarFile] = useState(null);
 
@@ -443,4 +444,3 @@ export default function Login() {
 
   return <>{loggedInUser ? <LoggedPage /> : <UnLoggedPage />}</>;
 }
-//   );
