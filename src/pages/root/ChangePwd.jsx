@@ -70,6 +70,7 @@ export default function ChangePwd() {
             })}
             id="newPassword"
             type="password"
+            placeholder="새 비밀번호를 입력하세요"
           />
           {errors.newPassword && (
             <ErrorMsg>{errors.newPassword.message}</ErrorMsg>
@@ -83,6 +84,7 @@ export default function ChangePwd() {
             })}
             id="confirmPassword"
             type="password"
+            placeholder="비밀번호를 다시 입력하세요"
           />
           {errors.confirmPassword && (
             <ErrorMsg>{errors.confirmPassword.message}</ErrorMsg>
@@ -90,7 +92,9 @@ export default function ChangePwd() {
         </InputBox>
         <ButtonContainer>
           <Button type="submit">비밀번호 변경</Button>
-          <LinkBtn to="/login">로그인</LinkBtn>
+          <Link to="/login" style={{ fontSize: "0.7rem" }}>
+            로그인
+          </Link>
         </ButtonContainer>
       </form>
     </LoginLayout>

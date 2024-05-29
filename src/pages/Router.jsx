@@ -16,9 +16,15 @@ import MypageReviewWrite from "./mypage/MypageReviewWrite";
 import MypageMatching from "./mypage/MypageMatching";
 import MypageCommunity from "./mypage/MypageCommunity";
 import MypageSetting from "./mypage/MypageSetting";
+import ProgramIntro from "./program/ProgramIntro";
+import ProgramReviews from "./program/ProgramReviews";
+import ProgramLayout from "./program/ProgramLayout";
+import ProgramDetail from "./program/ProgramDetail";
 import FindId from "./root/FindId";
 import FindPwd from "./root/FindPwd";
 import ChangePwd from "./root/ChangePwd";
+import Matching from "./matching/Matching";
+import Write from "./community/Write";
 
 export default function Router() {
   return (
@@ -31,8 +37,16 @@ export default function Router() {
         <Route path="change-pwd" element={<ChangePwd />} />
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
+        {/* Program detail */}
+        <Route path="program/:programId" element={<ProgramLayout />}>
+          <Route index element={<ProgramIntro />} />
+          <Route path="detail" element={<ProgramDetail />} />
+          <Route path="reviews" element={<ProgramReviews />} />
+        </Route>
         <Route path="community" element={<Coummunity />} />
+        <Route path="community/write" element={<Write />} />
         <Route path="community/:id" element={<Post />} />
+        {/* My page */}
         <Route path="/mypage/:id" element={<MypageLayout />}>
           <Route index element={<MypageUpdate />} />
           <Route path="review" element={<MypageReview />} />
@@ -41,6 +55,9 @@ export default function Router() {
           <Route path="matching" element={<MypageMatching />} />
           <Route path="setting" element={<MypageSetting />} />
         </Route>
+      </Route>
+      <Route path="/matching">
+        <Route index element={<Matching />} />
       </Route>
     </Routes>
   );

@@ -1,4 +1,5 @@
-import styled from "styled-components";
+// 
+import { styled } from "styled-components";
 
 const Label = styled.label`
   position: relative;
@@ -21,7 +22,6 @@ const Label = styled.label`
   &:hover {
     border: 2px solid ${(props) => props.color};
     box-shadow: 1px 1px 1px var(--color-gray);
-    box-sizing: border-box;
   }
   @media screen and (max-width: 768px) {
     padding: 1px var(--padding-5xs);
