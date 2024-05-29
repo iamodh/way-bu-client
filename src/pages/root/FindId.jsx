@@ -66,7 +66,9 @@ export default function FindId() {
         </InputBox>
         <ButtonContainer>
           <Button type="submit">이메일 찾기</Button>
-          <Link to="/login">로그인</Link>
+          <Link to="/login" style={{ fontSize: "0.8rem" }}>
+            로그인
+          </Link>
         </ButtonContainer>
       </form>
     </LoginLayout>
