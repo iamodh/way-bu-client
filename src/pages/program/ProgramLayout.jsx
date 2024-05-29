@@ -64,17 +64,15 @@ const Nav = styled.nav`
 export default function ProgramLayout() {
   const { programId } = useParams();
 
+  /* Get each program */
   const [program, setProgram] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [programLoading, setProgramLoading] = useState(true);
 
-  useEffect(() => {
-    getProgram();
-  }, []);
   const getProgram = async () => {
     const { data, error } = await client
       .from("PROGRAM")
       .select(
-        `*, SPORT (title, id, theme_color), BEACH (beach_name, id, theme_color), BUSINESS (business_address)`
+        `*, SPORT (title, id, theme_color), BEACH (beach_name, id, theme_color), BUSINESS (business_address, business_contact)`
       )
       .eq("id", programId);
     if (error) {
@@ -83,9 +81,31 @@ export default function ProgramLayout() {
     if (data) {
       setProgram(data);
     }
-    setIsLoading(false);
+    setProgramLoading(false);
   };
 
+  /* Get each program's all reviews */
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+
+  const getReviews = async () => {
+    const { data, error } = await client
+      .from("PROGRAM_REVIEW")
+      .select()
+      .eq("program_id", programId);
+    if (error) {
+      return;
+    }
+    if (data) {
+      setReviews(data);
+    }
+    setReviewsLoading(false);
+  };
+
+  useEffect(() => {
+    getProgram();
+    getReviews();
+  }, []);
   return (
     <>
       <Wrapper>
@@ -106,7 +126,7 @@ export default function ProgramLayout() {
           </Header>
           <Outlet context={{ program }} />
         </Main> */}
-        {isLoading ? (
+        {programLoading ? (
           "Loading..."
         ) : (
           <Main>
@@ -135,6 +155,7 @@ export default function ProgramLayout() {
             <Outlet
               context={{
                 program,
+                reviews,
               }}
             />
           </Main>

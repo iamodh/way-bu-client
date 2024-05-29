@@ -1,13 +1,12 @@
 import styled from "styled-components";
 import SportsTag from "./components/SportsTag";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query";
 import { useForm } from "react-hook-form";
 import { getPrograms } from "../../../apis/programs";
 import { getSports } from "../../../apis/sports";
 import ProgramItem from "./components/ProgramItem";
-import { client } from "../../../libs/supabase";
-import StarContainer from "./components/StarContainer";
+import StarAvgContainer from "./components/StarAvgContainer";
 
 const Body = styled.main`
   background-color: ${(props) => props.theme.backgroundColor};
@@ -898,7 +897,7 @@ export default function Program() {
                       <CompareProgramTitle>
                         {item.program_name}
                       </CompareProgramTitle>
-                      <StarContainer programId={item.id} />
+                      <StarAvgContainer programId={item.id} />
                       <CompareProgramPrice>{item.price}</CompareProgramPrice>
                     </CompareProgramContents>
                     <CompareProgramDelete
