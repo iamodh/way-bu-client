@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { client } from "../../../../libs/supabase";
 import BeachTag from './BeachTag';
 import { getBeach } from "../../../../apis/beach"
+import { getSports } from '../../../../apis/sports';
 
 const FrameWrapperRoot = styled.form`
   align-self: stretch;
@@ -255,7 +256,7 @@ const MatchingWrite = () => {
     let { data: matchings, error } = await client
       .from("MATCHINGTEST")
       .select(
-        "id, title, matching_date, matching_time, total_people, required, difficulty, necessity, beach_id"
+        "id, title, matching_date, matching_time, total_people, required, difficulty, necessity, beach_id, sports_id"
       );
     console.log(matchings);
     setAllMatchings(matchings);
@@ -276,6 +277,11 @@ const MatchingWrite = () => {
     getBeach
   );
 
+  const { isLoading: sportsLoading, data: sportsData } = useQuery(
+    ["sports"],
+    getSports
+  );
+
   const [clickedTags, setClickedTags] = useState([]);
 
   const addMatching = async (formData) => {
@@ -290,7 +296,8 @@ const MatchingWrite = () => {
           required: formData.required,
           difficulty: formData.difficulty,
           necessity: formData.necessity,
-          beach_id: selectedBeachId
+          beach_id: selectedBeachId,
+          sports_id: formData.sports_id
         },
       ])
       .select();
@@ -338,20 +345,23 @@ const MatchingWrite = () => {
                 })}
           </FrameDiv>
           <FrameDiv1>
-            {/* <FrameDiv>
-              <Divbox>종목</Divbox>
-              <Dropdown>
-                <option value="surfing">서핑</option>
-                <option value="waterskiing">수상스키</option>
-                <option value="wakeboarding">웨이크보드</option>
-                <option value="snorkeling">스노클링</option>
-                <option value="freediving">프리다이빙</option>
-                <option value="yacht">요트</option>
-                <option value="kayak">카약</option>
-                <option value="paddleboarding">패들보딩</option>
-                <option value="etc">기타</option>
-              </Dropdown>
-            </FrameDiv> */}
+          <FrameDiv>
+            <Divbox>종목</Divbox>
+            <Dropdown {...register("sports_id", { required: "종목을 선택해 주세요." })}>
+              <option value="">스포츠 종목 선택</option>
+              {sportsLoading ? (
+                <option value="" disabled>
+                  Loading...
+                </option>
+              ) : (
+                sportsData.map((sport) => (
+                  <option key={sport.id} value={sport.id}>
+                    {sport.title}
+                  </option>
+                ))
+              )}
+            </Dropdown>
+          </FrameDiv>
             <FrameDiv>
               <Divbox>난이도</Divbox>
                 <Radio
