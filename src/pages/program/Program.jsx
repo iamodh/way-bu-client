@@ -8,6 +8,7 @@ import { getSports } from "../../../apis/sports";
 import ProgramItem from "./components/ProgramItem";
 import StarAvgContainer from "./components/StarAvgContainer";
 import BlueButton from "./components/BlueButton";
+import { useNavigate } from "react-router-dom";
 
 const Body = styled.main`
   background-color: ${(props) => props.theme.backgroundColor};
@@ -610,6 +611,7 @@ export default function Program() {
     setCompareItem((prev) => prev.filter((item) => id !== item.id));
   };
 
+  const navigate = useNavigate();
   return (
     <Body>
       <Wrapper>
@@ -929,6 +931,7 @@ export default function Program() {
                 width={"250px"}
                 height={"50px"}
                 fontSize={"var(--font-size-ml)"}
+                onClick={() => navigate("compare", { state: compareItem })}
               />
             </CompareBox>
           </FixedBox>

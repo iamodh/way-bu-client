@@ -103,7 +103,9 @@ const StyledLink = styled(Link)`
   text-decoration: none;
   color: black;
 `;
-const Footer = styled.footer``;
+const Footer = styled.footer`
+  padding-bottom: 100px;
+`;
 
 export default function CommonLayout() {
   /* 새로고침 마다 getSession 해서 로그인 체크 */

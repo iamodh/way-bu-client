@@ -69,7 +69,6 @@ const Buttons = styled.div`
 export default function ProgramBooking() {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location.state);
   return (
     <Wrapper>
       <Form>

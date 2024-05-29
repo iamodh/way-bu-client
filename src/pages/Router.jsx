@@ -25,6 +25,7 @@ import ChangePwd from "./root/ChangePwd";
 import Matching from "./matching/Matching";
 import ProgramBooking from "./program/ProgramBooking";
 import Write from "./community/Write";
+import ComparePrograms from "./program/ComparePrograms";
 
 export default function Router() {
   return (
@@ -37,6 +38,8 @@ export default function Router() {
         <Route path="change-pwd" element={<ChangePwd />} />
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
+        {/* Compare Programs */}
+        <Route path="program/compare" element={<ComparePrograms />} />
         {/* Program detail */}
         <Route path="program/:programId" element={<ProgramLayout />}>
           <Route index element={<ProgramIntro />} />
@@ -47,6 +50,7 @@ export default function Router() {
         <Route path="community" element={<Coummunity />} />
         <Route path="community/write" element={<Write />} />
         <Route path="community/:id" element={<Post />} />
+
         {/* My page */}
 
         <Route path="/mypage" element={<MypageLayout />}>
