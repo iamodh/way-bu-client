@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useForm } from "react-hook-form";
 import styled from 'styled-components';
-import SportTag from '../../../components/SportTag';
 import { client } from "../../../../libs/supabase";
 
-const FrameWrapperRoot = styled.div`
+const FrameWrapperRoot = styled.form`
   align-self: stretch;
   display: flex;
   flex-direction: column;
@@ -240,65 +240,102 @@ const Necessity = styled.input`
 `;
 const MatchingWrite = () => {
   const [isNecessityRequired, setIsNecessityRequired] = useState(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    location: '',
-    difficulty: '',
-    date: '',
-    time: '',
-    capacity: 1,
-    necessity: '',
-  });
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const [allMatchings, setAllMatchings] = useState([]);
 
   const handleNecessityChange = (event) => {
     setIsNecessityRequired(event.target.value === '필요');
   };
 
-  const handleSubmit = async () => {
-    try {
-      const { data, error } = await client.from('matching').insert([formData]).select();
-      if (error) {
-        console.error(error);
-      } else {
-        console.log('Data inserted successfully:', data);
+  const getMatchings = async () => {
+    let { data: matchings, error } = await client
+      .from("MATCHINGTEST")
+      .select(
+        "id, title,  matching_date, matching_time, total_people, required, difficulty, necessity"
+      );
+    console.log(matchings);
+    setAllMatchings(matchings);
+  };
 
-      }
-    } catch (error) {
-      console.error('Error inserting data:', error.message);
+  useEffect(() => {
+    getMatchings();
+  }, []);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const addMatching = async (formData) => {
+    const { data, error } = await client
+      .from("MATCHINGTEST")
+      .insert([
+        {
+          title: formData.title,
+          matching_date: formData.matching_date,
+          matching_time: formData.matching_time,
+          total_people: formData.total_people,
+          required: formData.required,
+          difficulty: formData.difficulty,
+          necessity: formData.necessity
+        },
+      ])
+      .select();
+    if (error) {
+      console.error(error);
+      return;
     }
+    getMatchings();
+    console.log("작성완료", data);
   };
 
 
+  // const [formData, setFormData] = useState({
+  //   title: '',
+  //   location: '',
+  //   difficulty: '',
+  //   date: '',
+  //   time: '',
+  //   capacity: 1,
+  //   necessity: '',
+  // });
+
+  // const handleInputChange = (event) => {
+  //   const { name, value } = event.target;
+  //   setFormData({
+  //     ...formData,
+  //     [name]: value,
+  //   });
+  // };
+
+  // const handleSubmit = async () => {
+  //   try {
+  //     const { data, error } = await client.from('matching').insert([formData]).select();
+  //     if (error) {
+  //       console.error(error);
+  //     } else {
+  //       console.log('Data inserted successfully:', data);
+
+  //     }
+  //   } catch (error) {
+  //     console.error('Error inserting data:', error.message);
+  //   }
+  // };
+
+
   return (
-    <FrameWrapperRoot>
+    <FrameWrapperRoot onSubmit={handleSubmit(addMatching)}>
       <FrameParent1>
         <FrameGroup>
           <FrameDiv>
             <Divbox>제목</Divbox>
-            <Title type="text" />
+            <Title type="text" {...register("title", { required: "제목을 입력해 주세요." })} id='title'/>
           </FrameDiv>
           <FrameDiv>
             <Divbox>위치</Divbox>
-            <SportTagWrapper>
-              <SportTag prop="광안리" />
-              <SportTag prop="다대포" />
-              <SportTag prop="송도" />
-              <SportTag prop="송정" />
-              <SportTag prop="일광" />
-              <SportTag prop="임랑" />
-              <SportTag prop="해운대" />
-            </SportTagWrapper>
           </FrameDiv>
           <FrameDiv1>
-            <FrameDiv>
+            {/* <FrameDiv>
               <Divbox>종목</Divbox>
               <Dropdown>
                 <option value="surfing">서핑</option>
@@ -311,43 +348,46 @@ const MatchingWrite = () => {
                 <option value="paddleboarding">패들보딩</option>
                 <option value="etc">기타</option>
               </Dropdown>
-            </FrameDiv>
+            </FrameDiv> */}
             <FrameDiv>
               <Divbox>난이도</Divbox>
-              <Radio
-                type="radio"
-                value="상"
-                name="level"
-                id="level1"
-                style={{ opacity: '0' }}
-              />
-              <RadioLabel htmlFor="level1">상</RadioLabel>
-              <Radio
-                type="radio"
-                value="중"
-                name="level"
-                id="level2"
-                style={{ opacity: '0' }}
-              />
-              <RadioLabel htmlFor="level2">중</RadioLabel>
-              <Radio
-                type="radio"
-                value="하"
-                name="level"
-                id="level3"
-                style={{ opacity: '0' }}
-              />
-              <RadioLabel htmlFor="level3">하</RadioLabel>
+                <Radio
+                  type="radio"
+                  value="상"
+                  name="level"
+                  id="level1"
+                  style={{ opacity: '0' }}
+                  {...register("difficulty", { required: "제목을 입력해 주세요." })}
+                />
+                <RadioLabel htmlFor="level1">상</RadioLabel>
+                <Radio
+                  type="radio"
+                  value="중"
+                  name="level"
+                  id="level2"
+                  style={{ opacity: '0' }}
+                  {...register("difficulty", { required: "제목을 입력해 주세요." })}
+                />
+                <RadioLabel htmlFor="level2">중</RadioLabel>
+                <Radio
+                  type="radio"
+                  value="하"
+                  name="level"
+                  id="level3"
+                  style={{ opacity: '0' }}
+                  {...register("difficulty", { required: "제목을 입력해 주세요." })}
+                />
+                <RadioLabel htmlFor="level3">하</RadioLabel>
             </FrameDiv>
           </FrameDiv1>
           <FrameDiv>
             <Divbox>일정</Divbox>
-            <Schedulebox type="date" />
-            <Schedulebox type="time" />
+            <Schedulebox type="date" {...register("matching_date", { required: "제목을 입력해 주세요." })}/>
+            <Schedulebox type="time" {...register("matching_time", { required: "제목을 입력해 주세요." })}/>
           </FrameDiv>
           <FrameDiv>
             <Divbox>인원</Divbox>
-            <NumberInput type="number" min={1} max={10} />
+            <NumberInput type="number" min={1} max={10} {...register("total_people", { required: "제목을 입력해 주세요." })} />
             <Div>최대 10명까지 가능합니다.</Div>
           </FrameDiv>
           <FrameDiv>
@@ -355,29 +395,31 @@ const MatchingWrite = () => {
             <Radio
               type="radio"
               value="필요"
-              name="necessity"
+
               id="yes"
               style={{ opacity: '0' }}
               onChange={handleNecessityChange}
+              
             />
             <RadioLabel htmlFor="yes">필요</RadioLabel>
             <Radio
               type="radio"
               value="불필요"
-              name="necessity"
+
               id="no"
               style={{ opacity: '0' }}
               onChange={handleNecessityChange}
+              
             />
             <RadioLabel htmlFor="no">불필요</RadioLabel>
-            {isNecessityRequired && <Necessity type="text" placeholder="준비물 입력" />}
+            {isNecessityRequired && <Necessity {...register("necessity", { required: "제목을 입력해 주세요." })} type="text" placeholder="준비물 입력" />}
           </FrameDiv>
         </FrameGroup>
       </FrameParent1>
       <DivRoot>
-        <Textbox />
+        <Textbox  {...register("required", { required: "제목을 입력해 주세요." })} />
       </DivRoot>
-      <Button onClick={handleSubmit}>
+      <Button type='submit'>
         <Div2>올리기</Div2>
       </Button>
     </FrameWrapperRoot>

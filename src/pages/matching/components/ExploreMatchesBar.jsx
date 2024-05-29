@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Modal from "./Modal";
-import React, { useState } from 'react';
+import React from 'react';
 
 const ExploreMatchesBarRoot = styled.div`
   display: flex;

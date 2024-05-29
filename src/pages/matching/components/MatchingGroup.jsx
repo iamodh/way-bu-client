@@ -6,7 +6,6 @@ import MatchingWatch from "./MatchingWatch";
 const MatchingIcon = styled.img`
   height: 100px;
   width: 100px;
-  position: relative;
   overflow: hidden;
   flex-shrink: 0;
   margin-left: 15px;
@@ -14,86 +13,7 @@ const MatchingIcon = styled.img`
   @media screen and (max-width: 376px) {
     flex: 1;
     width: 100px;
-    
   }
-`;
-
-const Div = styled.div`
-  position: relative;
-  font-size: var(--m-size);
-  letter-spacing: 0.01em;
-  font-family: var(--font-noto-sans-kr);
-  color: var(--color-darkblue);
-  text-align: left;
-  display: inline-block;
-  min-width: 30px;
-`;
-
-const People = styled.button`
-  cursor: pointer;
-  border: none;
-  padding: var(--padding-9xs) var(--padding-5xs);
-  background-color: var(--color-thistle-100);
-  border-radius: var(--br-3xs);
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  &:hover {
-    background-color: var(--color-thistle-200);
-  }
-`;
-
-const Div1 = styled.div`
-  position: relative;
-  font-size: var(--m-size);
-  letter-spacing: 0.01em;
-  font-family: var(--font-noto-sans-kr);
-  color: var(--color-darkblue);
-  text-align: left;
-  display: inline-block;
-  min-width: 45px;
-`;
-
-const Place = styled.button`
-  cursor: pointer;
-  border: none;
-  padding: var(--padding-9xs) var(--padding-5xs);
-  background-color: var(--color-lavender);
-  border-radius: var(--br-3xs);
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  &:hover {
-    background-color: var(--color-lightsteelblue-200);
-  }
-`;
-
-const Button = styled.button`
-  cursor: pointer;
-  border: none;
-  padding: var(--padding-9xs) var(--padding-5xs);
-  background-color: var(--color-pink-100);
-  border-radius: var(--br-3xs);
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  &:hover {
-    background-color: var(--color-pink-200);
-  }
-`;
-
-const MatchingTag = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-end;
-  gap: var(--gap-9xs);
 `;
 
 const Wrapper = styled.div`
@@ -163,6 +83,9 @@ const H = styled.div`
   position: relative;
   font-size: var(--font-size-xl);
   font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;	
+  white-space: nowrap;
   @media screen and (max-width: 450px) {
     font-size: var(--font-size-l);
   }
@@ -175,6 +98,9 @@ const P = styled.div`
   font-size: var(--font-size-m);
   font-weight: bold;
   gap: var(--gap-5xs);
+  overflow: hidden;
+  text-overflow: ellipsis;	
+  white-space: nowrap;
 `;
 
 const ModalWrapper = styled.div`
@@ -226,7 +152,7 @@ const MatchingGroup = () => {
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
-      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date`);
+      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views`);
     setMatchings(data);
     setIsLoading(false);
     if (error) {
@@ -234,6 +160,23 @@ const MatchingGroup = () => {
       return;
     }
   }
+
+  async function updateMatchingViews(matching) {
+    const { data, error } = await client
+    .from("MATCHING")
+    .update({views : matching.views+1})
+    .eq("id", matching.id)
+    .select();
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+    setMatchings((currentMatchings) => 
+      currentMatchings.map((m) => (m.id === matching.id ? data[0] : m))
+    );
+    
+  }
+
 
   const openModal = (matching) => {
     setSelectedMatching(matching);
@@ -249,10 +192,8 @@ const MatchingGroup = () => {
         "Loading..."
       ) : (
         matchings.map((m) => (
-          <MatchingContainer onClick={() => openModal(m)} key={m.id}>
-            <MatchingIcon
-         
-            />
+          <MatchingContainer onClick={() => {openModal(m), updateMatchingViews(m)}} key={m.id}>
+            <MatchingIcon />
             <ContainerDetails>
               <Title>
                 <H>{m.title}</H>
