@@ -5,14 +5,14 @@ const Wrapper = styled.div`
   gap: 4px;
 `;
 
-export default function StarContainer({ review }) {
+export default function StarContainer({ review, width }) {
   return (
     <Wrapper>
       {[...Array(review.score)].map((_, i) => (
         <svg
           key={"full" + i}
-          width="20"
-          height="20"
+          width={width ? width : "20"}
+          height={width ? width : "20"}
           viewBox="0 0 16 16"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -26,8 +26,8 @@ export default function StarContainer({ review }) {
       {[...Array(5 - review.score)].map((_, i) => (
         <svg
           key={"empty" + i}
-          width="20"
-          height="20"
+          width={width ? width : "20"}
+          height={width ? width : "20"}
           viewBox="0 0 16 16"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

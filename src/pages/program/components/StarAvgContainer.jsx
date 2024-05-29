@@ -20,7 +20,7 @@ const Wrapper = styled.div`
   }
 `;
 
-export default function StarAvgContainer({ programId }) {
+export default function StarAvgContainer({ programId, width }) {
   /* Review 별 불러오기 */
   const [reviews, setReviews] = useState();
   const [reviewLoading, setReviewLoading] = useState(true);
@@ -53,8 +53,8 @@ export default function StarAvgContainer({ programId }) {
           [...Array(5)].map((_, i) => (
             <svg
               key={"empty" + i}
-              width="16"
-              height="16"
+              width={width ? width : "16"}
+              height={width ? width : "16"}
               viewBox="0 0 16 16"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -76,8 +76,8 @@ export default function StarAvgContainer({ programId }) {
           ].map((_, i) => (
             <svg
               key={"full" + i}
-              width="16"
-              height="16"
+              width={width ? width : "16"}
+              height={width ? width : "16"}
               viewBox="0 0 16 16"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -104,8 +104,8 @@ export default function StarAvgContainer({ programId }) {
           ].map((_, i) => (
             <svg
               key={"empry" + i}
-              width="16"
-              height="16"
+              width={width ? width : "16"}
+              height={width ? width : "16"}
               viewBox="0 0 16 16"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"

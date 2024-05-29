@@ -91,7 +91,7 @@ export default function ProgramLayout() {
   const getReviews = async () => {
     const { data, error } = await client
       .from("PROGRAM_REVIEW")
-      .select()
+      .select(`*, USER_PROFILE (id, user_nickname, avatar_url)`)
       .eq("program_id", programId);
     if (error) {
       return;
