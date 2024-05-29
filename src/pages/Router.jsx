@@ -23,6 +23,7 @@ import FindId from "./root/FindId";
 import FindPwd from "./root/FindPwd";
 import ChangePwd from "./root/ChangePwd";
 import Matching from "./matching/Matching";
+import Write from "./community/Write";
 
 export default function Router() {
   return (
@@ -42,6 +43,7 @@ export default function Router() {
           <Route path="reviews" element={<ProgramReviews />} />
         </Route>
         <Route path="community" element={<Coummunity />} />
+        <Route path="community/write" element={<Write />} />
         <Route path="community/:id" element={<Post />} />
         {/* My page */}
 
