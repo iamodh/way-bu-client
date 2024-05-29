@@ -11,6 +11,10 @@ const FrameWrapperRoot = styled.div`
   height: 100%;
   gap: var(--gap-base);
   margin: auto;
+  @media screen and (max-width: 376px) {
+    width: 310px;
+    height: 560px;
+  }
 `;
 
 const Div = styled.div`
@@ -38,7 +42,7 @@ const Title = styled.div`
 `;
 
 const FrameGroup = styled.nav`
-  margin: 0;
+  margin: 0px;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -54,16 +58,19 @@ const FrameGroup = styled.nav`
 const Schedulebox = styled.div`
   font-weight: bold;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
-  height: 45px;
-  line-height: 45px;
+  height: 40px;
+  line-height: 40px;
   flex: 1;
   border-radius: var(--br-8xs);
   box-sizing: border-box;
   overflow: hidden;
   min-width: 374px;
   max-width: 100%;
-  @media screen and (max-width: 675px) {
-    min-width: 100%;
+ @media screen and (max-width: 376px) {
+    min-width: 210px;
+    height: 30px;
+    line-height: 30px;
+    font-size: var(--font-size-s);
   }
 `;
 
@@ -89,16 +96,22 @@ const FrameParent1 = styled.div`
   height: 200px;
 `;
 const Divbox = styled.div`
-  padding: 10px;
+  padding: 5px;
   border: none;
   border-radius: 5px;
   text-align: center;
   font-weight: bold;
-  height: 20px;
-  line-height: 20px;
+  height: 40px;
+  line-height: 30px;
   background-color: var(--color-blue-vivid);
-  width: 70px;
+  width: 80px;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  @media screen and (max-width: 376px) {
+    width: 70px;
+    height: 30px;
+    line-height: 20px;
+    font-size: var(--font-size-s);
+  }
 `
 const Textbox = styled.div`
   font-weight: bold;
@@ -111,6 +124,10 @@ const Textbox = styled.div`
   background-color: aliceblue;
   border-radius: 15px;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  @media screen and (max-width: 376px) {
+    width: 300px;
+    height: 130px;
+  }
 `;
 
 const Textbox1 = styled.textarea`
@@ -131,16 +148,16 @@ const Textbox1 = styled.textarea`
   padding: 10px;
   resize: none;
   outline: none;
-  @media screen and (max-width: 750px) {
-    padding-left: var(--padding-13xl);
-    padding-right: var(--padding-12xl);
-    box-sizing: border-box;
+  @media screen and (max-width: 376px) {
+    width: 300px;
+    height: 70px;
+    font-size: var(--font-size-s);
   }
 `;
 
 const Button = styled.button`
   border: none;
-  min-width: 150px;
+  width: 150px;
   padding: var(--padding-base) var(--padding-base);
   background-color: var(--color-blue-main);
   color: var(--color-white);
@@ -156,15 +173,17 @@ const Button = styled.button`
   }
 `;
 const DivRoot = styled.div`
-  margin: 0;
+  margin: 0px;
   margin-top: 10px;
   width: 100%;
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
   box-sizing: border-box;
   gap: var(--gap-base);
   @media screen and (max-width: 675px) {
-    gap: var(--gap-mini);
+    gap: var(--gap-base);
     box-sizing: border-box;
   }
 `;
@@ -175,6 +194,7 @@ const Div2 = styled.div`
   text-align: center;
   display: inline-block;
   white-space: nowrap;
+  
 `;
 const Divbox1 = styled.div`
   padding: 10px;
@@ -182,11 +202,16 @@ const Divbox1 = styled.div`
   border-radius: 5px;
   text-align: center;
   font-weight: bold;
-  height: 20px;
+  height: 40px;
   line-height: 20px;
-
-  width: 70px;
+  width: 80px;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  @media screen and (max-width: 376px) {
+    width: 70px;
+    height: 30px;
+    line-height: 10px;
+    font-size: var(--font-size-s);
+  }
 `
 
 const MatchingWatch = ({ matching }) => {
@@ -210,10 +235,10 @@ const MatchingWatch = ({ matching }) => {
           </FrameDiv>
           <FrameDiv>
             <Divbox>모집상태</Divbox>
-            <Divbox1>모집중</Divbox1>
+            <Divbox1>{matching.state}</Divbox1>
           </FrameDiv>
         </FrameGroup>
-        <FrameDiv>
+        <FrameDiv style={{paddingTop:"0px"}}>
           <Divbox>일정</Divbox>
           <Schedulebox>{matching.matching_date} {matching.matching_time}</Schedulebox>
         </FrameDiv>
@@ -224,7 +249,6 @@ const MatchingWatch = ({ matching }) => {
             <Div2>신청하기</Div2>
           </Button>
         </DivRoot>
-
       </FrameParent1>
     </FrameWrapperRoot>
   );

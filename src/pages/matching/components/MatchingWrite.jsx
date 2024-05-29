@@ -18,6 +18,9 @@ const FrameWrapperRoot = styled.form`
   height: 100%;
   gap: var(--gap-base);
   margin: auto;
+  @media screen and (max-width: 376px) {
+    gap: var(--gap-3xs);
+  }
 `;
 
 const Div = styled.div`
@@ -27,6 +30,11 @@ const Div = styled.div`
   text-align: center;
   height: 45px;
   line-height: 45px;
+  @media screen and (max-width: 376px) {
+  height: 30px;
+  line-height: 30px;
+  font-size: var(--font-size-xs);
+  }
 `;
 
 const Title = styled.input`
@@ -41,8 +49,9 @@ const Title = styled.input`
   max-width: 100%;
   padding: 10px;
   background-color: aliceblue;
-  @media screen and (max-width: 675px) {
-    min-width: 100%;
+  @media screen and (max-width: 376px) {
+    min-width: 190px;
+    height: 30px;
   }
 `;
 
@@ -65,7 +74,7 @@ const FrameGroup = styled.div`
   gap: var(--gap-xl);
   white-space: nowrap;
   margin-bottom: 10px;
-  @media screen and (max-width: 750px) {
+  @media screen and (max-width: 376px) {
     flex-wrap: wrap;
   }
 `;
@@ -81,8 +90,9 @@ const Schedulebox = styled.input`
   max-width: 30%;
   padding: 10px;
   background-color: aliceblue;
-  @media screen and (max-width: 675px) {
-    min-width: 100%;
+    @media screen and (max-width: 376px) {
+    height: 30px;
+    max-width: 100px;
   }
 `;
 
@@ -97,8 +107,10 @@ const NumberInput = styled.input`
   max-width: 30%;
   padding: 10px;
   background-color: aliceblue;
-  @media screen and (max-width: 675px) {
-    min-width: 100%;
+  @media screen and (max-width: 376px) {
+    height: 30px;
+    max-width: 100px;
+    line-height: 30px;
   }
 `;
 
@@ -109,6 +121,9 @@ const FrameDiv = styled.div`
   gap: var(--gap-3xs);
   box-sizing: border-box;
   max-width: 100%;
+  @media screen and (max-width: 376px) {
+    width: 300px;
+  }
 `;
 
 const FrameParent1 = styled.div`
@@ -119,6 +134,11 @@ const FrameParent1 = styled.div`
   max-width: 100%;
   height: 60%;
   margin-top: 25px;
+  @media screen and (max-width: 376px) {
+    height: 400px;
+    width: 350px;
+
+  }
 `;
 
 const Divbox = styled.div`
@@ -131,6 +151,13 @@ const Divbox = styled.div`
   line-height: 20px;
   background-color: var(--color-blue-vivid);
   width: 70px;
+  @media screen and (max-width: 376px) {
+    width: 50px;
+    font-size: var(--font-size-s);
+    height: 30px;
+    line-height: 20px;
+    padding: 5px;
+  }
 `;
 
 const Textbox = styled.textarea`
@@ -145,6 +172,10 @@ const Textbox = styled.textarea`
   border: none;
   outline: none;
   background-color: aliceblue;
+  @media screen and (max-width: 376px) {
+    height: 150px;
+    font-size: var(--font-size-s);
+  }
 `;
 
 const Button = styled.button`
@@ -188,6 +219,10 @@ const FrameDiv1 = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  @media screen and (max-width: 376px) {
+    flex-direction: column;
+    gap: var(--gap-xl);
+  }
 `;
 
 const Radio = styled.input`
@@ -208,6 +243,11 @@ const RadioLabel = styled.label`
   &:hover {
     color: var(--color-blue-main);
   }
+  @media screen and (max-width: 376px) {
+    height: 30px;
+    line-height: 30px;
+    font-size: var(--font-size-s);
+  }
 `;
 
 const Dropdown = styled.select`
@@ -221,8 +261,9 @@ const Dropdown = styled.select`
   max-width: 60%;
   padding: 0px 20px 0px 10px;
   background-color: aliceblue;
-  @media screen and (max-width: 675px) {
-    min-width: 100%;
+  @media screen and (max-width: 376px) {
+    width: 100px;
+    height: 30px;
   }
 `;
 
@@ -243,7 +284,7 @@ const Necessity = styled.input`
   }
 `;
 
-const MatchingWrite = () => {
+const MatchingWrite = ({ closeModal }) => {
   const [isNecessityRequired, setIsNecessityRequired] = useState(false);
   const [allMatchings, setAllMatchings] = useState([]);
   const [selectedBeachId, setSelectedBeachId] = useState(null);
@@ -307,6 +348,7 @@ const MatchingWrite = () => {
     }
     getMatchings();
     console.log("작성완료", data);
+    closeModal();
   };
   
   const handleTagClicked = (id) => {
