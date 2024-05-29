@@ -53,10 +53,10 @@ const DateButton = styled.button`
   padding: 15px 50px;
   width: 150px;
   height: 70px;
-  color: var(--color-blue-main);
+  color: ${props => props.isSelected ? 'white' : 'var(--color-blue-main)'};
   border-radius: 15px;
-  border: 1px var(--color-blue-main) solid;
-  background-color: transparent;
+  border: 1px ${props => props.isSelected ? 'transparent' : 'var(--color-blue-main)'} solid;
+  background-color: ${props => props.isSelected ? 'var(--color-blue-main)' : 'transparent'};
   cursor: pointer;
   &:hover {
     background-color: var(--color-blue-light);
@@ -72,7 +72,7 @@ const DateButton = styled.button`
 
 const DayLabel = styled.div`
   font-size: var(--font-size-s);
-  color: ${props => props.isSunday ? 'red' : 'var(--color-navy)'&& props.isSaturday ? 'blue' : 'var(--color-navy)'};
+  color: ${props => props.isSunday ? 'red' : (props.isSaturday ? 'blue' : 'var(--color-navy)')};
   @media screen and (max-width: 376px) {
     margin-bottom: 10px;
   }
@@ -105,9 +105,10 @@ const ButtonContainer = styled.div`
 
 const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
 
-const Calendar = () => {
+const Calendar = ({ onSelectDate }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date()); // 새로운 상태 변수 selectedDate 추가
 
   useEffect(() => {
     setCurrentMonth((currentDate.getMonth() + 1) + '월');
@@ -147,6 +148,16 @@ const Calendar = () => {
     return endWeek >= twoWeeksLater;
   };
 
+  useEffect(() => {
+    console.log("Selected Date:", selectedDate);
+    onSelectDate(selectedDate);
+  }, [selectedDate, onSelectDate]);
+
+  const handleDateButtonClick = (date) => {
+    // 클릭된 날짜와 현재 선택된 날짜가 같은 경우 취소, 다른 경우 선택
+    setSelectedDate(prevDate => prevDate && prevDate.getTime() === date.getTime() ? null : date);
+  };  
+
   return (
     <CalendarContainer>
       <YearMonth>
@@ -156,8 +167,14 @@ const Calendar = () => {
       <DayContainer>
         {nextDays.map((date, index) => (
           <Day key={index}>
-            <DateButton>{date.getDate()}
-              <DayLabel isSunday={date.getDay() === 0} isSaturday={date.getDay() === 6}>{daysOfWeek[date.getDay()]}</DayLabel>
+            <DateButton
+              isSelected={selectedDate && date.getTime() === selectedDate.getTime()} // isSelected를 통해 토글 상태 전달
+              onClick={() => handleDateButtonClick(date)} // 클릭 시 handleDateButtonClick 함수 호출
+            >
+              {date.getDate()}
+              <DayLabel isSunday={date.getDay() === 0} isSaturday={date.getDay() === 6}>
+                {daysOfWeek[date.getDay()]}
+              </DayLabel>
             </DateButton>
           </Day>
         ))}

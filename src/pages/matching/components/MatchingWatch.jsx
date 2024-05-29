@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { useRecoilState } from "recoil";
+import { loggedInUserState } from "../../../atom";
 
 const FrameWrapperRoot = styled.div`
   align-self: stretch;
@@ -179,9 +181,9 @@ const Button = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   &:hover {
-    background-color: var(--color-navy);
+    background-color: ${({ disabled }) => (disabled ? 'gray' : 'var(--color-navy)')};
     box-sizing: border-box;
   }
 `;
@@ -217,7 +219,7 @@ const Divbox1 = styled.div`
   font-weight: bold;
   height: 40px;
   line-height: 20px;
-  width: 80px;
+  width: 90px;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   @media screen and (max-width: 376px) {
     width: 70px;
@@ -228,6 +230,16 @@ const Divbox1 = styled.div`
 `
 
 const MatchingWatch = ({ matching, sport, beach }) => {
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const isHostUser = matching.host_userId === loggedInUser.id;
+
+  const handleButtonClick = () => {
+    if (isHostUser) {
+      return;
+    }
+  };
+  
+
   return (
     <FrameWrapperRoot>
       <FrameParent1 key={matching.id}>
@@ -256,8 +268,8 @@ const MatchingWatch = ({ matching, sport, beach }) => {
         <DivRoot>
           <Textbox>{matching.required}</Textbox>
           <Textbox1 placeholder="신청 메세지를 입력해주세요." />
-          <Button>
-            <Div2>신청하기</Div2>
+          <Button disabled={isHostUser} onClick={handleButtonClick}>
+            <Div2>{isHostUser ? '직접 게시한 글입니다.' : '신청하기'}</Div2>
           </Button>
         </DivRoot>
       </FrameParent1>

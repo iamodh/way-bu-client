@@ -1,9 +1,11 @@
+import Sports from "./components/Sports";
 import MainContent from "./components/MainContent";
 import MatchingOptions from "./components/MatchingOptions";
 import ExploreMatchesBar from "./components/ExploreMatchesBar";
 import Calendar from "./components/Calendar";
 import styled from "styled-components";
 import MatchingGroup from "./components/MatchingGroup";
+import { useState } from "react";
 
 
 const MatchingRoot = styled.div`
@@ -39,15 +41,22 @@ const ExploreMatchesBarWrapper = styled.section`
 `;
 
 const Matching = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    // 여기서 선택된 날짜를 사용하거나 필요한 처리를 수행할 수 있습니다.
+  };
+
   return (
     <MatchingRoot>
       <MainContent />
       <MatchingOptions />
       <Wrapper>
-        <Calendar />
+        <Calendar onSelectDate={handleDateSelect}/>
         <ExploreMatchesBar />
         <ExploreMatchesBarWrapper> 
-          <MatchingGroup />
+          <MatchingGroup selectedDate={selectedDate}/>
         </ExploreMatchesBarWrapper>
       </Wrapper>
     </MatchingRoot>

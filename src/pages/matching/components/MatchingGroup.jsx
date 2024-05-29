@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { client } from "../../../../libs/supabase";
 import MatchingWatch from "./MatchingWatch";
 
+
 const MatchingIcon = styled.img`
   height: 100px;
   width: 100px;
@@ -144,7 +145,7 @@ const CloseButton = styled.button`
   }
 `;
 
-const MatchingGroup = () => {
+const MatchingGroup = ({ selectedDate, selectedSportId }) => {
   const [matchings, setMatchings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMatching, setSelectedMatching] = useState(null);
@@ -166,7 +167,7 @@ const MatchingGroup = () => {
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
-      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id`); // 수정: sport_id도 가져오기
+      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId`);
     setMatchings(data);
     setIsLoading(false);
     if (error) {
@@ -174,6 +175,18 @@ const MatchingGroup = () => {
       return;
     }
   }
+
+  const filteredMatchings = selectedDate
+    ? matchings.filter((matching) => {
+        const matchingDate = new Date(matching.matching_date);
+        return (
+          matchingDate.getFullYear() === selectedDate.getFullYear() &&
+          matchingDate.getMonth() === selectedDate.getMonth() &&
+          matchingDate.getDate() === selectedDate.getDate()
+        );
+      })
+    : matchings;
+  
 
   async function updateMatchingViews(matching) {
     const { data, error } = await client
@@ -243,7 +256,7 @@ const MatchingGroup = () => {
       {isLoading ? (
         "Loading..."
       ) : (
-        matchings.map((m) => (
+        filteredMatchings.map((m) => (
           <MatchingContainer onClick={() => {openModal(m); updateMatchingViews(m);}} key={m.id}>
             <MatchingIcon />
             <ContainerDetails>

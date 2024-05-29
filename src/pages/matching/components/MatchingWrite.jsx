@@ -6,6 +6,8 @@ import { client } from "../../../../libs/supabase";
 import BeachTag from './BeachTag';
 import { getBeach } from "../../../../apis/beach"
 import { getSports } from '../../../../apis/sports';
+import { useRecoilState } from "recoil";
+import { loggedInUserState, loggedInUserProfileState } from "../../../atom";
 
 const FrameWrapperRoot = styled.form`
   align-self: stretch;
@@ -292,6 +294,8 @@ const BeachWrapper = styled.div`
   }
 `
 const MatchingWrite = ({ closeModal }) => {
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+
   const [isNecessityRequired, setIsNecessityRequired] = useState(false);
   const [allMatchings, setAllMatchings] = useState([]);
   const [selectedBeachId, setSelectedBeachId] = useState(null);
@@ -304,7 +308,7 @@ const MatchingWrite = ({ closeModal }) => {
     let { data: matchings, error } = await client
       .from("MATCHINGTEST")
       .select(
-        "id, title, matching_date, matching_time, total_people, required, difficulty, necessity, beach_id, sports_id"
+        "id, title, matching_date, matching_time, total_people, required, difficulty, necessity, beach_id, sports_id, host_userid"
       );
     console.log(matchings);
     setAllMatchings(matchings);
@@ -313,7 +317,7 @@ const MatchingWrite = ({ closeModal }) => {
   useEffect(() => {
     getMatchings();
   }, []);
-
+  
   const {
     register,
     handleSubmit,
@@ -345,7 +349,8 @@ const MatchingWrite = ({ closeModal }) => {
           difficulty: formData.difficulty,
           necessity: formData.necessity,
           beach_id: selectedBeachId,
-          sports_id: formData.sports_id
+          sports_id: formData.sports_id,
+          host_userid: loggedInUser.id
         },
       ])
       .select();

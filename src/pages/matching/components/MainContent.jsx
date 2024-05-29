@@ -162,7 +162,7 @@ const MainContent = () => {
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
-      .select(`id, title, location, matching_date, views, sport_id, beach_id`);
+      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId, state`);
     setMatchings(data);
     setIsLoading(false);
     if (error) {

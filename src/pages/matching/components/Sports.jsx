@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import SportsTag from "../../../components/SportTag"
+import SportsTag from "../../../components/SportTag";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { getSports } from "../../../../apis/sports";
@@ -27,7 +27,7 @@ const Sports = () => {
   const [clickedTags, setClickedTags] = useState([]);
 
   // 스포츠 태그 클릭 시 clickedTags 배열에서 해당 id 토글
-  const handleTagClicked = (id) => {
+  const hanldeTagClicked = (id) => {
     if (clickedTags.includes(id)) {
       setClickedTags((prev) => prev.filter((it) => it !== id));
     } else {
@@ -41,10 +41,14 @@ const Sports = () => {
         : sportsData.map((sport) => {
             return (
               <SportsTag
+                themeColor={sport.theme_color}
                 key={sport.id}
-                sport={sport}
+                color={"#ff4d4d"}
+                text={sport.title}
+                bgColor={"#ffcccc"}
+                hoverColor={"#ffb8b8"}
                 // handleTagClicked 함수를 onClick props로 전달
-                onClick={() => handleTagClicked(sport.id)}
+                onClick={() => hanldeTagClicked(sport.id)}
                 hasClicked={clickedTags.includes(sport.id)}
               />
             );
