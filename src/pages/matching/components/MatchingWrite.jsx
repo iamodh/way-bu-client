@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { client } from "../../../../libs/supabase";
-import BeachTag from "./BeachTag"
-import { getBeach } from "../../../../apis/beach";
-import { useQuery } from "react-query";
+import BeachTag from './BeachTag';
+import { getBeach } from "../../../../apis/beach"
 
 const FrameWrapperRoot = styled.form`
   align-self: stretch;
@@ -241,22 +241,11 @@ const Necessity = styled.input`
     min-width: 100%;
   }
 `;
+
 const MatchingWrite = () => {
   const [isNecessityRequired, setIsNecessityRequired] = useState(false);
   const [allMatchings, setAllMatchings] = useState([]);
-  const { isLoading: beachLoading, data: beachData } = useQuery(
-    ["beach"],
-    getBeach
-  );
-  const [clickedTags, setClickedTags] = useState([]);
-
-  const handleTagClicked = (id) => {
-    if (clickedTags.includes(id)) {
-      setClickedTags((prev) => prev.filter((it) => it !== id));
-    } else {
-      setClickedTags((prev) => [...prev, id]);
-    }
-  };
+  const [selectedBeachId, setSelectedBeachId] = useState(null);
 
   const handleNecessityChange = (event) => {
     setIsNecessityRequired(event.target.value === '필요');
@@ -266,7 +255,7 @@ const MatchingWrite = () => {
     let { data: matchings, error } = await client
       .from("MATCHINGTEST")
       .select(
-        "id, title,  matching_date, matching_time, total_people, required, difficulty, necessity"
+        "id, title, matching_date, matching_time, total_people, required, difficulty, necessity, beach_id"
       );
     console.log(matchings);
     setAllMatchings(matchings);
@@ -282,6 +271,13 @@ const MatchingWrite = () => {
     formState: { errors },
   } = useForm();
 
+  const { isLoading: beachLoading, data: beachData } = useQuery(
+    ["beach"],
+    getBeach
+  );
+
+  const [clickedTags, setClickedTags] = useState([]);
+
   const addMatching = async (formData) => {
     const { data, error } = await client
       .from("MATCHINGTEST")
@@ -293,7 +289,8 @@ const MatchingWrite = () => {
           total_people: formData.total_people,
           required: formData.required,
           difficulty: formData.difficulty,
-          necessity: formData.necessity
+          necessity: formData.necessity,
+          beach_id: selectedBeachId
         },
       ])
       .select();
@@ -303,6 +300,14 @@ const MatchingWrite = () => {
     }
     getMatchings();
     console.log("작성완료", data);
+  };
+  
+  const handleTagClicked = (id) => {
+    if (clickedTags.includes(id)) {
+      setClickedTags((prev) => prev.filter((it) => it !== id));
+    } else {
+      setClickedTags((prev) => [...prev, id]);
+    }
   };
 
   return (
@@ -315,24 +320,27 @@ const MatchingWrite = () => {
           </FrameDiv>
           <FrameDiv>
             <Divbox>위치</Divbox>
-              {beachLoading
-                ? "Loading..."
-                : beachData.map((beach) => {
-                    return (
-                      <BeachTag
-                        key={beachData.id}
-                        beach={beach}
-                        onClick={() => handleTagClicked(beach.id)}
-                        hasClicked={clickedTags.includes(beach.id)} >
-                      </BeachTag>
-                    );
+            {beachLoading
+              ? "Loading..."
+              : beachData.map((beach) => {
+                  return (
+                    <BeachTag
+                      key={beach.id}
+                      beach={beach}
+                      // handleTagClicked 함수를 onClick props로 전달
+                      onClick={() => {
+                        handleTagClicked(beach.id);
+                        setSelectedBeachId(beach.id);
+                      }}
+                      hasClicked={clickedTags.includes(beach.id)}
+                    />
+                  );
                 })}
           </FrameDiv>
           <FrameDiv1>
-            <FrameDiv>
+            {/* <FrameDiv>
               <Divbox>종목</Divbox>
               <Dropdown>
-                <option value="">스포츠 종목 선택</option>
                 <option value="surfing">서핑</option>
                 <option value="waterskiing">수상스키</option>
                 <option value="wakeboarding">웨이크보드</option>
@@ -343,7 +351,7 @@ const MatchingWrite = () => {
                 <option value="paddleboarding">패들보딩</option>
                 <option value="etc">기타</option>
               </Dropdown>
-            </FrameDiv>
+            </FrameDiv> */}
             <FrameDiv>
               <Divbox>난이도</Divbox>
                 <Radio
@@ -390,7 +398,7 @@ const MatchingWrite = () => {
             <Radio
               type="radio"
               value="필요"
-
+              name='radio'
               id="yes"
               style={{ opacity: '0' }}
               onChange={handleNecessityChange}
@@ -400,7 +408,7 @@ const MatchingWrite = () => {
             <Radio
               type="radio"
               value="불필요"
-
+              name='radio'
               id="no"
               style={{ opacity: '0' }}
               onChange={handleNecessityChange}

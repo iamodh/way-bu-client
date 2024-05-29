@@ -1,4 +1,5 @@
 import { styled } from "styled-components";
+import React from "react";
 
 const Label = styled.label`
   position: relative;
@@ -37,23 +38,26 @@ const Tag = styled.input`
   }
 `;
 
-export default function SportsTag({ beach }) {
+const BeachTag = ({ beach, onClick, hasClicked }) => {
   let color = `var(--color-tag-${beach.theme_color}-front)`;
   let bgcolor = `var(--color-tag-${beach.theme_color}-back)`;
 
   return (
     <>
       <Tag
-        type="checkbox"
-        value={beach.beach_name}
-        name={beach.beach_name}
+        type="radio"
         id={beach.beach_name}
+        checked={hasClicked}
+        onChange={onClick}
         color={color}
         bgcolor={bgcolor}
+        name="beach"
       />
       <Label htmlFor={beach.beach_name} color={color} bgcolor={bgcolor}>
         {beach.beach_name}
       </Label>
     </>
   );
-}
+};
+
+export default BeachTag;
