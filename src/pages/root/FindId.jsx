@@ -19,37 +19,17 @@ export default function FindId() {
     formState: { errors },
   } = useForm();
   const [alert, setAlert] = useState({ cnt: 0, err: null });
-  const [foundEmail, setFoundEmail] = useState(null);
 
   const onSubmit = async (formData) => {
-    const { name, phoneNumber } = formData;
-
-    // 이름과 전화번호로 사용자 인증
-    const { data: users, error } = await client
-      .from("users")
-      .select("email")
-      .eq("name", name)
-      .eq("phoneNumber", phoneNumber);
-
-    if (error) {
-      console.error("Error retrieving user data:", error.message);
-      setAlert({
-        cnt: alert.cnt + 1,
-        err: "사용자를 인증하는 중에 오류가 발생했습니다.",
-      });
-      return;
-    }
-
-    if (users.length === 0) {
-      setAlert({
-        cnt: alert.cnt + 1,
-        err: "일치하는 사용자가 없습니다.",
-      });
-      return;
-    }
-
-    // 사용자가 존재하면 이메일을 보여줌
-    setFoundEmail(users[0].email);
+    const { name, phoneNumber, email } = formData;
+    // 여기서는 실제로 이메일을 보내는 대신 로그로 출력합니다.
+    console.log("Name:", name);
+    console.log("Phone Number:", phoneNumber);
+    console.log("Email:", email);
+    setAlert({
+      cnt: alert.cnt + 1,
+      err: "아이디 찾기 이메일이 전송되었습니다.",
+    });
   };
 
   return (
@@ -59,49 +39,38 @@ export default function FindId() {
         alert.cnt !== 0 && alert.err && `${alert.err} (횟수: ${alert.cnt})`
       }
     >
-      {foundEmail ? (
-        <div>
-          <p>가입된 이메일: {foundEmail}</p>
-          <ButtonContainer>
-            <Link to="/login" style={{ fontSize: "0.8rem" }}>
-              로그인
-            </Link>
-          </ButtonContainer>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <InputBox>
-            <Label htmlFor="name">이름</Label>
-            <Input
-              {...register("name", { required: "이름을 입력해 주세요." })}
-              id="name"
-              type="text"
-              placeholder="이름을 입력하세요"
-            />
-            {errors.name && <ErrorMsg>{errors.name.message}</ErrorMsg>}
-          </InputBox>
-          <InputBox>
-            <Label htmlFor="phoneNumber">전화번호</Label>
-            <Input
-              {...register("phoneNumber", {
-                required: "전화번호를 입력해 주세요.",
-              })}
-              id="phoneNumber"
-              type="tel"
-              placeholder="전화번호를 입력하세요"
-            />
-            {errors.phoneNumber && (
-              <ErrorMsg>{errors.phoneNumber.message}</ErrorMsg>
-            )}
-          </InputBox>
-          <ButtonContainer>
-            <Button type="submit">이메일 찾기</Button>
-            <Link to="/login" style={{ fontSize: "0.8rem" }}>
-              로그인
-            </Link>
-          </ButtonContainer>
-        </form>
-      )}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <InputBox>
+          <Label htmlFor="name">이름</Label>
+          <Input
+            {...register("name", { required: "이름을 입력해 주세요." })}
+            id="name"
+            type="text"
+            placeholder="이름을 입력하세요"
+          />
+          {errors.name && <ErrorMsg>{errors.name.message}</ErrorMsg>}
+        </InputBox>
+        <InputBox>
+          <Label htmlFor="phoneNumber">전화번호</Label>
+          <Input
+            {...register("phoneNumber", {
+              required: "전화번호를 입력해 주세요.",
+            })}
+            id="phoneNumber"
+            type="tel"
+            placeholder="전화번호를 입력하세요"
+          />
+          {errors.phoneNumber && (
+            <ErrorMsg>{errors.phoneNumber.message}</ErrorMsg>
+          )}
+        </InputBox>
+        <ButtonContainer>
+          <Button type="submit">이메일 찾기</Button>
+          <Link to="/login" style={{ fontSize: "0.7rem" }}>
+            로그인
+          </Link>
+        </ButtonContainer>
+      </form>
     </LoginLayout>
   );
 }
