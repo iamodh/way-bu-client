@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import styled from 'styled-components';
 import { client } from "../../../../libs/supabase";
+import BeachTag from "./BeachTag"
+import { getBeach } from "../../../../apis/beach";
+import { useQuery } from "react-query";
 
 const FrameWrapperRoot = styled.form`
   align-self: stretch;
@@ -123,7 +126,7 @@ const Divbox = styled.div`
   border-radius: 5px;
   text-align: center;
   font-weight: bold;
-  height: 20px;
+  height: 40px;
   line-height: 20px;
   background-color: var(--color-blue-vivid);
   width: 70px;
@@ -241,6 +244,19 @@ const Necessity = styled.input`
 const MatchingWrite = () => {
   const [isNecessityRequired, setIsNecessityRequired] = useState(false);
   const [allMatchings, setAllMatchings] = useState([]);
+  const { isLoading: beachLoading, data: beachData } = useQuery(
+    ["beach"],
+    getBeach
+  );
+  const [clickedTags, setClickedTags] = useState([]);
+
+  const handleTagClicked = (id) => {
+    if (clickedTags.includes(id)) {
+      setClickedTags((prev) => prev.filter((it) => it !== id));
+    } else {
+      setClickedTags((prev) => [...prev, id]);
+    }
+  };
 
   const handleNecessityChange = (event) => {
     setIsNecessityRequired(event.target.value === '필요');
@@ -289,40 +305,6 @@ const MatchingWrite = () => {
     console.log("작성완료", data);
   };
 
-
-  // const [formData, setFormData] = useState({
-  //   title: '',
-  //   location: '',
-  //   difficulty: '',
-  //   date: '',
-  //   time: '',
-  //   capacity: 1,
-  //   necessity: '',
-  // });
-
-  // const handleInputChange = (event) => {
-  //   const { name, value } = event.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value,
-  //   });
-  // };
-
-  // const handleSubmit = async () => {
-  //   try {
-  //     const { data, error } = await client.from('matching').insert([formData]).select();
-  //     if (error) {
-  //       console.error(error);
-  //     } else {
-  //       console.log('Data inserted successfully:', data);
-
-  //     }
-  //   } catch (error) {
-  //     console.error('Error inserting data:', error.message);
-  //   }
-  // };
-
-
   return (
     <FrameWrapperRoot onSubmit={handleSubmit(addMatching)}>
       <FrameParent1>
@@ -333,11 +315,24 @@ const MatchingWrite = () => {
           </FrameDiv>
           <FrameDiv>
             <Divbox>위치</Divbox>
+              {beachLoading
+                ? "Loading..."
+                : beachData.map((beach) => {
+                    return (
+                      <BeachTag
+                        key={beachData.id}
+                        beach={beach}
+                        onClick={() => handleTagClicked(beach.id)}
+                        hasClicked={clickedTags.includes(beach.id)} >
+                      </BeachTag>
+                    );
+                })}
           </FrameDiv>
           <FrameDiv1>
-            {/* <FrameDiv>
+            <FrameDiv>
               <Divbox>종목</Divbox>
               <Dropdown>
+                <option value="">스포츠 종목 선택</option>
                 <option value="surfing">서핑</option>
                 <option value="waterskiing">수상스키</option>
                 <option value="wakeboarding">웨이크보드</option>
@@ -348,7 +343,7 @@ const MatchingWrite = () => {
                 <option value="paddleboarding">패들보딩</option>
                 <option value="etc">기타</option>
               </Dropdown>
-            </FrameDiv> */}
+            </FrameDiv>
             <FrameDiv>
               <Divbox>난이도</Divbox>
                 <Radio

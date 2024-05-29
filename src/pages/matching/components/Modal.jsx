@@ -99,7 +99,7 @@ const Modal = () => {
   return (
     <>
       <ButtonWrapper>
-        <Button><StyledLink to = {"/mypage"}><Div>내 매칭 보러가기</Div></StyledLink></Button>
+        <Button><StyledLink to = {"/mypage/matching"}><Div>내 매칭 보러가기</Div></StyledLink></Button>
         <Button onClick={(openModal)}><Div>매칭 만들기</Div></Button>
       </ButtonWrapper>
       

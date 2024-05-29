@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import { getSports } from "../../../../apis/sports";
-import SportsTag from "../../../components/SportTag";
 
 const FrameWrapperRoot = styled.div`
   align-self: stretch;
