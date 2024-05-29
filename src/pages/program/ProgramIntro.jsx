@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { client } from "../../../libs/supabase";
 import StarAvgContainer from "./components/StarAvgContainer";
@@ -210,7 +210,10 @@ const ReviewContent = styled.span`
 export default function ProgramIntro() {
   const { program, reviews } = useOutletContext();
 
-  const [image, setImage] = useState(program[0].thumbnail);
+  const [currentImage, setCurrentImage] = useState({
+    index: 0,
+    imgUrl: program[0].thumbnail,
+  });
   const [options, setOptions] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedOptions, setSelectedOptions] = useState({
@@ -260,25 +263,43 @@ export default function ProgramIntro() {
     }
   };
 
-  console.log(reviews);
+  console.log(selectedOptions.opt1);
+  {
+    !isLoading
+      ? console.log(
+          selectedOptions.opt1
+            ? options[
+                options.findIndex(
+                  (option) => option.id === Number(selectedOptions.opt1)
+                )
+              ].option_price
+            : null
+        )
+      : null;
+  }
+  const navigate = useNavigate();
   return (
     <Wrapper>
       <Main>
         <ImageContainer>
-          <Image $imageUrl={program[0].images ? image : program[0].thumbnail} />
+          <Image
+            $imageUrl={
+              program[0].images ? currentImage.imgUrl : program[0].thumbnail
+            }
+          />
           <Slides>
             {/* 여러개일 때 클릭 추가, 하나일 때는 슬라이드만 */}
             {program[0].images ? (
               program[0].images.map((image, index) => (
                 <Slide
                   onClick={() => {
-                    setImage(image);
+                    setCurrentImage({ index, imgUrl: image });
                   }}
-                  key={index}
+                  key={"image" + index}
                   $url={image}
                 >
                   {/* Todo : slide cover 전환 구현 */}
-                  <SlideCover />
+                  {index === currentImage.index ? null : <SlideCover />}
                 </Slide>
               ))
             ) : (
@@ -379,10 +400,29 @@ export default function ProgramIntro() {
             <h2>
               {addCommaintoMoney(
                 program[0].price +
-                  Number(selectedOptions.opt1) +
-                  Number(selectedOptions.opt2)
+                  Number(
+                    selectedOptions.opt1
+                      ? options[
+                          options.findIndex(
+                            (option) =>
+                              option.id === Number(selectedOptions.opt1)
+                          )
+                        ].option_price
+                      : ""
+                  ) +
+                  Number(
+                    selectedOptions.opt2
+                      ? options[
+                          options.findIndex(
+                            (option) =>
+                              option.id === Number(selectedOptions.opt2)
+                          )
+                        ].option_price
+                      : ""
+                  )
               ) + "원"}
             </h2>
+
             <IntroRow>
               <IntroCol>옵션 1</IntroCol>
               <IntroCol>
@@ -391,7 +431,7 @@ export default function ProgramIntro() {
                   {isLoading
                     ? "null"
                     : options.map((option) => (
-                        <option key={option.id} value={option.option_price}>
+                        <option key={"option1" + option.id} value={option.id}>
                           {option.option_name} : {option.option_price}원
                         </option>
                       ))}
@@ -401,12 +441,15 @@ export default function ProgramIntro() {
             <IntroRow>
               <IntroCol>옵션 2</IntroCol>
               <IntroCol>
-                <select onChange={onOption2Selected}>
+                <select
+                  disabled={selectedOptions.opt1 ? false : true}
+                  onChange={onOption2Selected}
+                >
                   <option value="">선택</option>
                   {isLoading
                     ? "null"
                     : options.map((option) => (
-                        <option key={option.id} value={option.option_price}>
+                        <option key={"option2" + option.id} value={option.id}>
                           {option.option_name} : {option.option_price}원
                         </option>
                       ))}
@@ -414,7 +457,36 @@ export default function ProgramIntro() {
               </IntroCol>
             </IntroRow>
           </PriceBox>
-          <Button>예약하기</Button>
+          <Button
+            onClick={() =>
+              navigate("booking", {
+                state: {
+                  opt1: `${
+                    selectedOptions.opt1
+                      ? options[
+                          options.findIndex(
+                            (option) =>
+                              option.id === Number(selectedOptions.opt1)
+                          )
+                        ].option_name
+                      : ""
+                  }`,
+                  opt2: `${
+                    selectedOptions.opt2
+                      ? options[
+                          options.findIndex(
+                            (option) =>
+                              option.id === Number(selectedOptions.opt2)
+                          )
+                        ].option_name
+                      : ""
+                  }`,
+                },
+              })
+            }
+          >
+            예약하기
+          </Button>
         </IntroContainer>
       </Main>
       <ReviewsTitle>후기 ({reviews.length})</ReviewsTitle>

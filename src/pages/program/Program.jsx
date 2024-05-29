@@ -7,6 +7,7 @@ import { getPrograms } from "../../../apis/programs";
 import { getSports } from "../../../apis/sports";
 import ProgramItem from "./components/ProgramItem";
 import StarAvgContainer from "./components/StarAvgContainer";
+import BlueButton from "./components/BlueButton";
 
 const Body = styled.main`
   background-color: ${(props) => props.theme.backgroundColor};
@@ -642,7 +643,7 @@ export default function Program() {
                 return (
                   <SportsTag
                     themeColor={sport.theme_color}
-                    key={sport.id}
+                    key={"sport" + sport.id}
                     text={sport.title}
                     // handleTagClicked 함수를 onClick props로 전달
                     onClick={() => hanldeTagClicked(sport.id)}
@@ -875,7 +876,7 @@ export default function Program() {
               {programsData.length !== 0
                 ? programsData.map((program) => (
                     <ProgramItem
-                      key={program.id}
+                      key={"program" + program.id}
                       program={program}
                       onBtnClicked={onCompareBtnClicked}
                     />
@@ -892,7 +893,7 @@ export default function Program() {
               </CompareTitle>
               <CompareProgramBox>
                 {compareItem.map((item, index) => (
-                  <CompareProgram key={index}>
+                  <CompareProgram key={"compare" + index}>
                     <CompareProgramContents>
                       <CompareProgramTitle>
                         {item.program_name}
@@ -923,7 +924,12 @@ export default function Program() {
                   </CompareProgram>
                 ))}
               </CompareProgramBox>
-              <CompareBtn>상세 비교</CompareBtn>
+              <BlueButton
+                text={"상세 비교"}
+                width={"250px"}
+                height={"50px"}
+                fontSize={"var(--font-size-ml)"}
+              />
             </CompareBox>
           </FixedBox>
         ) : null}

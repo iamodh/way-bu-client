@@ -23,6 +23,7 @@ import FindId from "./root/FindId";
 import FindPwd from "./root/FindPwd";
 import ChangePwd from "./root/ChangePwd";
 import Matching from "./matching/Matching";
+import ProgramBooking from "./program/ProgramBooking";
 
 export default function Router() {
   return (
@@ -40,6 +41,7 @@ export default function Router() {
           <Route index element={<ProgramIntro />} />
           <Route path="detail" element={<ProgramDetail />} />
           <Route path="reviews" element={<ProgramReviews />} />
+          <Route path="booking" element={<ProgramBooking />} />
         </Route>
         <Route path="community" element={<Coummunity />} />
         <Route path="community/:id" element={<Post />} />

@@ -196,7 +196,7 @@ export default function CommonLayout() {
           <StyledLink to={"/sports"}>
             <NavItem>스포츠</NavItem>
           </StyledLink>
-          <StyledLink to={"/matcing"}>
+          <StyledLink to={"/matching"}>
             <NavItem>매칭</NavItem>
           </StyledLink>
           <StyledLink to={"/community"}>

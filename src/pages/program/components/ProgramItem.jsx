@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { client } from "../../../../libs/supabase";
 import StarAvgContainer from "./StarAvgContainer";
 import { addCommaintoMoney } from "../../../../libs/formatter";
+import BlueButton from "./BlueButton";
 
 const Wrapper = styled.div`
   border: 1px solid var(--color-gray);
@@ -71,22 +72,6 @@ const Content = styled.div`
   span {
     font-size: var(--font-size-s);
   }
-`;
-
-const Button = styled.button`
-  width: calc(100% - 40px);
-  margin: 10px 0 20px 0;
-  font-size: var(--font-size-m);
-  color: white;
-  height: 40px;
-  background-color: var(--color-blue-main);
-  &:hover {
-    background-color: #1758b9;
-  }
-  transition: all 0.2s ease-in-out;
-  border-radius: var(--br-3xs);
-  border: none;
-  cursor: pointer;
 `;
 
 export default function ProgramItem({ program, onBtnClicked }) {
@@ -210,13 +195,12 @@ export default function ProgramItem({ program, onBtnClicked }) {
           </div>
         </Content>
       </Link>
-      <Button
+      <BlueButton
+        text={"비교하기"}
         onClick={() => {
           onBtnClicked(program);
         }}
-      >
-        비교하기
-      </Button>
+      />
     </Wrapper>
   );
 }
