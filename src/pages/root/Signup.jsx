@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 45px;
+  margin-top: 100px;
 
   @media (max-width: 480px) {
     margin-top: 10px;
@@ -26,15 +26,15 @@ const Wrapper = styled.div`
 
 const Form = styled.form`
   width: 100%;
-  max-width: 500px;
-  padding: 40px;
+  max-width: 600px;
+  padding: 60px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--color-blue-vivid);
 
   @media (max-width: 480px) {
-    padding: 35px;
+    padding: 30px;
   }
 `;
 
