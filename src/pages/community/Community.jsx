@@ -242,17 +242,20 @@ export default function Community() {
   };
 
   const handleSort = (way) => {
+    let newOrder = order;
     if (sortWay === way) {
-      setOrder(!order);
+      newOrder = !order;
+      setOrder(newOrder);
     } else {
       setSortWay(way);
-      setOrder(true);
+      newOrder = false;
+      setOrder(newOrder);
     }
     const sortedPosts = [...posts].sort((a, b) => {
-      if (order) {
-        return a[sortWay] > b[sortWay] ? 1 : -1;
+      if (newOrder) {
+        return a[way] > b[way] ? 1 : -1;
       } else {
-        return a[sortWay] < b[sortWay] ? 1 : -1;
+        return a[way] < b[way] ? 1 : -1;
       }
     });
     setPosts(sortedPosts);
