@@ -18,6 +18,7 @@ import MypageSetting from "./mypage/MypageSetting";
 import FindId from "./root/FindId";
 import FindPwd from "./root/FindPwd";
 import ChangePwd from "./root/ChangePwd";
+import Write from "./community/Write";
 
 export default function Router() {
   return (
@@ -31,6 +32,7 @@ export default function Router() {
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
         <Route path="community" element={<Coummunity />} />
+        <Route path="community/write" element={<Write />} />
         <Route path="community/:id" element={<Post />} />
         <Route path="/mypage" element={<MypageLayout />}>
           <Route index element={<MypageUpdate />} />
