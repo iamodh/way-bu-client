@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const Wrapper = styled.li`
   display: flex;
@@ -63,6 +64,7 @@ const Profile = styled.div`
   justify-content: center;
 `;
 const ProfileImg = styled.img`
+  margin: 0 auto;
   display: flex;
   width: 40px;
   height: 40px;
@@ -73,23 +75,24 @@ const ProfileName = styled(Div)`
   text-align: center;
 `;
 
-export default function UserDoneMatchingItem({ matching }) {
-  const memberList = matching.members;
+export default function UserDoneMatchingItem({ matching, users }) {
   return (
     <Wrapper>
       <Row>
         <PostTitle>{matching.title}</PostTitle>
-        <SportTag>{matching.sport}</SportTag>
+        <SportTag>{matching.SPORT.title}</SportTag>
       </Row>
       <Date>{matching.date}</Date>
       <Row2>
         <Div>참가자</Div>
-        {memberList.map((member) => {
+        {users.map((member) => {
           return (
-            <Profile>
-              <ProfileImg src={member.img} />
-              <ProfileName>{member.name}</ProfileName>
-            </Profile>
+            <Link to={"/mypage/" + member.id}>
+              <Profile>
+                <ProfileImg src={member.avatar_url} />
+                <ProfileName>{member.user_nickname}</ProfileName>
+              </Profile>
+            </Link>
           );
         })}
       </Row2>

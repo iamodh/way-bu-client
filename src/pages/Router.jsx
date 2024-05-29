@@ -12,6 +12,7 @@ import CommonLayout from "../components/layout/CommonLayout";
 import MypageLayout from "../components/layout/MypageLayout";
 import MypageUpdate from "./mypage/MypageUpdate";
 import MypageReview from "./mypage/MypageReview";
+import MypageReviewWrite from "./mypage/MypageReviewWrite";
 import MypageMatching from "./mypage/MypageMatching";
 import MypageCommunity from "./mypage/MypageCommunity";
 import MypageSetting from "./mypage/MypageSetting";
@@ -52,10 +53,10 @@ export default function Router() {
         <Route path="community/:id" element={<Post />} />
 
         {/* My page */}
-
-        <Route path="/mypage" element={<MypageLayout />}>
+        <Route path="/mypage/:id" element={<MypageLayout />}>
           <Route index element={<MypageUpdate />} />
           <Route path="review" element={<MypageReview />} />
+          <Route path="review-write" element={<MypageReviewWrite />} />
           <Route path="community" element={<MypageCommunity />} />
           <Route path="matching" element={<MypageMatching />} />
           <Route path="setting" element={<MypageSetting />} />
