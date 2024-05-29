@@ -54,6 +54,19 @@ const FrameGroup = styled.nav`
     flex-wrap: wrap;
   }
 `;
+const FrameGroup1 = styled.nav`
+  margin: 0px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: var(--gap-9xs);
+  white-space: nowrap;
+  margin-bottom: 10px;
+  @media screen and (max-width: 376px) {
+  
+  }
+`;
 
 const Schedulebox = styled.div`
   font-weight: bold;
@@ -214,9 +227,7 @@ const Divbox1 = styled.div`
   }
 `
 
-const MatchingWatch = ({ matching }) => {
-  if (!matching) return null;
-
+const MatchingWatch = ({ matching, sport, beach }) => {
   return (
     <FrameWrapperRoot>
       <FrameParent1 key={matching.id}>
@@ -224,11 +235,11 @@ const MatchingWatch = ({ matching }) => {
           <Div>{matching.title}</Div>
         </Title>
         <FrameGroup>
-          <Divbox1>#종목</Divbox1>
+          <Divbox1 style={{width:"110px"}}>#{sport.title}</Divbox1>
           <Divbox1>#{matching.difficulty}</Divbox1>
-          <Divbox1>#{matching.location}</Divbox1>
+          <Divbox1 style={{width:"150px"}}>#{beach.beach_name}</Divbox1>
         </FrameGroup>
-        <FrameGroup>
+        <FrameGroup1>
           <FrameDiv>
             <Divbox>참가인원</Divbox>
             <Divbox1>{matching.total_people}명</Divbox1>
@@ -237,7 +248,7 @@ const MatchingWatch = ({ matching }) => {
             <Divbox>모집상태</Divbox>
             <Divbox1>{matching.state}</Divbox1>
           </FrameDiv>
-        </FrameGroup>
+        </FrameGroup1>
         <FrameDiv style={{paddingTop:"0px"}}>
           <Divbox>일정</Divbox>
           <Schedulebox>{matching.matching_date} {matching.matching_time}</Schedulebox>

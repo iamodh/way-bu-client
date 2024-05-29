@@ -148,15 +148,25 @@ const MatchingGroup = () => {
   const [matchings, setMatchings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMatching, setSelectedMatching] = useState(null);
+  const [selectedBeach, setSelectedBeach] = useState(null);
+  const [selectedSport, setSelectedSport] = useState(null); // 추가: 선택된 스포츠 정보 상태
 
   useEffect(() => {
     getMatchings();
   }, []);
 
+  useEffect(() => {
+    getSports();
+  }, []);
+
+  useEffect(() => {
+    getBeach();
+  }, []);
+
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
-      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views`);
+      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id`); // 수정: sport_id도 가져오기
     setMatchings(data);
     setIsLoading(false);
     if (error) {
@@ -181,13 +191,51 @@ const MatchingGroup = () => {
     
   }
 
+  async function getSports(sportId) {
+    const { data, error } = await client
+      .from("SPORT")
+      .select("title")
+      .eq("id", sportId); // sport_id와 일치하는 스포츠 정보 가져오기
+    if (error) {
+      console.log(error.message);
+      return null;
+    }
+    return data[0]; // 데이터는 배열로 오므로 첫 번째 요소 반환
+  }
 
-  const openModal = (matching) => {
+  async function getBeach(beachId) {
+    const { data, error } = await client
+      .from("BEACH")
+      .select("beach_name")
+      .eq("id", beachId);
+    if (error) {
+      console.log(error.message);
+      return null;
+    }
+    if (data.length === 0) {
+      console.log("Beach data not found");
+      return null;
+    }
+    return data[0];
+  }
+  
+  
+
+  const openModal = async (matching) => {
+    const sport = await getSports(matching.sport_id);
+    setSelectedSport(sport);
+    
+    const beach = await getBeach(matching.beach_id); // matching.beach_id를 전달하여 해당하는 해변 정보 가져오기
     setSelectedMatching(matching);
-  };
+    setSelectedBeach(beach);
+  };  
+  
+  
 
   const closeModal = () => {
     setSelectedMatching(null);
+    setSelectedSport(null); // 추가: 선택된 스포츠 정보 초기화
+    setSelectedBeach(null);
   };
 
   return (
@@ -196,7 +244,7 @@ const MatchingGroup = () => {
         "Loading..."
       ) : (
         matchings.map((m) => (
-          <MatchingContainer onClick={() => {openModal(m), updateMatchingViews(m)}} key={m.id}>
+          <MatchingContainer onClick={() => {openModal(m); updateMatchingViews(m);}} key={m.id}>
             <MatchingIcon />
             <ContainerDetails>
               <Title>
@@ -213,7 +261,7 @@ const MatchingGroup = () => {
         <ModalWrapper onClick={closeModal}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <CloseButton onClick={closeModal}>&times;</CloseButton>
-            <MatchingWatch matching={selectedMatching} />
+            <MatchingWatch matching={selectedMatching} sport={selectedSport} beach={selectedBeach} />
           </ModalContent>
         </ModalWrapper>
       )}
