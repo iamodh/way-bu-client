@@ -22,6 +22,7 @@ import ProgramDetail from "./program/ProgramDetail";
 import FindId from "./root/FindId";
 import FindPwd from "./root/FindPwd";
 import ChangePwd from "./root/ChangePwd";
+import Matching from "./matching/Matching";
 
 export default function Router() {
   return (
@@ -51,6 +52,9 @@ export default function Router() {
           <Route path="matching" element={<MypageMatching />} />
           <Route path="setting" element={<MypageSetting />} />
         </Route>
+      </Route>
+      <Route path="/matching">
+        <Route index element={<Matching />} />
       </Route>
     </Routes>
   );
