@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { client } from "../../../../libs/supabase";
-import StarContainer from "./StarContainer";
+import StarAvgContainer from "./StarAvgContainer";
+import { addCommaintoMoney } from "../../../../libs/formatter";
 
 const Wrapper = styled.div`
   border: 1px solid var(--color-gray);
@@ -118,7 +119,7 @@ export default function ProgramItem({ program, onBtnClicked }) {
         <Thumbnail $imageUrl={program.thumbnail} />
         <Content>
           <h3>{program.program_name}</h3>
-          <StarContainer programId={program.id}>
+          <StarAvgContainer programId={program.id}>
             {reviewLoading
               ? "Loading..."
               : reviews.length === 0
@@ -200,8 +201,8 @@ export default function ProgramItem({ program, onBtnClicked }) {
                   : `(${reviews.length})`
               }
             </span>
-          </StarContainer>
-          <span>{program.price} 원</span>
+          </StarAvgContainer>
+          <span>{addCommaintoMoney(program.price)}원</span>
           <div>
             <span>{program.open_time.substring(0, 5)}</span>
             <span> ~ </span>
