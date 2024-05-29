@@ -4,7 +4,8 @@ import React from "react";
 const Label = styled.label`
   position: relative;
   font-size: var(--font-size-m);
-  line-height: 20px;
+  height: 40px;
+  line-height: 30px;
   font-family: inherit;
   color: inherit;
   text-align: center;
@@ -23,9 +24,13 @@ const Label = styled.label`
     border: 2px solid ${(props) => props.color};
     box-shadow: 1px 1px 1px var(--color-gray);
   }
-  @media screen and (max-width: 768px) {
-    padding: 1px var(--padding-5xs);
-    font-size: var(--font-size-s);
+  @media screen and (max-width: 376px) {
+    padding: 1px;
+    font-size: var(--font-size-xs);
+    height: 30px;
+    line-height: 28px;
+    width: 31px;
+    font-weight: bold;
   }
 `;
 
@@ -42,6 +47,8 @@ const BeachTag = ({ beach, onClick, hasClicked }) => {
   let color = `var(--color-tag-${beach.theme_color}-front)`;
   let bgcolor = `var(--color-tag-${beach.theme_color}-back)`;
 
+  const beachName = beach.beach_name.replace("해수욕장","")
+
   return (
     <>
       <Tag
@@ -54,7 +61,7 @@ const BeachTag = ({ beach, onClick, hasClicked }) => {
         name="beach"
       />
       <Label htmlFor={beach.beach_name} color={color} bgcolor={bgcolor}>
-        {beach.beach_name}
+        {beachName}
       </Label>
     </>
   );

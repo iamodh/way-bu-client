@@ -284,6 +284,13 @@ const Necessity = styled.input`
   }
 `;
 
+const BeachWrapper = styled.div`
+  display: flex;
+  gap: var(--gap-5xs);
+  @media screen and (max-width: 376px) {
+    gap: var(--gap-9xs);
+  }
+`
 const MatchingWrite = ({ closeModal }) => {
   const [isNecessityRequired, setIsNecessityRequired] = useState(false);
   const [allMatchings, setAllMatchings] = useState([]);
@@ -369,22 +376,24 @@ const MatchingWrite = ({ closeModal }) => {
           </FrameDiv>
           <FrameDiv>
             <Divbox>위치</Divbox>
-            {beachLoading
-              ? "Loading..."
-              : beachData.map((beach) => {
-                  return (
-                    <BeachTag
-                      key={beach.id}
-                      beach={beach}
-                      // handleTagClicked 함수를 onClick props로 전달
-                      onClick={() => {
-                        handleTagClicked(beach.id);
-                        setSelectedBeachId(beach.id);
-                      }}
-                      hasClicked={clickedTags.includes(beach.id)}
-                    />
-                  );
-                })}
+            <BeachWrapper>
+              {beachLoading
+                ? "Loading..."
+                : beachData.map((beach) => {
+                    return (
+                      <BeachTag
+                        key={beach.id}
+                        beach={beach}
+                        // handleTagClicked 함수를 onClick props로 전달
+                        onClick={() => {
+                          handleTagClicked(beach.id);
+                          setSelectedBeachId(beach.id);
+                        }}
+                        hasClicked={clickedTags.includes(beach.id)}
+                      />
+                    );
+                  })}
+            </BeachWrapper>
           </FrameDiv>
           <FrameDiv1>
           <FrameDiv>
