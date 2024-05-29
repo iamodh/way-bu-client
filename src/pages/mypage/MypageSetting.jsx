@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const MypageSettingWrapper = styled.form`
   width: 80%;
-  max-width: 700px;
+  max-width: 600px;
   margin: var(--padding-base) auto;
   display: flex;
   flex-direction: column;
@@ -76,18 +76,18 @@ export default function MypageSetting() {
       <Title>공개범위 설정</Title>
       <TypeList>
         {[
-          "나이대/성별",
-          "커뮤니티 게시글",
-          "참여 프로그램 목록",
-          "참여 매칭 목록",
-          "친구 목록",
-          "쪽지 수신",
-        ].map((type) => {
+          { name: "is_public_profile", label: "나이대/성별" },
+          { name: "is_public_community", label: "커뮤니티 게시글" },
+          { name: "is_public_program", label: "참여 프로그램 목록" },
+          { name: "is_public_matching", label: "참여 매칭 목록" },
+          { name: "is_public_follow", label: "친구 목록" },
+          { name: "is_public_message", label: "쪽지 수신" },
+        ].map((type, i) => {
           return (
-            <Row>
-              <ScopeType>{type}</ScopeType>
-              <ScopeSelect>
-                <ScopeOption value="">비공개</ScopeOption>
+            <Row key={i}>
+              <ScopeType>{type.label}</ScopeType>
+              <ScopeSelect name={type.name}>
+                <ScopeOption>비공개</ScopeOption>
                 <ScopeOption value="">전체공개</ScopeOption>
               </ScopeSelect>
             </Row>

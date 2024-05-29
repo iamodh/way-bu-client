@@ -185,9 +185,11 @@ export default function CommonLayout() {
             <SearchButton />
           </Search>
           <Alarm />
-          <StyledLink to={"/mypage/" + loggedInUserProfile.id}>
-            <ProfileImage src="/img/ellipse-13@2x.png" />
-          </StyledLink>
+          {loggedInUser && loggedInUserProfile ? (
+            <StyledLink to={"/mypage/" + loggedInUserProfile.id}>
+              <ProfileImage src="/img/ellipse-13@2x.png" />
+            </StyledLink>
+          ) : null}
         </Sign>
         <Nav>
           <StyledLink to={"/program"}>

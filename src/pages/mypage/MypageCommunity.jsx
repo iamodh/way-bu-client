@@ -166,9 +166,9 @@ export default function MypageCommunity() {
       <UserPostList>
         {filteredPosts.map((post, i) => {
           return (
-            <Link to={"/community/" + post.post_id}>
+            <Link to={"/community/" + post.post_id} key={"post" + post.post_id}>
               <UserPostItem key={"post" + post.post_id} post={post} />
-              {selectedOption === "myComments" ? (
+              {selectedOption === "myComments" && filteredComments ? (
                 <UserCommentItem
                   comment={filteredComments[i]}
                 ></UserCommentItem>

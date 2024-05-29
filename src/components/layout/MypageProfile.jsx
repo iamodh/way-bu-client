@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
-import { client } from "../../../libs/supabase";
+import { useRecoilState } from "recoil";
+import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import SportsTag from "../SportTag";
 
 const H = styled.h2`
@@ -143,21 +143,34 @@ const B1 = styled(B)`
   }
 `;
 
-export default function MypageProfile({ data }) {
+export default function MypageProfile() {
+  /* 회원 정보 불러오기 */
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
+    loggedInUserProfileState
+  );
+
+  // console.log("user", loggedInUserProfile);
   return (
     <ProfileWrapper>
       <ProfileBox>
         <IntroduceBox>
-          <ProfileImage loading="lazy" alt="" src={`${data.avatar_url}`} />
+          <ProfileImage
+            loading="lazy"
+            alt=""
+            src={`${loggedInUserProfile.avatar_url}`}
+          />
           <IntroduceContents>
             <Introduce>
-              <H>{data.user_nickname}</H>
-              <Div>{data.bio}</Div>
+              <H>{loggedInUserProfile.user_nickname}</H>
+              <Div>{loggedInUserProfile.bio}</Div>
             </Introduce>
             <Interest>
               <B>관심종목</B>
               <SportTagParent>
-                <SportsTag sport={data.SPORT} />
+                {loggedInUserProfile.SPORT ? (
+                  <SportsTag sport={loggedInUserProfile.SPORT} />
+                ) : null}
               </SportTagParent>
             </Interest>
           </IntroduceContents>
@@ -166,17 +179,17 @@ export default function MypageProfile({ data }) {
           <CountItem>
             <FrameItem loading="lazy" alt="like" src="/icon/like.svg" />
             <B1>좋아요</B1>
-            <Div>{data.countLikes}개</Div>
+            <Div>{loggedInUserProfile.countLikes}개</Div>
           </CountItem>
           <CountItem>
             <FrameItem loading="lazy" alt="review" src="/icon/edit.svg" />
             <B1>후기</B1>
-            <Div>{data.countReviews}개</Div>
+            <Div>{loggedInUserProfile.countReviews}개</Div>
           </CountItem>
           <CountItem>
             <FrameItem loading="lazy" alt="matching" src="/icon/smile.svg" />
             <B1>매칭</B1>
-            <Div>{data.countMatches}개</Div>
+            <Div>{loggedInUserProfile.countMatches}개</Div>
           </CountItem>
         </CountBox>
       </ProfileBox>

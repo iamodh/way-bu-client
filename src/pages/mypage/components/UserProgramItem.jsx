@@ -1,17 +1,27 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { loggedInUserState, loggedInUserProfileState } from "../../../atom";
 
-const Wrapper = styled.li`
+const Wrapper = styled.div`
+  width: 100%;
+  background: white;
+`;
+const Item = styled.li`
   display: flex;
   align-items: center;
   justify-content: space-around;
   flex-direction: column;
   flex-wrap: wrap;
   padding: var(--padding-13xl) var(--padding-5xs);
-  width: 100%;
   height: 100%;
+  margin: 0 var(--padding-9xs);
+
   background: var(--color-skyblue-background, #edf4f7);
-  border-radius: var(--br-8xs);
+  border-radius: var(--br-mini);
   @media screen and (max-width: 768px) {
+    border-radius: var(--br-8xs);
     padding: var(--padding-base) var(--padding-5xs);
   }
 `;
@@ -19,21 +29,23 @@ const ProgramName = styled.div`
   font-size: var(--font-size-l);
   font-weight: bold;
   padding: var(--padding-9xs);
+  text-align: center;
   @media screen and (max-width: 768px) {
     padding: 0;
     font-size: var(--font-size-m);
   }
 `;
-const Date = styled.div`
+const Business = styled.div`
   font-size: var(--font-size-s);
   margin-bottom: var(--padding-xl);
+  text-align: center;
 
   @media screen and (max-width: 768px) {
     margin-bottom: var(--padding-xs);
   }
 `;
 
-const Button = styled.button`
+const Button = styled.div`
   cursor: pointer;
   border: none;
   width: 120px;
@@ -59,11 +71,29 @@ const Button = styled.button`
 `;
 
 export default function UserProgramItem({ program }) {
+  /* 회원정보 불러오기 */
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
+    loggedInUserProfileState
+  );
+
+  /* 후기작성 페이지 이동 및 파싱 */
+  const navigate = useNavigate();
+  const handleButton = ({ program }) => {
+    navigate("/mypage/" + loggedInUserProfile.id + "/review-write", {
+      state: { ...program },
+    });
+  };
+
   return (
     <Wrapper>
-      <ProgramName>{program.program_name}</ProgramName>
-      <Date>{"2024.05.22."}</Date>
-      <Button>후기쓰기</Button>
+      <Item>
+        <Link to={"/program/" + program.id}>
+          <ProgramName>{program.program_name}</ProgramName>
+        </Link>
+        <Business>{program.BUSINESS.business_name}</Business>
+        <Button onClick={() => handleButton({ program })}>후기쓰기</Button>
+      </Item>
     </Wrapper>
   );
 }

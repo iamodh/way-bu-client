@@ -1,10 +1,17 @@
 import styled from "styled-components";
 import UserMatchingItem from "./components/UserMatchingItem";
 import UserDoneMatchingItem from "./components/UserDoneMatchingItem";
+import { useOutletContext } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { loggedInUserState, loggedInUserProfileState } from "../../atom";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const MypageMatchingWrapper = styled.form`
   width: 90%;
-  max-width: 1000px;
+  max-width: 800px;
   margin: var(--padding-base) auto;
   display: flex;
   flex-direction: column;
@@ -36,31 +43,23 @@ const UserMatchingArea = styled.div`
   justify-content: center;
   width: 100%;
 `;
-const UserProgramList = styled.ul`
-  width: 88%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--padding-9xs);
+const UserMatchingList = styled(Slider)`
+  width: 80%;
 `;
-const ButtonLeft = styled.button`
-  position: absolute;
-  top: 45%;
-  left: 0px;
-  width: 5%;
-  padding: 0;
-  border: none;
-  background-color: transparent;
-  font-weight: bold;
+const SlickButtonFix = ({ currentSlide, slideCount, children, ...props }) => (
+  <span {...props}>{children}</span>
+);
+const NextArrow = styled.div`
+  background-image: url("/icon/arrow-right-circle.svg");
+  background-size: contain;
+  height: 20px;
+  width: 20px;
 `;
-const ButtonRight = styled.button`
-  position: absolute;
-  top: 45%;
-  right: 0px;
-  width: 5%;
-  padding: 0;
-  border: none;
-  background-color: transparent;
-  font-weight: bold;
+const PrevArrow = styled.div`
+  background-image: url("/icon/arrow-left-circle.svg");
+  background-size: contain;
+  height: 20px;
+  width: 20px;
 `;
 const UserDoneMatchingArea = styled(UserMatchingArea)`
   width: 90%;
@@ -118,25 +117,87 @@ const test_done = [
   },
 ];
 export default function MypageMatching() {
+  /* 회원정보 불러오기 */
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
+    loggedInUserProfileState
+  );
+
+  /* 필요한 데이터 불러오기 */
+  const { userMatchings, userProfiles } = useOutletContext();
+  const [filteredMatchings, setFilteredMatchings] = useState();
+  const [filteredDoneMatchings, setFilteredDoneMatchings] = useState();
+
+  /* 사용자가 참여한 매칭만 필터링하기 */
+  useEffect(() => {
+    let newUserMatchings = userMatchings.filter(
+      (m) =>
+        m.joining_users.includes(loggedInUserProfile.id) && m.state === "진행중"
+    );
+    let newUserDoneMatchings = userMatchings.filter(
+      (m) =>
+        m.joining_users.includes(loggedInUserProfile.id) &&
+        m.state === "진행완료"
+    );
+    setFilteredMatchings(newUserMatchings);
+    setFilteredDoneMatchings(newUserDoneMatchings);
+  }, [userMatchings]);
+
+  /* Slider 커스텀 */
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 300,
+    slidesToShow: 3,
+    slidesToScroll: 3,
+    // 이때 SlickButtonFix로 화살표 이미지를 감싸지 않으면 경고가 발생
+    nextArrow: (
+      <SlickButtonFix>
+        <NextArrow />
+      </SlickButtonFix>
+    ),
+    prevArrow: (
+      <SlickButtonFix>
+        <PrevArrow />
+      </SlickButtonFix>
+    ),
+  };
   return (
     <MypageMatchingWrapper>
       <Title>진행 중인 매칭</Title>
       <UserMatchingArea>
-        <ButtonLeft>{"<"}</ButtonLeft>
-        <UserProgramList>
-          <UserMatchingItem matching={test[0]} />
-          <UserMatchingItem matching={test[0]} />
-          <UserMatchingItem matching={test[0]} />
-        </UserProgramList>
-        <ButtonRight>{">"}</ButtonRight>
+        <UserMatchingList {...settings}>
+          {filteredMatchings
+            ? filteredMatchings.map((matching) => {
+                return (
+                  <UserMatchingItem
+                    key={"matching" + matching.id}
+                    matching={matching}
+                  />
+                );
+              })
+            : null}
+        </UserMatchingList>
       </UserMatchingArea>
       <Hr />
       <Title>진행 종료된 매칭</Title>
       <UserDoneMatchingArea>
         <UserDoneMatchingList>
-          <UserDoneMatchingItem matching={test_done[0]} />
-          <UserDoneMatchingItem matching={test_done[0]} />
-          <UserDoneMatchingItem matching={test_done[0]} />
+          {filteredDoneMatchings
+            ? filteredDoneMatchings.map((d_matching) => {
+                /* 사용자 프로필 정보 불러오기 */
+                let userList = userProfiles.filter((u) =>
+                  d_matching.joining_users.includes(u.id)
+                );
+                return (
+                  <UserDoneMatchingItem
+                    key={"done_matching" + d_matching.id}
+                    matching={d_matching}
+                    users={userList}
+                  />
+                );
+              })
+            : null}
         </UserDoneMatchingList>
         <PageIndex>
           <Page>1</Page>

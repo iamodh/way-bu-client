@@ -35,6 +35,7 @@ const Div = styled.div`
 `;
 
 export default function UserCommentItem({ comment }) {
+  console.log("comment", comment);
   const formatDate = (datestr) => {
     const date = new Date(datestr);
     var options = { year: "numeric", month: "numeric", day: "numeric" };
@@ -45,13 +46,11 @@ export default function UserCommentItem({ comment }) {
     <Wrapper>
       <Arrow>ㄴ</Arrow>
       <Row>
-        {/* <CommentTitle>{comment.user_nickname}</CommentTitle> */}
-        <CommentTitle>괴도 김다현</CommentTitle>
+        <CommentTitle>{comment.user_nickname}</CommentTitle>
         <Div> | </Div>
-        {/* <Div>{formatDate(comment.created_at)}</Div> */}
-        <Div>2024. 05. 28</Div>
+        <Div>{formatDate(comment.created_at)}</Div>
       </Row>
-      <Div>댓글 내용입니다.</Div>
+      <Div>{comment.content}</Div>
     </Wrapper>
   );
 }
