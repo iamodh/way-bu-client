@@ -1,12 +1,13 @@
 import styled from "styled-components";
-import ProgramItem from "../../components/program/ProgramItem";
-import SportsTag from "../../components/global/SportsTag";
-import { useState } from "react";
+import SportsTag from "./components/SportsTag";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useForm } from "react-hook-form";
 import { getPrograms } from "../../../apis/programs";
 import { getSports } from "../../../apis/sports";
-import ButtonBlue from "../../components/ButtonBlue";
+import ProgramItem from "./components/ProgramItem";
+import { client } from "../../../libs/supabase";
+import StarContainer from "./components/StarContainer";
 
 const Body = styled.main`
   background-color: ${(props) => props.theme.backgroundColor};
@@ -21,7 +22,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   margin-bottom: 80px;
-  gap: 10px;
+  gap: 20px;
 `;
 
 /* Search */
@@ -38,8 +39,8 @@ const Input = styled.input`
   width: 100%;
   height: 50px;
   border-style: none;
-  padding-left: 10px;
-  padding-right: 70px;
+  padding-left: 20px;
+  padding-right: 80px;
   border-radius: var(--br-mini);
   border: 2px solid var(--color-blue-main);
   font-size: var(--font-size-ml);
@@ -48,7 +49,15 @@ const Input = styled.input`
     border: 2px solid var(--color-blue-dark);
   }
 
+  &::placeholder {
+    @media only screen and (max-width: 376px) {
+      font-size: var(--font-size-m);
+    }
+  }
   transition: all 0.1s ease-in-out;
+  @media only screen and (max-width: 376px) {
+    height: 40px;
+  }
 `;
 
 const SearchButton = styled.button`
@@ -66,6 +75,9 @@ const SearchButton = styled.button`
     background-color: var(--color-blue-dark);
   }
   transition: all 0.1s ease-in-out;
+  @media only screen and (max-width: 376px) {
+    width: 50px;
+  }
 `;
 
 /* Program */
@@ -75,61 +87,105 @@ const ProgramContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
+
+  @media only screen and (max-width: 376px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 /* Filters */
 
 const FilterContainer = styled.form`
   width: 80%;
-  height: 300px;
   display: flex;
   flex-direction: column;
 `;
 
 const SportsFilter = styled.form`
-  height: 40px;
+  width: 80%;
+  flex-wrap: wrap;
+
   align-items: center;
   gap: 10px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   h3 {
+    width: fit-content;
+
+    white-space: nowrap;
     font-weight: bold;
+  }
+
+  @media only screen and (max-width: 376px) {
+    h3 {
+      display: none;
+    }
   }
 `;
 
 const MainFilter = styled.div`
-  height: 50px;
   display: flex;
   gap: 10px;
   padding-bottom: 10px;
   font-weight: bold;
+  @media only screen and (max-width: 376px) {
+    flex-direction: column;
+  }
 `;
 
-const DateAndTime = styled.div`
-  flex: 2;
+const FilterDiv = styled.div`
   display: flex;
+  flex: 1;
+  gap: 10px;
 
-  div {
-    &:first-child {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      border-right: 1px solid var(--color-gray);
+  &:first-child {
+    gap: 0;
+    box-shadow: 1px 1px 1px var(--color-gray);
+    border-radius: var(--br-mini);
+
+    div {
+      box-shadow: none;
+
+      &:first-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      &:last-child {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left: 0;
+      }
     }
-    &:nth-child(2) {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
+  }
+
+  @media only screen and (max-width: 376px) {
+    gap: 0;
+    box-shadow: 1px 1px 1px var(--color-gray);
+    border-radius: var(--br-mini);
+
+    div {
+      box-shadow: none;
+
+      &:first-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      &:last-child {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left: 0;
+      }
     }
   }
 `;
 
 const SmallFilterBox = styled.div`
   border: 1px solid var(--color-gray);
-  border-bottom: 3px solid var(--color-gray);
-  border-right: 3px solid var(--color-gray);
+  border-bottom: 1px solid var(--color-gray);
+  border-right: 1px solid var(--color-gray);
   border-radius: var(--br-mini);
-  height: 100%;
-  flex: 1;
   gap: 4px;
+  flex: 1;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -138,9 +194,12 @@ const SmallFilterBox = styled.div`
   transition: all 0.1s ease-in-out;
   input,
   select {
-    width: 100px;
+    height: 40px;
+    width: 80%;
     border: none;
   }
+
+  box-shadow: 1px 1px 1px var(--color-gray);
 `;
 
 const DetailFilter = styled.div`
@@ -150,7 +209,7 @@ const DetailFilter = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  border: 2px solid var(--color-gray);
+  border: 1px solid var(--color-gray);
   border-radius: var(--br-mini);
   position: relative;
 `;
@@ -159,6 +218,12 @@ const FilterRow = styled.div`
   height: 40px;
   width: 90%;
   display: flex;
+  @media only screen and (max-width: 376px) {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
 `;
 
 const FilterCol = styled.div`
@@ -172,16 +237,32 @@ const FilterCol = styled.div`
     font-weight: bold;
     display: flex;
     justify-content: flex-start;
+    @media only screen and (max-width: 376px) {
+      flex: 1;
+    }
   }
 
   &:nth-child(2) {
     flex: 2;
     display: flex;
     justify-content: flex-start;
+    @media only screen and (max-width: 376px) {
+      flex: 1;
+    }
   }
 
   input {
     margin-right: 10px;
+    @media only screen and (max-width: 376px) {
+      margin-right: 0;
+    }
+  }
+
+  @media only screen and (max-width: 376px) {
+    font-size: 14px;
+    &:first-child {
+      flex: 1;
+    }
   }
 `;
 
@@ -200,6 +281,9 @@ const CheckBoxLabel = styled.label`
   &:hover {
     color: var(--color-navy);
   }
+  &:last-child {
+    margin-right: 0;
+  }
 `;
 
 const FilterSubmit = styled.div`
@@ -208,10 +292,18 @@ const FilterSubmit = styled.div`
   position: absolute;
   right: 50px;
   bottom: 30px;
-`;
 
-const ResetBtn = styled.button`
-  cursor: pointer;
+  button {
+    padding: 8px 16px;
+    border: 1px solid var(--color-gray);
+    background-color: var(--color-white);
+    &:hover {
+      background-color: var(--color-blue-vivid);
+    }
+  }
+  @media only screen and (max-width: 376px) {
+    position: static;
+  }
 `;
 
 /* Order */
@@ -223,6 +315,9 @@ const OrderContainer = styled.div`
     margin-right: var(--padding-base);
     cursor: pointer;
   }
+  @media only screen and (max-width: 376px) {
+    font-size: 14px;
+  }
 `;
 
 /* Compare */
@@ -232,7 +327,7 @@ const FixedBox = styled.div`
 
 const CompareBox = styled.div`
   width: 300px;
-  background-color: var(--color-skyblue-main);
+  background-color: #f4fcff;
   position: absolute;
   top: 20px;
   right: -680px;
@@ -261,8 +356,9 @@ const CompareProgramBox = styled.div`
 const CompareProgram = styled.div`
   width: 250px;
   height: 100px;
+  border: 1px solid var(--color-blue-main);
   background-color: var(--color-white);
-  border-radius: 20px;
+  border-radius: var(--br-mini);
   position: relative;
 `;
 
@@ -295,7 +391,24 @@ const CompareProgramDelete = styled.span`
   cursor: pointer;
 `;
 
+const CompareBtn = styled.button`
+  width: 250px;
+  font-size: var(--font-size-m);
+  color: white;
+  height: 50px;
+  background-color: var(--color-blue-main);
+  &:hover {
+    background-color: #1758b9;
+  }
+  transition: all 0.2s ease-in-out;
+  border-radius: var(--br-3xs);
+  border: none;
+  cursor: pointer;
+`;
+
 export default function Program() {
+  /* 리뷰 */
+
   /* 검색 기능 */
   const [searchKeyword, setSearchKeyword] = useState("");
 
@@ -502,7 +615,7 @@ export default function Program() {
       <Wrapper>
         <SearchContainer onSubmit={handleSearchSubmit(onSearchSubmit)}>
           <Input
-            placeholder="검색어를 입력해주세요."
+            placeholder="키워드를 입력하세요"
             {...searchRegister("keyword")}
           />
           <SearchButton>
@@ -531,10 +644,7 @@ export default function Program() {
                   <SportsTag
                     themeColor={sport.theme_color}
                     key={sport.id}
-                    color={"#ff4d4d"}
                     text={sport.title}
-                    bgColor={"#ffcccc"}
-                    hoverColor={"#ffb8b8"}
                     // handleTagClicked 함수를 onClick props로 전달
                     onClick={() => hanldeTagClicked(sport.id)}
                     hasClicked={clickedTags.includes(sport.id)}
@@ -544,34 +654,36 @@ export default function Program() {
         </SportsFilter>
         <FilterContainer onSubmit={handleFilterSubmit(onFilterValid)}>
           <MainFilter>
-            <DateAndTime>
+            <FilterDiv>
               <SmallFilterBox>
                 <input type="date" {...filterRegister("date")} />
               </SmallFilterBox>
               <SmallFilterBox>
                 <input type="time" {...filterRegister("time")} />
               </SmallFilterBox>
-            </DateAndTime>
-            <SmallFilterBox>
-              <input
-                type="number"
-                placeholder="원하는 가격대"
-                min={0}
-                {...filterRegister("minPrice")}
-              />
-            </SmallFilterBox>
-            <SmallFilterBox>
-              <select {...filterRegister("beach")}>
-                <option value="">해수욕장</option>
-                <option value="해운대해수욕장">해운대해수욕장</option>
-                <option value="광안리해수욕장">광안리해수욕장</option>
-                <option value="송정해수욕장">송정해수욕장</option>
-                <option value="임랑해수욕장">임랑해수욕장</option>
-                <option value="다대포해수욕장">다대포해수욕장</option>
-                <option value="일광해수욕장">일광해수욕장</option>
-                <option value="송도해수욕장">송도해수욕장</option>
-              </select>
-            </SmallFilterBox>
+            </FilterDiv>
+            <FilterDiv>
+              <SmallFilterBox>
+                <input
+                  type="number"
+                  placeholder="가격대"
+                  min={0}
+                  {...filterRegister("minPrice")}
+                />
+              </SmallFilterBox>
+              <SmallFilterBox>
+                <select {...filterRegister("beach")}>
+                  <option value="">해수욕장</option>
+                  <option value="해운대해수욕장">해운대해수욕장</option>
+                  <option value="광안리해수욕장">광안리해수욕장</option>
+                  <option value="송정해수욕장">송정해수욕장</option>
+                  <option value="임랑해수욕장">임랑해수욕장</option>
+                  <option value="다대포해수욕장">다대포해수욕장</option>
+                  <option value="일광해수욕장">일광해수욕장</option>
+                  <option value="송도해수욕장">송도해수욕장</option>
+                </select>
+              </SmallFilterBox>
+            </FilterDiv>
           </MainFilter>
           <DetailFilter>
             <FilterRow>
@@ -583,7 +695,7 @@ export default function Program() {
                   id="high"
                   name="difficulty"
                   type="checkbox"
-                  value="어려움"
+                  value="상"
                   {...filterRegister("diff")}
                 />
                 <CheckBoxLabel htmlFor="high">상</CheckBoxLabel>
@@ -591,7 +703,7 @@ export default function Program() {
                   id="mid"
                   name="difficulty"
                   type="checkbox"
-                  value="보통"
+                  value="중"
                   {...filterRegister("diff")}
                 />
                 <CheckBoxLabel htmlFor="mid">중</CheckBoxLabel>
@@ -599,7 +711,7 @@ export default function Program() {
                   id="low"
                   name="difficulty"
                   type="checkbox"
-                  value="쉬움"
+                  value="하"
                   {...filterRegister("diff")}
                 />
                 <CheckBoxLabel htmlFor="low">하</CheckBoxLabel>
@@ -616,26 +728,26 @@ export default function Program() {
                   value="call"
                   {...filterRegister("booking")}
                 />
-                <CheckBoxLabel htmlFor="call">전화 예약</CheckBoxLabel>
+                <CheckBoxLabel htmlFor="call">전화</CheckBoxLabel>
                 <CheckBox
                   type="checkbox"
                   id="homepage"
                   value="homepage"
                   {...filterRegister("booking")}
                 />
-                <CheckBoxLabel htmlFor="homepage">홈페이지 예약</CheckBoxLabel>
+                <CheckBoxLabel htmlFor="homepage">홈페이지</CheckBoxLabel>
                 <CheckBox
                   type="checkbox"
                   id="waybu"
                   value="waybu"
                   {...filterRegister("booking")}
                 />
-                <CheckBoxLabel htmlFor="waybu">웨이부 예약</CheckBoxLabel>
+                <CheckBoxLabel htmlFor="waybu">웨이부</CheckBoxLabel>
               </FilterCol>
             </FilterRow>
             <FilterRow>
               <FilterCol>
-                <span>나이대</span>
+                <span>포함 나이대</span>
               </FilterCol>
               <FilterCol>
                 <CheckBox
@@ -644,7 +756,7 @@ export default function Program() {
                   {...filterRegister("age")}
                   value="14"
                 />
-                <CheckBoxLabel htmlFor="ten">14세 이하 포함</CheckBoxLabel>
+                <CheckBoxLabel htmlFor="ten">14세 이하</CheckBoxLabel>
 
                 <CheckBox
                   id="elder"
@@ -652,7 +764,7 @@ export default function Program() {
                   {...filterRegister("age")}
                   value="60"
                 />
-                <CheckBoxLabel htmlFor="elder">60세 이상 포함</CheckBoxLabel>
+                <CheckBoxLabel htmlFor="elder">60세 이상</CheckBoxLabel>
               </FilterCol>
             </FilterRow>
             <FilterRow>
@@ -697,7 +809,7 @@ export default function Program() {
               </FilterCol>
             </FilterRow>
             <FilterSubmit>
-              <input type="submit" value="필터 적용" />
+              <button>필터 적용</button>
               <button
                 text={"초기화"}
                 onClick={() => {
@@ -786,7 +898,7 @@ export default function Program() {
                       <CompareProgramTitle>
                         {item.program_name}
                       </CompareProgramTitle>
-                      <CompareProgramRates>⭐⭐⭐⭐⭐(0)</CompareProgramRates>
+                      <StarContainer programId={item.id} />
                       <CompareProgramPrice>{item.price}</CompareProgramPrice>
                     </CompareProgramContents>
                     <CompareProgramDelete
@@ -812,7 +924,7 @@ export default function Program() {
                   </CompareProgram>
                 ))}
               </CompareProgramBox>
-              <ButtonBlue text={"상세 비교"} size={"250px"} />
+              <CompareBtn>상세 비교</CompareBtn>
             </CompareBox>
           </FixedBox>
         ) : null}

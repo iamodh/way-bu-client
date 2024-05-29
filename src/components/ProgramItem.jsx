@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import ButtonBlue from "./ButtonBlue";
+import Button from "./global/Button";
 
 const Wrapper = styled.div`
   display: flex;
@@ -42,7 +43,7 @@ export default function ProgramItem({ program }) {
           {program.open_time} - {program.close_time}
         </Span>
       </TextBox>
-      <ButtonBlue text={"비교하기"} width={"100%"}></ButtonBlue>
+      <Button text={"비교하기"} width={"100%"}></Button>
     </Wrapper>
   );
 }
