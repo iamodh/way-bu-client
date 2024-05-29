@@ -35,6 +35,7 @@ export default function Router() {
         <Route path="change-pwd" element={<ChangePwd />} />
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
+        <Route path="matching" element={<Matching />} />
         {/* Program detail */}
         <Route path="program/:programId" element={<ProgramLayout />}>
           <Route index element={<ProgramIntro />} />
@@ -52,9 +53,6 @@ export default function Router() {
           <Route path="matching" element={<MypageMatching />} />
           <Route path="setting" element={<MypageSetting />} />
         </Route>
-      </Route>
-      <Route path="/matching">
-        <Route index element={<Matching />} />
       </Route>
     </Routes>
   );

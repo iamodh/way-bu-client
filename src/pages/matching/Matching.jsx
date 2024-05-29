@@ -1,4 +1,3 @@
-import Menubar1 from "./components/Menubar1";
 import MainContent from "./components/MainContent";
 import MatchingOptions from "./components/MatchingOptions";
 import ExploreMatchesBar from "./components/ExploreMatchesBar";
@@ -42,7 +41,6 @@ const ExploreMatchesBarWrapper = styled.section`
 const Matching = () => {
   return (
     <MatchingRoot>
-      <Menubar1 />
       <MainContent />
       <MatchingOptions />
       <Wrapper>
