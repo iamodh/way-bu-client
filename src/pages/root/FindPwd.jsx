@@ -50,12 +50,13 @@ export default function FindPwd() {
             {...register("email", { required: "이메일을 입력해 주세요." })}
             id="email"
             type="email"
+            placeholder="이메일을 입력하세요"
           />
         </InputBox>
         {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
         <ButtonContainer>
           <Button type="submit">비밀번호 찾기</Button>
-          <LinkBtn to="/change-pwd">비밀번호 변경하기</LinkBtn>
+          <Link to="/change-pwd">비밀번호 변경하기</Link>
         </ButtonContainer>
       </form>
     </LoginLayout>
