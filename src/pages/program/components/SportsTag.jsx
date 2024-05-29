@@ -1,18 +1,23 @@
 import { styled } from "styled-components";
 
 const Tag = styled.div`
+  white-space: nowrap;
+  width: fit-content;
   background-color: ${(props) => props.$bgColor};
   color: ${(props) => props.$color};
   padding: 4px 8px;
   border-radius: var(--br-mini);
-  border: 2px solid ${(props) => props.$hoverColor};
+  border: 1px solid ${(props) => props.$hoverColor};
   font-size: var(--font-size-s);
   cursor: pointer;
   &:hover {
     box-shadow: 1px 1px 1px var(--color-gray);
   }
   transition: all 0.2s ease-in-out;
-  opacity: 0.7;
+  &:active {
+    background-color: ${(props) => props.$color};
+    color: ${(props) => props.$bgColor};
+  }
 `;
 
 const ClickedTag = styled(Tag)`

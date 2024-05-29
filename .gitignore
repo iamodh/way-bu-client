@@ -24,4 +24,6 @@ dist-ssr
 *.sw?
 
 .env
-.gitignore
+.gitignorebackup/
+# Test: Seojin
+backup/
