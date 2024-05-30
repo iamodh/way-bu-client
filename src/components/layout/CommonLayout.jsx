@@ -103,7 +103,9 @@ const StyledLink = styled(Link)`
   text-decoration: none;
   color: black;
 `;
-const Footer = styled.footer``;
+const Footer = styled.footer`
+  padding-bottom: 100px;
+`;
 
 export default function CommonLayout() {
   /* 새로고침 마다 getSession 해서 로그인 체크 */
@@ -130,7 +132,7 @@ export default function CommonLayout() {
         setLoggedInUser(user);
         const { data: userProfile, error: profileError } = await client
           .from("USER_PROFILE")
-          .select("*")
+          .select("*, SPORT(title, theme_color)")
           .eq("user_id", user.id);
 
         if (profileError) {
@@ -185,9 +187,11 @@ export default function CommonLayout() {
             <SearchButton />
           </Search>
           <Alarm />
-          <StyledLink to="/mypage">
-            <ProfileImage src="/img/ellipse-13@2x.png" />
-          </StyledLink>
+          {loggedInUser && loggedInUserProfile ? (
+            <StyledLink to={"/mypage/" + loggedInUserProfile.id}>
+              <ProfileImage src="/img/ellipse-13@2x.png" />
+            </StyledLink>
+          ) : null}
         </Sign>
         <Nav>
           <StyledLink to={"/program"}>

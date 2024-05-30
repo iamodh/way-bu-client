@@ -1,8 +1,9 @@
 import styled from "styled-components";
-import UserPostItem from "./components/UserPostItem";
+import { Link } from "react-router-dom";
 
-const MypageCommunityWrapper = styled.form`
+const MypageSettingWrapper = styled.form`
   width: 80%;
+  max-width: 600px;
   margin: var(--padding-base) auto;
   display: flex;
   flex-direction: column;
@@ -28,87 +29,92 @@ const Title = styled.div`
 `;
 const TypeList = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: var(--padding-5xs);
-  width: 100%;
-`;
-const Label = styled.label`
-  display: flex;
-  font-size: var(--font-size-m);
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  cursor: pointer;
-  border: 1px solid var(--color-gray);
-  color: var(--color-gray);
-  padding: var(--padding-9xs) var(--padding-5xs);
-  background-color: var(--color-white);
-  border-radius: var(--br-8xs);
-  overflow: hidden;
-  &:hover {
-    border: 1px solid var(--color-blue-main);
-    color: var(--color-blue-main);
-  }
-  @media screen and (max-width: 768px) {
-    padding: var(--padding-9xs);
-    font-size: var(--font-size-s);
-  }
-`;
-
-const Type = styled.input`
-  display: none;
-  &:checked + label {
-    background-color: var(--color-skyblue-light);
-    color: var(--color-blue-main);
-    border: 1px solid var(--color-blue-main);
-  }
-`;
-
-const UserPostList = styled.ul`
-  width: 100%;
-  display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: var(--padding-5xs);
-  margin-bottom: var(--padding-xs);
-  border-bottom: 1px solid var(--color-gray);
+  width: 100%;
 `;
-
-const test = [
-  {
-    title: "test",
-    sport: "서핑",
-    view: 88,
-    writer: "괴도 김다현",
-    date: "2024-04-08",
-  },
-];
-export default function MypageCommunity() {
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+const ScopeType = styled.div`
+  font-weight: bold;
+`;
+const ScopeSelect = styled.select`
+  font-weight: bold;
+  padding: 2px var(--padding-xs);
+  border: 1px solid var(--color-blue-main);
+  border-radius: var(--br-8xs);
+  color: var(--color-blue-main);
+  &:hover {
+    background-color: var(--color-skyblue-light);
+  }
+`;
+const ScopeOption = styled.option`
+  border: 1px solid var(--color-blue-main);
+  color: black;
+`;
+const Hr = styled.div`
+  width: 100%;
+  height: 0.5px;
+  background-color: var(--color-gray);
+`;
+const StyledLink = styled(Link)`
+  display: flex;
+  justify-items: flex-start;
+`;
+const Withdrawal = styled.div`
+  font-weight: bold;
+  color: var(--color-blue-main);
+`;
+export default function MypageSetting() {
   return (
-    <MypageCommunityWrapper>
-      <Title>커뮤니티</Title>
+    <MypageSettingWrapper>
+      <Title>공개범위 설정</Title>
       <TypeList>
         {[
-          "내가 쓴 게시글",
-          "내가 쓴 댓글",
-          "좋아요한 게시글",
-          "스크랩 게시글",
-        ].map((type) => {
+          { name: "is_public_profile", label: "나이대/성별" },
+          { name: "is_public_community", label: "커뮤니티 게시글" },
+          { name: "is_public_program", label: "참여 프로그램 목록" },
+          { name: "is_public_matching", label: "참여 매칭 목록" },
+          { name: "is_public_follow", label: "친구 목록" },
+          { name: "is_public_message", label: "쪽지 수신" },
+        ].map((type, i) => {
           return (
-            <>
-              <Type type="radio" value={type} name="typeitem" id={type} />
-              <Label htmlFor={type}>{type}</Label>
-            </>
+            <Row key={i}>
+              <ScopeType>{type.label}</ScopeType>
+              <ScopeSelect name={type.name}>
+                <ScopeOption>비공개</ScopeOption>
+                <ScopeOption value="">전체공개</ScopeOption>
+              </ScopeSelect>
+            </Row>
           );
         })}
       </TypeList>
-      <UserPostList>
-        <UserPostItem post={test[0]} />
-        <UserPostItem post={test[0]} />
-        <UserPostItem post={test[0]} />
-      </UserPostList>
-    </MypageCommunityWrapper>
+      <Hr />
+      <Title>일반 설정</Title>
+      <TypeList>
+        <Row>
+          <ScopeType>다크모드</ScopeType>
+          <ScopeSelect>
+            <option value="">밝게</option>
+            <option value="">어둡게</option>
+          </ScopeSelect>
+        </Row>
+        <Row>
+          <ScopeType>언어</ScopeType>
+          <ScopeSelect>
+            <option value="">한국어</option>
+            <option value="">영어</option>
+          </ScopeSelect>
+        </Row>
+      </TypeList>
+      <StyledLink to="/">
+        <Withdrawal>회원탈퇴</Withdrawal>
+      </StyledLink>
+    </MypageSettingWrapper>
   );
 }

@@ -56,7 +56,9 @@ export default function FindPwd() {
         {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
         <ButtonContainer>
           <Button type="submit">비밀번호 찾기</Button>
-          <Link to="/change-pwd">비밀번호 변경하기</Link>
+          <Link to="/change-pwd" style={{ fontSize: "0.7rem" }}>
+            비밀번호 변경하기
+          </Link>
         </ButtonContainer>
       </form>
     </LoginLayout>

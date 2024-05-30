@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
-import { client } from "../../../libs/supabase";
+import { useRecoilState } from "recoil";
+import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import SportsTag from "../SportTag";
 
 const H = styled.h2`
@@ -144,73 +144,55 @@ const B1 = styled(B)`
 `;
 
 export default function MypageProfile() {
-  const user_id = 1;
-  const [userProfile, setUserProfile] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+  /* 회원 정보 불러오기 */
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
+    loggedInUserProfileState
+  );
 
-  useEffect(() => {
-    getUserProfile();
-    console.log(userProfile);
-  }, []);
-
-  async function getUserProfile() {
-    const { data, error } = await client
-      .from("USER_PROFILE")
-      .select(`*, SPORT(title, theme_color)`)
-      .eq("id", user_id)
-      .single();
-    setUserProfile(data);
-    setIsLoading(false);
-    if (error) {
-      console.log(error.message);
-      return;
-    }
-  }
-
+  // console.log("user", loggedInUserProfile);
   return (
     <ProfileWrapper>
-      {isLoading ? (
-        "Loading..."
-      ) : (
-        <ProfileBox>
-          <IntroduceBox>
-            <ProfileImage
-              loading="lazy"
-              alt=""
-              src={`/img/${userProfile.avatar_url}`}
-            />
-            <IntroduceContents>
-              <Introduce>
-                <H>{userProfile.user_nickname}</H>
-                <Div>{userProfile.bio}</Div>
-              </Introduce>
-              <Interest>
-                <B>관심종목</B>
-                <SportTagParent>
-                  <SportsTag sport={userProfile.SPORT} />
-                </SportTagParent>
-              </Interest>
-            </IntroduceContents>
-          </IntroduceBox>
-          <CountBox>
-            <CountItem>
-              <FrameItem loading="lazy" alt="like" src="/icon/like.svg" />
-              <B1>좋아요</B1>
-              <Div>{userProfile.countLikes}개</Div>
-            </CountItem>
-            <CountItem>
-              <FrameItem loading="lazy" alt="review" src="/icon/edit.svg" />
-              <B1>후기</B1>
-              <Div>{userProfile.countReviews}개</Div>
-            </CountItem>
-            <CountItem>
-              <FrameItem loading="lazy" alt="matching" src="/icon/smile.svg" />
-              <B1>매칭</B1>
-              <Div>{userProfile.countMatches}개</Div>
-            </CountItem>
-          </CountBox>
-        </ProfileBox>
-      )}
+      <ProfileBox>
+        <IntroduceBox>
+          <ProfileImage
+            loading="lazy"
+            alt=""
+            src={`${loggedInUserProfile.avatar_url}`}
+          />
+          <IntroduceContents>
+            <Introduce>
+              <H>{loggedInUserProfile.user_nickname}</H>
+              <Div>{loggedInUserProfile.bio}</Div>
+            </Introduce>
+            <Interest>
+              <B>관심종목</B>
+              <SportTagParent>
+                {loggedInUserProfile.SPORT ? (
+                  <SportsTag sport={loggedInUserProfile.SPORT} />
+                ) : null}
+              </SportTagParent>
+            </Interest>
+          </IntroduceContents>
+        </IntroduceBox>
+        <CountBox>
+          <CountItem>
+            <FrameItem loading="lazy" alt="like" src="/icon/like.svg" />
+            <B1>좋아요</B1>
+            <Div>{loggedInUserProfile.countLikes}개</Div>
+          </CountItem>
+          <CountItem>
+            <FrameItem loading="lazy" alt="review" src="/icon/edit.svg" />
+            <B1>후기</B1>
+            <Div>{loggedInUserProfile.countReviews}개</Div>
+          </CountItem>
+          <CountItem>
+            <FrameItem loading="lazy" alt="matching" src="/icon/smile.svg" />
+            <B1>매칭</B1>
+            <Div>{loggedInUserProfile.countMatches}개</Div>
+          </CountItem>
+        </CountBox>
+      </ProfileBox>
     </ProfileWrapper>
   );
 }

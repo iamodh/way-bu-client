@@ -1,12 +1,13 @@
 import styled from "styled-components";
-import Button from "../../components/ButtonBlue";
 import { client } from "../../../libs/supabase";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useForm } from "react-hook-form";
 
 const MypageUpdateWrapper = styled.form`
   width: 80%;
+  max-width: 700px;
   margin: var(--padding-base) auto;
   display: flex;
   flex-direction: column;
@@ -77,11 +78,35 @@ const BtnConfirm = styled.button`
   }
 `;
 
+const Button = styled.button`
+  cursor: pointer;
+  border: none;
+  width: 160px;
+  font-size: var(--font-size-m);
+  padding: var(--padding-base) var(--padding-base);
+  background-color: var(--color-blue-main);
+  color: var(--color-white);
+  border-radius: var(--br-3xs);
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background-color: var(--color-blue-dark);
+    box-sizing: border-box;
+  }
+  @media screen and (max-width: 768px) {
+    padding: var(--padding-5xs) var(--padding-xs);
+  }
+`;
+
 export default function MypageUpdate() {
-  const user_id = "aa4005a5-5f17-40d0-bce1-a022a2002f28";
-  const navigate = useNavigate();
-  const [userProfile, setUserProfile] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
+    loggedInUserProfileState
+  );
+
   const {
     register,
     handleSubmit,
@@ -92,81 +117,78 @@ export default function MypageUpdate() {
   /* 폼이 제출되었을 때 개인정보 업데이트 */
   const onSubmit = (formData) => {
     updateUserInfo(formData);
-    console.log("UPDATE::", formData);
+    reset();
   };
-
-  /* 렌더링 될 때마다 개인정보 읽어옴 */
-  useEffect(() => {
-    getUserProfile();
-    console.log("START::", userProfile);
-    if (!isLoading) console.log("NAME::", userProfile.user_nickname);
-  }, []);
-
-  /* 개인정보 불러오는 함수 */
-  async function getUserProfile() {
-    const { data, error } = await client
-      .from("USER_PROFILE")
-      .select("user_nickname, birth_date")
-      .eq("user_id", user_id);
-    setUserProfile(data);
-    setIsLoading(false);
-    if (error) {
-      console.log(error.message);
-      return;
-    }
-  }
-
-  // 이메일 불러오기
-  // async function getUser() {
-  //   client.auth.email({
-  //     email: formData.email,
-  //     password: formData.password,
-  //   });
-  // }
 
   /* 개인정보 수정하는 함수 */
   async function updateUserInfo(formData) {
-    const { data, error } = await client.auth.updateUser({
-      email: formData.email,
-      password: formData.password,
-    });
+    // not null인 항목만 업데이트 되도록 함
+    const updateProfile = {};
+    const updateAccount = {};
+
+    if (formData.name) {
+      updateProfile.user_nickname = formData.name;
+    }
+    if (formData.birth_date) {
+      updateProfile.birth_date = formData.birth_date;
+    }
+    if (formData.email) {
+      updateAccount.email = formData.email;
+    }
+    // if (formData.password) {
+    //   updateAccount.password = formData.password;
+    // }
+    if (formData.phone) {
+      updateProfile.phone = formData.phone;
+    }
+    const { data1 } = await client
+      .from("USER_PROFILE")
+      .update(updateProfile)
+      .eq("user_id", loggedInUser.id);
+    const { data2 } = await client.auth.updateUser(updateAccount);
   }
+
   return (
     <MypageUpdateWrapper onSubmit={handleSubmit(onSubmit)}>
       <Title>개인정보 수정하기</Title>
-      {isLoading ? (
-        "Loading..."
-      ) : (
-        <ItemBox>
-          <ItemTitle htmlFor="myName">이름</ItemTitle>
+      <ItemBox>
+        <ItemTitle htmlFor="myName">이름</ItemTitle>
+        <InputText
+          {...register("name")}
+          type="text"
+          id="myName"
+          placeholder={loggedInUserProfile.user_nickname}
+        />
+        <ItemTitle htmlFor="myBirth">생년월일</ItemTitle>
+        <InputText
+          {...register("birth_date")}
+          type="date"
+          id="myBirth"
+          defaultValue={loggedInUserProfile.birth_date}
+        />
+        <ItemTitle htmlFor="myEmail">이메일</ItemTitle>
+        <InputText
+          {...register("email")}
+          type="email"
+          id="myEmail"
+          placeholder={loggedInUser.email}
+        />
+        <ItemTitle htmlFor="myPassword">비밀번호 변경</ItemTitle>
+        <InputText {...register("password")} type="text" id="myPassword" />
+        <ItemTitle htmlFor="myPassword2">비밀번호 확인</ItemTitle>
+        <InputText {...register("password2")} type="text" id="myPassword2" />
+        <ItemTitle htmlFor="myPhone">전화번호</ItemTitle>
+        <InputWith>
           <InputText
-            {...register("name")}
+            {...register("phone")}
             type="text"
-            id="myName"
-            placeholder={userProfile.user_nickname}
+            id="myPhone"
+            placeholder={loggedInUserProfile.phone}
           />
-          <ItemTitle htmlFor="myBirth">생년월일</ItemTitle>
-          <InputText
-            {...register("birth")}
-            type="date"
-            id="myBirth"
-            placeholder={userProfile.birth_date}
-          />
-          <ItemTitle htmlFor="myEmail">이메일</ItemTitle>
-          <InputText {...register("email")} type="email" id="myEmail" />
-          <ItemTitle htmlFor="myPassword">비밀번호 변경</ItemTitle>
-          <InputText {...register("password")} type="text" id="myPassword" />
-          <ItemTitle htmlFor="myPassword2">비밀번호 확인</ItemTitle>
-          <InputText {...register("password2")} type="text" id="myPassword2" />
-          <ItemTitle htmlFor="myPhone">전화번호</ItemTitle>
-          <InputWith>
-            <InputText {...register("phone")} type="text" id="myPhone" />
-            <BtnConfirm>인증</BtnConfirm>
-          </InputWith>
-        </ItemBox>
-      )}
-
-      <Button type="submit" text={"저장하기"} size={"m"} />
+          <BtnConfirm>인증</BtnConfirm>
+        </InputWith>
+      </ItemBox>
+      <Button>저장하기</Button>
     </MypageUpdateWrapper>
   );
 }
