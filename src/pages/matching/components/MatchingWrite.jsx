@@ -306,9 +306,9 @@ const MatchingWrite = ({ closeModal }) => {
 
   const getMatchings = async () => {
     let { data: matchings, error } = await client
-      .from("MATCHINGTEST")
+      .from("MATCHING")
       .select(
-        "id, title, matching_date, matching_time, total_people, required, difficulty, necessity, beach_id, sports_id, host_userid"
+        "id, title, matching_date, matching_time, total_people, required, difficulty, necessity, beach_id, sport_id, host_userId, location"
       );
     console.log(matchings);
     setAllMatchings(matchings);
@@ -338,7 +338,7 @@ const MatchingWrite = ({ closeModal }) => {
 
   const addMatching = async (formData) => {
     const { data, error } = await client
-      .from("MATCHINGTEST")
+      .from("MATCHING")
       .insert([
         {
           title: formData.title,
@@ -349,8 +349,9 @@ const MatchingWrite = ({ closeModal }) => {
           difficulty: formData.difficulty,
           necessity: formData.necessity,
           beach_id: selectedBeachId,
-          sports_id: formData.sports_id,
-          host_userid: loggedInUser.id
+          sport_id: formData.sport_id,
+          host_userId: loggedInUser.id,
+          location: formData.location
         },
       ])
       .select();
@@ -380,7 +381,7 @@ const MatchingWrite = ({ closeModal }) => {
             <Title type="text" {...register("title", { required: "제목을 입력해 주세요." })} id='title'/>
           </FrameDiv>
           <FrameDiv>
-            <Divbox>위치</Divbox>
+            <Divbox>해변</Divbox>
             <BeachWrapper>
               {beachLoading
                 ? "Loading..."
@@ -400,10 +401,14 @@ const MatchingWrite = ({ closeModal }) => {
                   })}
             </BeachWrapper>
           </FrameDiv>
+          <FrameDiv>
+            <Divbox>위치</Divbox>
+            <Title type="text" {...register("location", { required: "제목을 입력해 주세요." })} id='location'/>
+          </FrameDiv>
           <FrameDiv1>
           <FrameDiv>
             <Divbox>종목</Divbox>
-            <Dropdown {...register("sports_id", { required: "종목을 선택해 주세요." })}>
+            <Dropdown {...register("sport_id", { required: "종목을 선택해 주세요." })}>
               <option value="">스포츠 종목 선택</option>
               {sportsLoading ? (
                 <option value="" disabled>

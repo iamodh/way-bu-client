@@ -45,7 +45,6 @@ const Sports = () => {
                 sport={sport}
                 onClick={() => handleTagClick(sport.id)}
                 hasClicked={selectedTags.includes(sport.id)}
-                
               />
             );
           })}

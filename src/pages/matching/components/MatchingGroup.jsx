@@ -243,8 +243,6 @@ const MatchingGroup = ({ selectedDate, selectedSportId }) => {
     setSelectedBeach(beach);
   };  
   
-  
-
   const closeModal = () => {
     setSelectedMatching(null);
     setSelectedSport(null); // 추가: 선택된 스포츠 정보 초기화
