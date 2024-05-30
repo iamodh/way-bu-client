@@ -17,28 +17,46 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 100px;
+
+  @media (max-width: 480px) {
+    margin-top: 10px;
+    padding: 40px;
+  }
 `;
 
 const Form = styled.form`
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
   padding: 60px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--color-blue-vivid);
+
+  @media (max-width: 480px) {
+    padding: 30px;
+  }
 `;
 
 const Title = styled.h1`
-  font-size: 36px;
+  font-size: 28px;
   font-weight: bold;
   margin-bottom: 15px;
   color: var(--color-navy);
+
+  @media (max-width: 480px) {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
 `;
 
 const GreyHR = styled.hr`
   border-top: 1px solid #b9b9b9;
-  margin-bottom: 50px;
+  margin-bottom: 35px;
+
+  @media (max-width: 480px) {
+    margin-bottom: 20px;
+  }
 `;
 
 const alertAnimation = keyframes`
@@ -186,8 +204,12 @@ export default function Signup() {
             <ErrorMsg>{errors?.joinPath?.message}</ErrorMsg>
           </InputBox>
           <ButtonContainer>
-            <Button type="submit">회원가입</Button>
-            <Link to="/login">로그인</Link>
+            <Button type="submit" to="/login">
+              회원가입
+            </Button>
+            <Link to="/login" style={{ fontSize: "0.7rem" }}>
+              로그인
+            </Link>
           </ButtonContainer>
         </Form>
       </Wrapper>

@@ -92,7 +92,9 @@ export default function ChangePwd() {
         </InputBox>
         <ButtonContainer>
           <Button type="submit">비밀번호 변경</Button>
-          <Link to="/login">로그인</Link>
+          <Link to="/login" style={{ fontSize: "0.7rem" }}>
+            로그인
+          </Link>
         </ButtonContainer>
       </form>
     </LoginLayout>

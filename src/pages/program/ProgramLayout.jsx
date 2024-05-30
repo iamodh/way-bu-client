@@ -1,4 +1,4 @@
-import { Link, Outlet, useParams } from "react-router-dom";
+import { Link, Outlet, useMatch, useParams } from "react-router-dom";
 import { client } from "../../../libs/supabase";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -8,7 +8,6 @@ const Wrapper = styled.div``;
 
 const Main = styled.div`
   max-width: 720px;
-  height: 100vh;
   margin: 0 auto;
 `;
 
@@ -16,15 +15,17 @@ const Main = styled.div`
 const Header = styled.div``;
 
 const Title = styled.div`
-  height: 103px;
+  padding: 50px 0;
   display: flex;
   align-items: center;
   padding-left: 32px;
   gap: 16px;
+  border-bottom: 1px solid var(--color-blue-main);
   @media only screen and (max-width: 376px) {
     flex-direction: column;
     padding-left: 0;
     margin-top: 20px;
+    padding: 30px 0;
   }
 `;
 
@@ -45,6 +46,8 @@ const Tags = styled.div`
 const Nav = styled.nav`
   height: 56px;
   display: flex;
+  border-right: 1px solid var(--color-blue-main);
+  border-left: 1px solid var(--color-blue-main);
   a {
     flex: 1;
     display: flex;
@@ -58,23 +61,25 @@ const Nav = styled.nav`
     @media only screen and (max-width: 376px) {
       font-size: var(--font-size-m);
     }
+    &:hover {
+      background-color: var(--color-blue-vivid);
+    }
+    transition: all 0.1s ease-in;
   }
 `;
 
 export default function ProgramLayout() {
   const { programId } = useParams();
 
+  /* Get each program */
   const [program, setProgram] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [programLoading, setProgramLoading] = useState(true);
 
-  useEffect(() => {
-    getProgram();
-  }, []);
   const getProgram = async () => {
     const { data, error } = await client
       .from("PROGRAM")
       .select(
-        `*, SPORT (title, id, theme_color), BEACH (beach_name, id, theme_color), BUSINESS (business_address)`
+        `*, SPORT (title, id, theme_color), BEACH (beach_name, id, theme_color), BUSINESS (business_address, business_contact)`
       )
       .eq("id", programId);
     if (error) {
@@ -83,8 +88,33 @@ export default function ProgramLayout() {
     if (data) {
       setProgram(data);
     }
-    setIsLoading(false);
+    setProgramLoading(false);
   };
+
+  /* Get each program's all reviews */
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+
+  const getReviews = async () => {
+    const { data, error } = await client
+      .from("PROGRAM_REVIEW")
+      .select(`*, USER_PROFILE (id, user_nickname, avatar_url)`)
+      .eq("program_id", programId);
+    if (error) {
+      return;
+    }
+    if (data) {
+      setReviews(data);
+    }
+    setReviewsLoading(false);
+  };
+
+  useEffect(() => {
+    getProgram();
+    getReviews();
+  }, []);
+
+  const matchBookingPage = useMatch("program/:id/booking");
 
   return (
     <>
@@ -106,7 +136,7 @@ export default function ProgramLayout() {
           </Header>
           <Outlet context={{ program }} />
         </Main> */}
-        {isLoading ? (
+        {programLoading ? (
           "Loading..."
         ) : (
           <Main>
@@ -126,15 +156,18 @@ export default function ProgramLayout() {
                   />
                 </Tags>
               </Title>
-              <Nav>
-                <Link to={`/program/${programId}`}>소개</Link>
-                <Link to="detail">상세정보</Link>
-                <Link to="reviews">후기</Link>
-              </Nav>
+              {matchBookingPage ? null : (
+                <Nav>
+                  <Link to={`/program/${programId}`}>소개</Link>
+                  <Link to="detail">상세정보</Link>
+                  <Link to="reviews">후기</Link>
+                </Nav>
+              )}
             </Header>
             <Outlet
               context={{
                 program,
+                reviews,
               }}
             />
           </Main>

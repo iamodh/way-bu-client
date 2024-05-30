@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { client } from "../../../../libs/supabase";
-import StarContainer from "./StarContainer";
+import StarAvgContainer from "./StarAvgContainer";
+import { addCommaintoMoney } from "../../../../libs/formatter";
+import BlueButton from "./BlueButton";
 
 const Wrapper = styled.div`
   border: 1px solid var(--color-gray);
@@ -72,22 +74,6 @@ const Content = styled.div`
   }
 `;
 
-const Button = styled.button`
-  width: calc(100% - 40px);
-  margin: 10px 0 20px 0;
-  font-size: var(--font-size-m);
-  color: white;
-  height: 40px;
-  background-color: var(--color-blue-main);
-  &:hover {
-    background-color: #1758b9;
-  }
-  transition: all 0.2s ease-in-out;
-  border-radius: var(--br-3xs);
-  border: none;
-  cursor: pointer;
-`;
-
 export default function ProgramItem({ program, onBtnClicked }) {
   /* Review 별 불러오기 */
   const [reviews, setReviews] = useState();
@@ -118,7 +104,7 @@ export default function ProgramItem({ program, onBtnClicked }) {
         <Thumbnail $imageUrl={program.thumbnail} />
         <Content>
           <h3>{program.program_name}</h3>
-          <StarContainer programId={program.id}>
+          <StarAvgContainer programId={program.id}>
             {reviewLoading
               ? "Loading..."
               : reviews.length === 0
@@ -200,8 +186,8 @@ export default function ProgramItem({ program, onBtnClicked }) {
                   : `(${reviews.length})`
               }
             </span>
-          </StarContainer>
-          <span>{program.price} 원</span>
+          </StarAvgContainer>
+          <span>{addCommaintoMoney(program.price)}원</span>
           <div>
             <span>{program.open_time.substring(0, 5)}</span>
             <span> ~ </span>
@@ -209,13 +195,12 @@ export default function ProgramItem({ program, onBtnClicked }) {
           </div>
         </Content>
       </Link>
-      <Button
+      <BlueButton
+        text={"비교하기"}
         onClick={() => {
           onBtnClicked(program);
         }}
-      >
-        비교하기
-      </Button>
+      />
     </Wrapper>
   );
 }

@@ -15,26 +15,22 @@ const Row = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: var(--padding-5xs);
 `;
 const SportTag = styled.div`
   display: flex;
-  font-size: var(--font-size-m);
+  font-size: var(--font-size-s);
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   text-align: center;
-  cursor: pointer;
   border: 1px solid var(--color-blue-main);
   color: var(--color-blue-main);
   padding: var(--padding-9xs) var(--padding-5xs);
   background-color: var(--color-skyblue-light);
   border-radius: var(--br-mini);
-  @media screen and (max-width: 768px) {
-    padding: var(--padding-9xs);
-    font-size: var(--font-size-s);
-  }
 `;
 const PostTitle = styled.div`
   font-size: var(--font-size-m);
@@ -51,17 +47,23 @@ const View = styled(Div)`
 `;
 
 export default function UserProgramItem({ post }) {
+  const formatDate = (datestr) => {
+    const date = new Date(datestr);
+    var options = { year: "numeric", month: "numeric", day: "numeric" };
+    return date.toLocaleDateString(options);
+  };
+
   return (
     <Wrapper>
       <Row>
         <PostTitle>{post.title}</PostTitle>
-        <SportTag>{post.sport}</SportTag>
+        <SportTag>{post.post_type}</SportTag>
       </Row>
-      <View>조회수 : {post.view}</View>
+      <View>조회수 : {post.views}</View>
       <Row>
-        <Div>{post.writer}</Div>
+        <Div>{post.user_nickname}</Div>
         <Div> | </Div>
-        <Div>{post.date}</Div>
+        <Div>{formatDate(post.created_at)}</Div>
       </Row>
     </Wrapper>
   );
