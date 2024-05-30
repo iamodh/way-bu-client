@@ -39,8 +39,10 @@ export default function Router() {
         <Route path="change-pwd" element={<ChangePwd />} />
         <Route path="signup" element={<Signup />} />
         <Route path="program" element={<Program />} />
+
         {/* Compare Programs */}
         <Route path="program/compare" element={<ComparePrograms />} />
+
         {/* Program detail */}
         <Route path="program/:programId" element={<ProgramLayout />}>
           <Route index element={<ProgramIntro />} />
@@ -52,6 +54,9 @@ export default function Router() {
         <Route path="community/write" element={<Write />} />
         <Route path="community/:id" element={<Post />} />
 
+        {/* Matching */}
+        <Route path="matching" element={<Matching />} />
+          
         {/* My page */}
         <Route path="/mypage/:id" element={<MypageLayout />}>
           <Route index element={<MypageUpdate />} />
@@ -61,9 +66,6 @@ export default function Router() {
           <Route path="matching" element={<MypageMatching />} />
           <Route path="setting" element={<MypageSetting />} />
         </Route>
-      </Route>
-      <Route path="/matching">
-        <Route index element={<Matching />} />
       </Route>
     </Routes>
   );
