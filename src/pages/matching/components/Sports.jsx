@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { getSports } from "../../../../apis/sports";
 
-
 const SportsFilter = styled.div`
   padding: var(--padding-13xl);
   padding-bottom: 0px;
@@ -19,7 +18,7 @@ const SportsFilter = styled.div`
 `;
 
 const Sports = () => {
-    const { isLoading: sportsLoading, data: sportsData } = useQuery(
+  const { isLoading: sportsLoading, data: sportsData } = useQuery(
     ["sports"],
     getSports
   );
@@ -39,14 +38,12 @@ const Sports = () => {
       {sportsLoading
         ? "Loading..."
         : sportsData.map((sport) => {
+            console.log(sport);
+
             return (
               <SportsTag
-                themeColor={sport.theme_color}
                 key={sport.id}
-                color={"#ff4d4d"}
-                text={sport.title}
-                bgColor={"#ffcccc"}
-                hoverColor={"#ffb8b8"}
+                sport={sport}
                 // handleTagClicked 함수를 onClick props로 전달
                 onClick={() => hanldeTagClicked(sport.id)}
                 hasClicked={clickedTags.includes(sport.id)}
