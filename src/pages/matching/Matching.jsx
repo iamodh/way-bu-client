@@ -45,7 +45,6 @@ const Matching = () => {
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
-    // 여기서 선택된 날짜를 사용하거나 필요한 처리를 수행할 수 있습니다.
   };
 
   return (

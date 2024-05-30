@@ -108,7 +108,7 @@ const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
 const Calendar = ({ onSelectDate }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date()); // 새로운 상태 변수 selectedDate 추가
+  const [selectedDate, setSelectedDate] = useState(null); // 새로운 상태 변수 selectedDate 추가
 
   useEffect(() => {
     setCurrentMonth((currentDate.getMonth() + 1) + '월');
@@ -154,7 +154,6 @@ const Calendar = ({ onSelectDate }) => {
   }, [selectedDate, onSelectDate]);
 
   const handleDateButtonClick = (date) => {
-    // 클릭된 날짜와 현재 선택된 날짜가 같은 경우 취소, 다른 경우 선택
     setSelectedDate(prevDate => prevDate && prevDate.getTime() === date.getTime() ? null : date);
   };  
 

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { getSports } from "../../../../apis/sports";
 
-
 const SportsFilter = styled.div`
   padding: var(--padding-13xl);
   padding-bottom: 0px;
@@ -19,21 +18,22 @@ const SportsFilter = styled.div`
 `;
 
 const Sports = () => {
-    const { isLoading: sportsLoading, data: sportsData } = useQuery(
+  const { isLoading: sportsLoading, data: sportsData } = useQuery(
     ["sports"],
     getSports
   );
 
-  const [clickedTags, setClickedTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
 
-  // 스포츠 태그 클릭 시 clickedTags 배열에서 해당 id 토글
-  const hanldeTagClicked = (id) => {
-    if (clickedTags.includes(id)) {
-      setClickedTags((prev) => prev.filter((it) => it !== id));
-    } else {
-      setClickedTags((prev) => [...prev, id]);
-    }
+  // 스포츠 태그 클릭 시 selectedTags 배열에 추가 또는 제거
+  const handleTagClick = (id) => {
+    setSelectedTags(prevSelectedTags =>
+      prevSelectedTags.includes(id)
+        ? prevSelectedTags.filter(tagId => tagId !== id)
+        : [...prevSelectedTags, id]
+    );
   };
+
   return (
     <SportsFilter>
       {sportsLoading
@@ -41,15 +41,10 @@ const Sports = () => {
         : sportsData.map((sport) => {
             return (
               <SportsTag
-                themeColor={sport.theme_color}
                 key={sport.id}
-                color={"#ff4d4d"}
-                text={sport.title}
-                bgColor={"#ffcccc"}
-                hoverColor={"#ffb8b8"}
-                // handleTagClicked 함수를 onClick props로 전달
-                onClick={() => hanldeTagClicked(sport.id)}
-                hasClicked={clickedTags.includes(sport.id)}
+                sport={sport}
+                onClick={() => handleTagClick(sport.id)}
+                hasClicked={selectedTags.includes(sport.id)}
               />
             );
           })}

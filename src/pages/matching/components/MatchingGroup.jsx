@@ -176,16 +176,16 @@ const MatchingGroup = ({ selectedDate, selectedSportId }) => {
     }
   }
 
-  const filteredMatchings = selectedDate
-    ? matchings.filter((matching) => {
-        const matchingDate = new Date(matching.matching_date);
-        return (
-          matchingDate.getFullYear() === selectedDate.getFullYear() &&
-          matchingDate.getMonth() === selectedDate.getMonth() &&
-          matchingDate.getDate() === selectedDate.getDate()
-        );
-      })
-    : matchings;
+  const filteredMatchings = matchings.filter((matching) => {
+    const matchingDate = new Date(matching.matching_date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return matchingDate >= today && (!selectedDate || (
+      matchingDate.getFullYear() === selectedDate.getFullYear() &&
+      matchingDate.getMonth() === selectedDate.getMonth() &&
+      matchingDate.getDate() === selectedDate.getDate()
+    ));
+  });
   
 
   async function updateMatchingViews(matching) {

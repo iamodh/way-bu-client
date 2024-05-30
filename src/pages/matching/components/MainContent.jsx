@@ -171,8 +171,15 @@ const MainContent = () => {
       return;
     }
     
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 시간을 00:00:00으로 설정하여 날짜만 비교
+    const filteredMatchings = data.filter((matching) => {
+      const matchingDate = new Date(matching.matching_date);
+      return matchingDate >= today;
+    });
+
     // 조회수 기준 정렬
-    const sortMatchings = data.sort((a, b) => b.views - a.views).slice(0, 5);
+    const sortMatchings = filteredMatchings.sort((a, b) => b.views - a.views).slice(0, 5);
     
     setMatchings(sortMatchings);
     setIsLoading(false);
@@ -217,7 +224,7 @@ const MainContent = () => {
       return null;
     }
     if (data.length === 0) {
-      console.log("Beach data not found");
+      console.log("데이터없음");
       return null;
     }
     return data[0];
