@@ -128,6 +128,21 @@ const FrameDiv = styled.div`
   }
 `;
 
+const FrameDiv2 = styled.div`
+  width: 767px;
+  display: flex;
+  justify-content: flex-start;
+  gap: var(--gap-3xs);
+  box-sizing: border-box;
+  max-width: 100%;
+  @media screen and (max-width: 376px) {
+    width: 300px;
+    font-size: var(--font-size-s);
+    gap: 0px;
+  }
+`;
+
+
 const FrameParent1 = styled.div`
   display: flex;
   flex-direction: column;
@@ -163,7 +178,7 @@ const Divbox = styled.div`
 `;
 
 const Textbox = styled.textarea`
-  height: 230px;
+  height: 150px;
   width: 100%;
   padding: 10px;
   box-sizing: border-box;
@@ -175,7 +190,7 @@ const Textbox = styled.textarea`
   outline: none;
   background-color: aliceblue;
   @media screen and (max-width: 376px) {
-    height: 150px;
+    height: 80px;
     font-size: var(--font-size-s);
   }
 `;
@@ -281,8 +296,10 @@ const Necessity = styled.input`
   max-width: 100%;
   padding: 10px;
   background-color: aliceblue;
-  @media screen and (max-width: 675px) {
-    min-width: 100%;
+  @media screen and (max-width: 376px) {
+    height: 30px;
+    padding: 3px;
+    font-size: var(--font-size-s);
   }
 `;
 
@@ -295,7 +312,7 @@ const BeachWrapper = styled.div`
 `
 const MatchingWrite = ({ closeModal }) => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
-
+  
   const [isNecessityRequired, setIsNecessityRequired] = useState(false);
   const [allMatchings, setAllMatchings] = useState([]);
   const [selectedBeachId, setSelectedBeachId] = useState(null);
@@ -308,7 +325,7 @@ const MatchingWrite = ({ closeModal }) => {
     let { data: matchings, error } = await client
       .from("MATCHING")
       .select(
-        "id, title, matching_date, matching_time, total_people, required, difficulty, necessity, beach_id, sport_id, host_userId, location"
+        "id, title, difficulty, matching_date, matching_time, total_people, required, location, beach_id, sport_id, host_userId"
       );
     console.log(matchings);
     setAllMatchings(matchings);
@@ -342,16 +359,16 @@ const MatchingWrite = ({ closeModal }) => {
       .insert([
         {
           title: formData.title,
+          beach_id: selectedBeachId,
+          location: formData.location,
+          sport_id: formData.sport_id,
+          difficulty: formData.difficulty,
           matching_date: formData.matching_date,
           matching_time: formData.matching_time,
           total_people: formData.total_people,
-          required: formData.required,
-          difficulty: formData.difficulty,
           necessity: formData.necessity,
-          beach_id: selectedBeachId,
-          sport_id: formData.sport_id,
-          host_userId: loggedInUser.id,
-          location: formData.location
+          required: formData.required,
+          host_userId: loggedInUser.id
         },
       ])
       .select();
@@ -362,6 +379,7 @@ const MatchingWrite = ({ closeModal }) => {
     getMatchings();
     console.log("작성완료", data);
     closeModal();
+    window.location.reload();
   };
   
   const handleTagClicked = (id) => {
@@ -423,7 +441,7 @@ const MatchingWrite = ({ closeModal }) => {
               )}
             </Dropdown>
           </FrameDiv>
-            <FrameDiv>
+            <FrameDiv2>
               <Divbox>난이도</Divbox>
                 <Radio
                   type="radio"
@@ -452,7 +470,7 @@ const MatchingWrite = ({ closeModal }) => {
                   {...register("difficulty", { required: "제목을 입력해 주세요." })}
                 />
                 <RadioLabel htmlFor="level3">하</RadioLabel>
-            </FrameDiv>
+            </FrameDiv2>
           </FrameDiv1>
           <FrameDiv>
             <Divbox>일정</Divbox>
@@ -464,7 +482,7 @@ const MatchingWrite = ({ closeModal }) => {
             <NumberInput type="number" min={1} max={10} {...register("total_people", { required: "제목을 입력해 주세요." })} />
             <Div>최대 10명까지 가능합니다.</Div>
           </FrameDiv>
-          <FrameDiv>
+          <FrameDiv2>
             <Divbox>준비물</Divbox>
             <Radio
               type="radio"
@@ -487,7 +505,7 @@ const MatchingWrite = ({ closeModal }) => {
             />
             <RadioLabel htmlFor="no">불필요</RadioLabel>
             {isNecessityRequired && <Necessity {...register("necessity", { required: "제목을 입력해 주세요." })} type="text" placeholder="준비물 입력" />}
-          </FrameDiv>
+          </FrameDiv2>
         </FrameGroup>
       </FrameParent1>
       <DivRoot>
