@@ -23,16 +23,17 @@ const Sports = () => {
     getSports
   );
 
-  const [clickedTags, setClickedTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
 
-  // 스포츠 태그 클릭 시 clickedTags 배열에서 해당 id 토글
-  const hanldeTagClicked = (id) => {
-    if (clickedTags.includes(id)) {
-      setClickedTags((prev) => prev.filter((it) => it !== id));
-    } else {
-      setClickedTags((prev) => [...prev, id]);
-    }
+  // 스포츠 태그 클릭 시 selectedTags 배열에 추가 또는 제거
+  const handleTagClick = (id) => {
+    setSelectedTags((prevSelectedTags) =>
+      prevSelectedTags.includes(id)
+        ? prevSelectedTags.filter((tagId) => tagId !== id)
+        : [...prevSelectedTags, id]
+    );
   };
+
   return (
     <SportsFilter>
       {sportsLoading
@@ -44,9 +45,8 @@ const Sports = () => {
               <SportsTag
                 key={sport.id}
                 sport={sport}
-                // handleTagClicked 함수를 onClick props로 전달
-                onClick={() => hanldeTagClicked(sport.id)}
-                hasClicked={clickedTags.includes(sport.id)}
+                onClick={() => handleTagClick(sport.id)}
+                hasClicked={selectedTags.includes(sport.id)}
               />
             );
           })}

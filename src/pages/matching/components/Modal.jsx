@@ -64,10 +64,14 @@ const ModalContent = styled.div`
   background: white;
   padding: 20px;
   border-radius: var(--br-3xs);
-  height: 700px;
+  height: 750px;
   width: 600px;
   text-align: center;
   position: relative;
+  @media screen and (max-width: 376px) {
+    width: 350px;
+    height: 600px;
+  }
 `;
 
 const CloseButton = styled.button`
@@ -99,15 +103,15 @@ const Modal = () => {
   return (
     <>
       <ButtonWrapper>
-        <Button><StyledLink to = {"/mypage"}><Div>내 매칭 보러가기</Div></StyledLink></Button>
+        <Button><StyledLink to = {"/mypage/matching"}><Div>내 매칭 보러가기</Div></StyledLink></Button>
         <Button onClick={(openModal)}><Div>매칭 만들기</Div></Button>
       </ButtonWrapper>
       
       {isOpen && (
-        <ModalWrapper>
+        <ModalWrapper onClick={closeModal}>
           <ModalContent onClick={e => e.stopPropagation()}>
             <CloseButton onClick={closeModal}>&times;</CloseButton>
-            <MatchingWrite />
+            <MatchingWrite closeModal={closeModal}/>
           </ModalContent>
         </ModalWrapper>
       )}
