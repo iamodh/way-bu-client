@@ -1,6 +1,12 @@
 import styled from "styled-components";
 
 export const PostWrapper = styled.div`
+  @media (max-width: 768px) {
+    & * {
+      font-size: 0.8rem;
+    }
+    padding-top: 0;
+  }
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -16,6 +22,7 @@ export const PostWrapper = styled.div`
   border: 1px solid var(--color-blue-main);
   padding: 1rem;
   border-radius: 0.5rem;
+  position: relative;
 `;
 
 export const PostTitleContainer = styled.div`
@@ -23,15 +30,27 @@ export const PostTitleContainer = styled.div`
   width: 100%;
   padding: 1rem 0%;
   align-items: center;
+  @media (max-width: 768px) {
+    padding-bottom: 0.5rem;
+  }
 `;
 
 export const PostTitle = styled.div`
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    margin-left: 1rem;
+  }
   font-size: var(--font-size-xl);
   margin-left: 1.5rem;
   font-weight: 700;
 `;
 
 export const PostTag = styled.div`
+  @media (max-width: 768px) {
+    width: 3rem;
+    margin: 0.3rem;
+    height: 2rem;
+  }
   border-radius: 0.6rem;
   margin: 0.5rem;
   border: 1px solid rgba(0, 0, 0, 0.6);
@@ -87,9 +106,25 @@ export const PostContent = styled.div`
   position: relative;
 `;
 
-export const PostBtn = styled.button``;
+export const PostBtn = styled.button`
+  background-color: white;
+  border: 1px solid var(--color-blue-main);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+  float: right;
+`;
+
+export const PostBtnContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+`;
 
 export const ThumbBtn = styled.button`
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
   position: absolute;
   bottom: 1rem;
   right: 50%;
@@ -117,6 +152,9 @@ export const CommentForm = styled.form`
 `;
 
 export const CommentInput = styled.textarea`
+  @media (max-width: 768px) {
+    height: 3rem;
+  }
   height: 3.5rem;
   border-radius: 0.2rem;
   flex: 1;
@@ -125,6 +163,10 @@ export const CommentInput = styled.textarea`
 `;
 
 export const CommentInputBtn = styled.button`
+  @media (max-width: 768px) {
+    width: 4rem;
+    height: 3rem;
+  }
   border: none;
   background-color: var(--color-blue-main);
   color: white;

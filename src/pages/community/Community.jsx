@@ -182,7 +182,6 @@ export default function Community() {
   };
 
   const TagList = () => {
-    // 작업중
     const tags = ["전체", "자유", "질문", "후기", "꿀팁"];
     const sports = ["전체", "서핑", "카약", "패들보드", "낚시", "기타"];
 

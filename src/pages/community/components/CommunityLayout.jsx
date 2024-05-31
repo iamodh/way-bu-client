@@ -1,6 +1,11 @@
 import styled from "styled-components";
 
 export const ComWrapper = styled.div`
+  @media (max-width: 768px) {
+    & * {
+      font-size: 0.8rem;
+    }
+  }
   display: flex;
   justify-content: center;
   align-items: center;
@@ -63,6 +68,12 @@ export const PostDate = styled.div`
 `;
 
 export const PostTag = styled.div`
+  @media (max-width: 768px) {
+    margin-right: 0.5rem;
+    width: 2rem;
+    height: 1.8rem;
+    line-height: 1.6rem;
+  }
   color: var(--color-tag-mint-front);
   background-color: var(--color-tag-mint-back);
   border: 1px solid var(--color-tag-mint-front);
@@ -83,6 +94,11 @@ export const PostView = styled.div`
 `;
 
 export const PostThumb = styled.div`
+  @media (max-width: 768px) {
+    margin-right: 0.5rem;
+    width: 1.8rem;
+    height: 1.8rem;
+  }
   border: 1px solid black;
   width: 2rem;
   height: 2rem;
@@ -97,6 +113,9 @@ export const PostComment = styled.div`
 `;
 
 export const PostDesc = styled.div`
+  @media screen and (max-width: 768px) {
+    margin-right: 0.8rem;
+  }
   margin-right: 1.3rem;
   &:last-child {
     position: absolute;
@@ -119,12 +138,16 @@ export const TagWrapper = styled.div`
 `;
 
 export const TagContainer = styled.div`
+  min-width: 320px;
   display: flex;
   align-items: center;
   width: 60%;
 `;
 
 export const TagBox = styled.div`
+  @media screen and (max-width: 768px) {
+    width: 3rem;
+  }
   border-radius: 0.6rem;
   padding: 0.3rem 0.5rem;
   margin: 0.5rem;
@@ -139,6 +162,9 @@ export const TagBox = styled.div`
 `;
 
 export const TagName = styled.div`
+  @media screen and (max-width: 768px) {
+    width: 2rem;
+  }
   font-weight: 700;
   width: 5rem;
   margin: 0 1rem;

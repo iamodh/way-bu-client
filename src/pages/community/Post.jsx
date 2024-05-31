@@ -16,6 +16,7 @@ import {
   PostContent,
   ThumbBtn,
   PostBtn,
+  PostBtnContainer,
   CommentContainer,
   CommentForm,
   CommentInput,
@@ -289,7 +290,9 @@ export default function Post() {
         <ThumbBtn onClick={() => clickThumb()}>{post.thumbs} 👍🏻</ThumbBtn>
       </PostContent>
       {loggedInUser && post.user_id == loggedInUser.id && (
-        <PostBtn onClick={() => deletePost()}>삭제하기</PostBtn>
+        <PostBtnContainer>
+          <PostBtn onClick={() => deletePost()}>삭제하기</PostBtn>
+        </PostBtnContainer>
       )}
       <CommentContainer>
         <CommentForm onSubmit={handleSubmit(onCommentSubmit)}>
