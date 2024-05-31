@@ -4,176 +4,28 @@ import { useState, useEffect } from "react";
 import { client } from "../../../libs/supabase";
 import { useRecoilState } from "recoil";
 import { useForm } from "react-hook-form";
-import styled from "styled-components";
-
-const PostWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  max-width: 1000px;
-  width: 80%;
-  min-width: 350px;
-  margin: 2rem auto;
-  flex-direction: column;
-  & * {
-    box-sizing: border-box;
-    border-collapse: collapse;
-  }
-  border: 1px solid var(--color-blue-main);
-  padding: 1rem;
-  border-radius: 0.5rem;
-`;
-
-const PostTitleContainer = styled.div`
-  display: flex;
-  width: 100%;
-  padding: 1rem 0%;
-  align-items: center;
-`;
-
-const PostTitle = styled.div`
-  font-size: var(--font-size-xl);
-  margin-left: 1.5rem;
-  font-weight: 700;
-`;
-
-const PostTag = styled.div`
-  border-radius: 0.6rem;
-  margin: 0.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.6);
-  width: 4rem;
-  height: 2.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const PostInfoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  width: 100%;
-  border: 1px solid var(--color-blue-main);
-  border-radius: 0.5rem;
-  position: relative;
-  margin-bottom: 1rem;
-`;
-
-const PostInfoBottom = styled.div`
-  display: flex;
-  margin-top: 0.5rem;
-  @media screen and (max-width: 768px) {
-    flex-direction: column;
-  }
-`;
-
-const PostInfoBox = styled.div`
-  display: flex;
-  &:nth-child(2) {
-    position: absolute;
-    right: 2rem;
-  }
-`;
-
-const PostInfoItem = styled.div`
-  &:first-child {
-    margin-right: 0.5rem;
-    background-color: var(--color-skyblue-main);
-    font-weight: 600;
-  }
-  padding: 0.4rem;
-`;
-
-const PostContent = styled.div`
-  width: 100%;
-  border: 1px solid var(--color-blue-main);
-  border-radius: 0.5rem;
-  min-height: 15rem;
-  padding: 2rem;
-  position: relative;
-`;
-
-const PostBtn = styled.button``;
-
-const ThumbBtn = styled.button`
-  position: absolute;
-  bottom: 1rem;
-  right: 50%;
-  background-color: rgba(0, 0, 0, 0);
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-radius: 0.5rem;
-  font-size: 2rem;
-  padding: 0.8rem;
-  transform: translate(50%, 0);
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
-const CommentContainer = styled.div`
-  width: 100%;
-`;
-
-const CommentForm = styled.form`
-  margin: 1rem 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const CommentInput = styled.textarea`
-  height: 3.5rem;
-  border-radius: 0.2rem;
-  flex: 1;
-  padding: 0.3rem;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-`;
-
-const CommentInputBtn = styled.button`
-  border: none;
-  background-color: var(--color-blue-main);
-  color: white;
-  height: 3.5rem;
-  width: 6rem;
-  margin-left: 0.5rem;
-  border-radius: 0.2rem;
-`;
-
-const CommentBox = styled.div`
-  margin: 1rem 0;
-  background-color: var(--color-skyblue-background);
-  padding: 1rem;
-  border-radius: 0.3rem;
-`;
-
-const CommentInfo = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-`;
-
-const CommentItem = styled.div`
-  margin-right: 0.5rem;
-  &:nth-child(2) {
-    opacity: 0.6;
-  }
-`;
-
-const CommentContent = styled.div`
-  background-color: white;
-  margin: 0 1rem;
-  padding: 0.5rem;
-  border-radius: 0.3rem;
-`;
-
-const CommentBtn = styled.button`
-  background-color: rgba(0, 0, 0, 0);
-  border: none;
-  &:hover {
-    cursor: pointer;
-  }
-`;
+import {
+  PostWrapper,
+  PostTitleContainer,
+  PostTitle,
+  PostTag,
+  PostInfoContainer,
+  PostInfoBox,
+  PostInfoItem,
+  PostInfoBottom,
+  PostContent,
+  ThumbBtn,
+  PostBtn,
+  CommentContainer,
+  CommentForm,
+  CommentInput,
+  CommentInputBtn,
+  CommentBox,
+  CommentInfo,
+  CommentItem,
+  CommentContent,
+  CommentBtn,
+} from "./components/PostLayout";
 
 export default function Post() {
   const {
