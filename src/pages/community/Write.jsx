@@ -28,6 +28,7 @@ export default function Write() {
           user_id: loggedInUser.id,
           user_nickname: loggedInUserProfile.user_nickname,
           post_type: formData.tag,
+          sport: formData.sport,
         },
       ])
       .select();
@@ -52,6 +53,13 @@ export default function Write() {
         <option value="질문">질문</option>
         <option value="후기">후기</option>
         <option value="꿀팁">꿀팁</option>
+      </select>
+      <select name="sport" id="sport" {...register("sport")}>
+        <option value="서핑">서핑</option>
+        <option value="패들보드">패들보드</option>
+        <option value="낚시">낚시</option>
+        <option value="카약">카약</option>
+        <option value="기타">기타</option>
       </select>
       <InputBox>
         <label htmlFor="content">내용</label>

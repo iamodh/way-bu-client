@@ -67,11 +67,14 @@ export const PostTag = styled.div`
   background-color: var(--color-tag-mint-back);
   border: 1px solid var(--color-tag-mint-front);
   border-radius: 0.6rem;
-  margin: 0 1rem;
+  margin-right: 1rem;
   height: 2rem;
   line-height: 2rem;
   width: 3rem;
   text-align: center;
+  &:nth-child(2) {
+    margin-right: 0.5rem;
+  }
 `;
 
 export const PostView = styled.div`
@@ -86,6 +89,7 @@ export const PostThumb = styled.div`
   border-radius: 0.3rem;
   text-align: center;
   line-height: 2rem;
+  margin-right: 1rem;
 `;
 
 export const PostComment = styled.div`
@@ -93,7 +97,7 @@ export const PostComment = styled.div`
 `;
 
 export const PostDesc = styled.div`
-  margin-right: 1rem;
+  margin-right: 1.3rem;
   &:last-child {
     position: absolute;
     margin: 0;
@@ -127,6 +131,8 @@ export const TagBox = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.6);
   width: 4rem;
   text-align: center;
+  background-color: ${(props) =>
+    props.selected ? "var(--color-skyblue-main)" : "white"};
   &:hover {
     cursor: pointer;
   }

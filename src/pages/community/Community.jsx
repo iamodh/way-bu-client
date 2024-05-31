@@ -49,12 +49,14 @@ export default function Community() {
   const [pageSection, setPageSection] = useState(1);
   const [sortWay, setSortWay] = useState("created_at");
   const [order, setOrder] = useState(true);
+  const [postTag, setPostTag] = useState("전체");
+  const [postSport, setPostSport] = useState("전체");
 
   const getPosts = async () => {
     let { data: posts, error } = await client
       .from("POST")
       .select(
-        "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, comment_count, created_at, updated_at"
+        "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, comment_count, created_at, updated_at, sport"
       );
     console.log(posts);
     posts.sort((a, b) => {
@@ -107,6 +109,7 @@ export default function Community() {
           <PostBox>
             <PostThumb>{post.thumbs}</PostThumb>
             <PostTag>{post.post_type}</PostTag>
+            <PostTag>{post.sport}</PostTag>
             <PostLeft>
               <PostLeftTop>
                 <PostTitle>
@@ -133,16 +136,19 @@ export default function Community() {
     formState: { errors },
   } = useForm();
 
-  const handleTag = (tag) => {
-    if (tag === "전체") {
-      setPosts(originalPosts);
-      return;
+  const handleTag = (tag, sport) => {
+    let filteredPosts = originalPosts;
+    if (tag === "전체" && sport === "전체") {
+    } else if (tag === "전체") {
+      filteredPosts = originalPosts.filter((post) => post.sport === sport);
+    } else if (sport === "전체") {
+      filteredPosts = originalPosts.filter((post) => post.post_type === tag);
+    } else {
+      filteredPosts = originalPosts.filter(
+        (post) => post.post_type === tag && post.sport === sport
+      );
     }
-    const filteredPosts = originalPosts.filter(
-      (post) => post.post_type === tag
-    );
-    console.log(tag);
-    setPosts(filteredPosts);
+    return setPosts(filteredPosts);
   };
 
   const searchPost = (formData) => {
@@ -175,6 +181,119 @@ export default function Community() {
     return pages;
   };
 
+  const TagList = () => {
+    // 작업중
+    const tags = ["전체", "자유", "질문", "후기", "꿀팁"];
+    const sports = ["전체", "서핑", "카약", "패들보드", "낚시", "기타"];
+
+    return (
+      <TagWrapper>
+        <TagContainer>
+          <TagName>태그</TagName>
+          {tags.map((tag) => {
+            return (
+              <TagBox
+                key={tag}
+                selected={postTag === tag}
+                onClick={() => setPostTag(tag)}
+              >
+                {tag}
+              </TagBox>
+            );
+          })}
+        </TagContainer>
+        <TagContainer>
+          <TagName>종목</TagName>
+          {sports.map((sport) => {
+            return (
+              <TagBox
+                key={sport}
+                selected={postSport === sport}
+                onClick={() => setPostSport(sport)}
+              >
+                {sport}
+              </TagBox>
+            );
+          })}
+        </TagContainer>
+      </TagWrapper>
+    );
+    // <TagWrapper>
+    //   <TagContainer>
+    //     <TagName>태그</TagName>
+    //     <TagBox
+    //       selected={postTag === "전체"}
+    //       onClick={() => setPostTag("전체")}
+    //     >
+    //       전체
+    //     </TagBox>
+    //     <TagBox
+    //       selected={postTag === "자유"}
+    //       onClick={() => setPostTag("자유")}
+    //     >
+    //       자유
+    //     </TagBox>
+    //     <TagBox
+    //       selected={postTag === "질문"}
+    //       onClick={() => setPostTag("질문")}
+    //     >
+    //       질문
+    //     </TagBox>
+    //     <TagBox
+    //       selected={postTag === "후기"}
+    //       onClick={() => setPostTag("후기")}
+    //     >
+    //       후기
+    //     </TagBox>
+    //     <TagBox
+    //       selected={postTag === "꿀팁"}
+    //       onClick={() => setPostTag("꿀팁")}
+    //     >
+    //       꿀팁
+    //     </TagBox>
+    //   </TagContainer>
+    //   <TagContainer>
+    //     <TagName>종목</TagName>
+    //     <TagBox
+    //       selected={postSport === "전체"}
+    //       onClick={() => setPostSport("전체")}
+    //     >
+    //       전체
+    //     </TagBox>
+    //     <TagBox
+    //       selected={postSport === "서핑"}
+    //       onClick={() => setPostSport("서핑")}
+    //     >
+    //       서핑
+    //     </TagBox>
+    //     <TagBox
+    //       selected={postSport === "카약"}
+    //       onClick={() => setPostSport("카약")}
+    //     >
+    //       카약
+    //     </TagBox>
+    //     <TagBox
+    //       selected={postSport === "패들보드"}
+    //       onClick={() => setPostSport("패들보드")}
+    //     >
+    //       패들보드
+    //     </TagBox>
+    //     <TagBox
+    //       selected={postSport === "낚시"}
+    //       onClick={() => setPostSport("낚시")}
+    //     >
+    //       낚시
+    //     </TagBox>
+    //     <TagBox
+    //       selected={postSport === "기타"}
+    //       onClick={() => setPostSport("기타")}
+    //     >
+    //       기타
+    //     </TagBox>
+    //   </TagContainer>
+    // </TagWrapper>;
+  };
+
   useEffect(() => {
     const count = posts.length;
     setPostsCount(count);
@@ -191,32 +310,20 @@ export default function Community() {
     setPageSection(Math.ceil(postPage / postPerPage));
   }, [postPage]);
 
+  useEffect(() => {
+    handleTag(postTag, postSport);
+  }, [postTag, postSport]);
+
   return (
     <>
       <ComWrapper>
         <TitleBox>게시판</TitleBox>
-        <TagWrapper>
-          <TagContainer>
-            <TagName>태그</TagName>
-            <TagBox onClick={() => handleTag("전체")}>전체</TagBox>
-            <TagBox onClick={() => handleTag("자유")}>자유</TagBox>
-            <TagBox onClick={() => handleTag("질문")}>질문</TagBox>
-            <TagBox onClick={() => handleTag("후기")}>후기</TagBox>
-            <TagBox onClick={() => handleTag("꿀팁")}>꿀팁</TagBox>
-          </TagContainer>
-          <TagContainer>
-            <TagName>종목</TagName>
-            <TagBox>서핑</TagBox>
-            <TagBox>카약</TagBox>
-            <TagBox>패들보드</TagBox>
-            <TagBox>낚시</TagBox>
-            <TagBox>크루즈</TagBox>
-          </TagContainer>
-        </TagWrapper>
+        <TagList />
         <PostWrapper>
           <PostBox>
             <PostDesc onClick={() => handleSort("thumbs")}>추천수</PostDesc>
             <PostDesc>태그</PostDesc>
+            <PostDesc>종목</PostDesc>
             <PostDesc onClick={() => handleSort("comment_count")}>
               댓글수
             </PostDesc>
