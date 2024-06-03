@@ -104,7 +104,7 @@ const StyledLink = styled(Link)`
   color: black;
 `;
 const Footer = styled.footer`
-  padding-bottom: 100px;
+  /* padding-bottom: 100px; */
 `;
 
 export default function CommonLayout() {

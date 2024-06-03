@@ -56,7 +56,7 @@ export default function Router() {
 
         {/* Matching */}
         <Route path="matching" element={<Matching />} />
-          
+
         {/* My page */}
         <Route path="/mypage/:id" element={<MypageLayout />}>
           <Route index element={<MypageUpdate />} />
