@@ -27,6 +27,7 @@ import Matching from "./matching/Matching";
 import ProgramBooking from "./program/ProgramBooking";
 import Write from "./community/Write";
 import ComparePrograms from "./program/ComparePrograms";
+import Sports from "./sports/Sports";
 
 export default function Router() {
   return (
@@ -53,6 +54,9 @@ export default function Router() {
         <Route path="community" element={<Coummunity />} />
         <Route path="community/write" element={<Write />} />
         <Route path="community/:id" element={<Post />} />
+
+        {/* Sports */}
+        <Route path="sports" element={<Sports />} />
 
         {/* Matching */}
         <Route path="matching" element={<Matching />} />
