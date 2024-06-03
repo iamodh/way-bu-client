@@ -61,6 +61,12 @@ export const PostTag = styled.div`
   align-items: center;
 `;
 
+export const PostAvatar = styled.img`
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+`;
+
 export const PostInfoContainer = styled.div`
   display: flex;
   flex-direction: column;

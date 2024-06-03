@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./root/Home";
 import Login from "./root/Login";
 import Signup from "./root/Signup";
-import Coummunity from "./community/Community";
+import Community from "./community/Community";
 import Post from "./community/Post";
 
 /* program pagse */
@@ -25,7 +25,7 @@ import FindPwd from "./root/FindPwd";
 import ChangePwd from "./root/ChangePwd";
 import Matching from "./matching/Matching";
 import ProgramBooking from "./program/ProgramBooking";
-import Write from "./community/Write";
+import PostWrite from "./community/PostWrite";
 import ComparePrograms from "./program/ComparePrograms";
 
 export default function Router() {
@@ -50,13 +50,15 @@ export default function Router() {
           <Route path="reviews" element={<ProgramReviews />} />
           <Route path="booking" element={<ProgramBooking />} />
         </Route>
-        <Route path="community" element={<Coummunity />} />
-        <Route path="community/write" element={<Write />} />
+
+        {/* Community */}
+        <Route path="community" element={<Community />} />
+        <Route path="community/write" element={<PostWrite />} />
         <Route path="community/:id" element={<Post />} />
 
         {/* Matching */}
         <Route path="matching" element={<Matching />} />
-          
+
         {/* My page */}
         <Route path="/mypage/:id" element={<MypageLayout />}>
           <Route index element={<MypageUpdate />} />

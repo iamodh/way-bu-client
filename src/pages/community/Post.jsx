@@ -9,6 +9,7 @@ import {
   PostTitleContainer,
   PostTitle,
   PostTag,
+  PostAvatar,
   PostInfoContainer,
   PostInfoBox,
   PostInfoItem,
@@ -51,12 +52,21 @@ export default function Post() {
       const { data: post, error: fetchError } = await client
         .from("POST")
         .select(
-          "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, created_at, updated_at, comment_count, user_recommend"
+          "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, created_at, updated_at, comment_count, user_recommend, sport"
         )
         .eq("post_id", postId)
         .single();
-
       if (fetchError) {
+        throw new Error(fetchError.message);
+      }
+
+      const { data: user, error: userError } = await client
+        .from("USER_PROFILE")
+        .select("avatar_url")
+        .eq("user_id", post.user_id)
+        .single();
+
+      if (userError) {
         throw new Error(fetchError.message);
       }
 
@@ -79,7 +89,7 @@ export default function Post() {
         throw new Error(commentError.message);
       }
 
-      setPost(updatedPost[0]);
+      setPost({ ...updatedPost[0], user_avatar: user.avatar_url });
       setComments(comments);
       setIsLoading(false);
     } catch (error) {
@@ -272,6 +282,7 @@ export default function Post() {
       <PostInfoContainer>
         <PostInfoBox>
           <PostInfoItem>작성자</PostInfoItem>
+          <PostAvatar src={post.user_avatar} />
           <PostInfoItem>{post.user_nickname}</PostInfoItem>
         </PostInfoBox>
         <PostInfoBottom>
