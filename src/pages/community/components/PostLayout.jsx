@@ -88,9 +88,13 @@ export const PostInfoBottom = styled.div`
 
 export const PostInfoBox = styled.div`
   display: flex;
-  &:nth-child(2) {
+  margin-right: 1rem;
+  &:last-child {
     position: absolute;
-    right: 2rem;
+    right: 1.5rem;
+  }
+  @media screen {
+    margin: 0;
   }
 `;
 
@@ -118,6 +122,7 @@ export const PostBtn = styled.button`
   padding: 0.5rem;
   border-radius: 0.5rem;
   margin-top: 0.5rem;
+  margin-left: 0.5rem;
   float: right;
 `;
 

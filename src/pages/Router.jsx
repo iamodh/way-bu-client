@@ -27,6 +27,7 @@ import Matching from "./matching/Matching";
 import ProgramBooking from "./program/ProgramBooking";
 import PostWrite from "./community/PostWrite";
 import ComparePrograms from "./program/ComparePrograms";
+import PostEdit from "./community/PostEdit";
 
 export default function Router() {
   return (
@@ -55,6 +56,7 @@ export default function Router() {
         <Route path="community" element={<Community />} />
         <Route path="community/write" element={<PostWrite />} />
         <Route path="community/:id" element={<Post />} />
+        <Route path="community/:id/edit" element={<PostEdit />} />
 
         {/* Matching */}
         <Route path="matching" element={<Matching />} />

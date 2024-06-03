@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { client } from "../../../libs/supabase";
 import { useRecoilState } from "recoil";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import {
   PostWrapper,
   PostTitleContainer,
@@ -290,6 +291,12 @@ export default function Post() {
             <PostInfoItem>작성일</PostInfoItem>
             <PostInfoItem>{formatTime(post.created_at)}</PostInfoItem>
           </PostInfoBox>
+          {post.updated_at && (
+            <PostInfoBox>
+              <PostInfoItem>수정일</PostInfoItem>
+              <PostInfoItem>{formatTime(post.updated_at)}</PostInfoItem>
+            </PostInfoBox>
+          )}
           <PostInfoBox>
             <PostInfoItem>조회수</PostInfoItem>
             <PostInfoItem>{post.views}</PostInfoItem>
@@ -302,6 +309,9 @@ export default function Post() {
       </PostContent>
       {loggedInUser && post.user_id == loggedInUser.id && (
         <PostBtnContainer>
+          <PostBtn>
+            <Link to={`edit`}>수정하기</Link>
+          </PostBtn>
           <PostBtn onClick={() => deletePost()}>삭제하기</PostBtn>
         </PostBtnContainer>
       )}
