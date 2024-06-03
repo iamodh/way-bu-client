@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { client } from "../../../../libs/supabase";
+import BeachTag from './BeachTag';
+import { getBeach } from "../../../../apis/beach"
+import { getSports } from '../../../../apis/sports';
+import { useRecoilState } from "recoil";
+import { loggedInUserState, loggedInUserProfileState } from "../../../atom";
 
 const FrameWrapperRoot = styled.form`
   align-self: stretch;
@@ -14,6 +20,9 @@ const FrameWrapperRoot = styled.form`
   height: 100%;
   gap: var(--gap-base);
   margin: auto;
+  @media screen and (max-width: 376px) {
+    gap: var(--gap-3xs);
+  }
 `;
 
 const Div = styled.div`
@@ -23,6 +32,11 @@ const Div = styled.div`
   text-align: center;
   height: 45px;
   line-height: 45px;
+  @media screen and (max-width: 376px) {
+  height: 30px;
+  line-height: 30px;
+  font-size: var(--font-size-xs);
+  }
 `;
 
 const Title = styled.input`
@@ -37,8 +51,9 @@ const Title = styled.input`
   max-width: 100%;
   padding: 10px;
   background-color: aliceblue;
-  @media screen and (max-width: 675px) {
-    min-width: 100%;
+  @media screen and (max-width: 376px) {
+    min-width: 190px;
+    height: 30px;
   }
 `;
 
@@ -61,7 +76,7 @@ const FrameGroup = styled.div`
   gap: var(--gap-xl);
   white-space: nowrap;
   margin-bottom: 10px;
-  @media screen and (max-width: 750px) {
+  @media screen and (max-width: 376px) {
     flex-wrap: wrap;
   }
 `;
@@ -77,8 +92,9 @@ const Schedulebox = styled.input`
   max-width: 30%;
   padding: 10px;
   background-color: aliceblue;
-  @media screen and (max-width: 675px) {
-    min-width: 100%;
+    @media screen and (max-width: 376px) {
+    height: 30px;
+    max-width: 100px;
   }
 `;
 
@@ -93,8 +109,10 @@ const NumberInput = styled.input`
   max-width: 30%;
   padding: 10px;
   background-color: aliceblue;
-  @media screen and (max-width: 675px) {
-    min-width: 100%;
+  @media screen and (max-width: 376px) {
+    height: 30px;
+    max-width: 100px;
+    line-height: 30px;
   }
 `;
 
@@ -105,6 +123,9 @@ const FrameDiv = styled.div`
   gap: var(--gap-3xs);
   box-sizing: border-box;
   max-width: 100%;
+  @media screen and (max-width: 376px) {
+    width: 300px;
+  }
 `;
 
 const FrameParent1 = styled.div`
@@ -115,6 +136,11 @@ const FrameParent1 = styled.div`
   max-width: 100%;
   height: 60%;
   margin-top: 25px;
+  @media screen and (max-width: 376px) {
+    height: 400px;
+    width: 350px;
+
+  }
 `;
 
 const Divbox = styled.div`
@@ -123,10 +149,17 @@ const Divbox = styled.div`
   border-radius: 5px;
   text-align: center;
   font-weight: bold;
-  height: 20px;
+  height: 40px;
   line-height: 20px;
   background-color: var(--color-blue-vivid);
   width: 70px;
+  @media screen and (max-width: 376px) {
+    width: 50px;
+    font-size: var(--font-size-s);
+    height: 30px;
+    line-height: 20px;
+    padding: 5px;
+  }
 `;
 
 const Textbox = styled.textarea`
@@ -141,6 +174,10 @@ const Textbox = styled.textarea`
   border: none;
   outline: none;
   background-color: aliceblue;
+  @media screen and (max-width: 376px) {
+    height: 150px;
+    font-size: var(--font-size-s);
+  }
 `;
 
 const Button = styled.button`
@@ -184,6 +221,10 @@ const FrameDiv1 = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  @media screen and (max-width: 376px) {
+    flex-direction: column;
+    gap: var(--gap-xl);
+  }
 `;
 
 const Radio = styled.input`
@@ -204,6 +245,11 @@ const RadioLabel = styled.label`
   &:hover {
     color: var(--color-blue-main);
   }
+  @media screen and (max-width: 376px) {
+    height: 30px;
+    line-height: 30px;
+    font-size: var(--font-size-s);
+  }
 `;
 
 const Dropdown = styled.select`
@@ -217,8 +263,9 @@ const Dropdown = styled.select`
   max-width: 60%;
   padding: 0px 20px 0px 10px;
   background-color: aliceblue;
-  @media screen and (max-width: 675px) {
-    min-width: 100%;
+  @media screen and (max-width: 376px) {
+    width: 100px;
+    height: 30px;
   }
 `;
 
@@ -238,9 +285,20 @@ const Necessity = styled.input`
     min-width: 100%;
   }
 `;
-const MatchingWrite = () => {
+
+const BeachWrapper = styled.div`
+  display: flex;
+  gap: var(--gap-5xs);
+  @media screen and (max-width: 376px) {
+    gap: var(--gap-9xs);
+  }
+`
+const MatchingWrite = ({ closeModal }) => {
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+
   const [isNecessityRequired, setIsNecessityRequired] = useState(false);
   const [allMatchings, setAllMatchings] = useState([]);
+  const [selectedBeachId, setSelectedBeachId] = useState(null);
 
   const handleNecessityChange = (event) => {
     setIsNecessityRequired(event.target.value === '필요');
@@ -250,7 +308,7 @@ const MatchingWrite = () => {
     let { data: matchings, error } = await client
       .from("MATCHINGTEST")
       .select(
-        "id, title,  matching_date, matching_time, total_people, required, difficulty, necessity"
+        "id, title, matching_date, matching_time, total_people, required, difficulty, necessity, beach_id, sports_id, host_userid"
       );
     console.log(matchings);
     setAllMatchings(matchings);
@@ -259,12 +317,24 @@ const MatchingWrite = () => {
   useEffect(() => {
     getMatchings();
   }, []);
-
+  
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const { isLoading: beachLoading, data: beachData } = useQuery(
+    ["beach"],
+    getBeach
+  );
+
+  const { isLoading: sportsLoading, data: sportsData } = useQuery(
+    ["sports"],
+    getSports
+  );
+
+  const [clickedTags, setClickedTags] = useState([]);
 
   const addMatching = async (formData) => {
     const { data, error } = await client
@@ -277,7 +347,10 @@ const MatchingWrite = () => {
           total_people: formData.total_people,
           required: formData.required,
           difficulty: formData.difficulty,
-          necessity: formData.necessity
+          necessity: formData.necessity,
+          beach_id: selectedBeachId,
+          sports_id: formData.sports_id,
+          host_userid: loggedInUser.id
         },
       ])
       .select();
@@ -287,41 +360,16 @@ const MatchingWrite = () => {
     }
     getMatchings();
     console.log("작성완료", data);
+    closeModal();
   };
-
-
-  // const [formData, setFormData] = useState({
-  //   title: '',
-  //   location: '',
-  //   difficulty: '',
-  //   date: '',
-  //   time: '',
-  //   capacity: 1,
-  //   necessity: '',
-  // });
-
-  // const handleInputChange = (event) => {
-  //   const { name, value } = event.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value,
-  //   });
-  // };
-
-  // const handleSubmit = async () => {
-  //   try {
-  //     const { data, error } = await client.from('matching').insert([formData]).select();
-  //     if (error) {
-  //       console.error(error);
-  //     } else {
-  //       console.log('Data inserted successfully:', data);
-
-  //     }
-  //   } catch (error) {
-  //     console.error('Error inserting data:', error.message);
-  //   }
-  // };
-
+  
+  const handleTagClicked = (id) => {
+    if (clickedTags.includes(id)) {
+      setClickedTags((prev) => prev.filter((it) => it !== id));
+    } else {
+      setClickedTags((prev) => [...prev, id]);
+    }
+  };
 
   return (
     <FrameWrapperRoot onSubmit={handleSubmit(addMatching)}>
@@ -333,22 +381,43 @@ const MatchingWrite = () => {
           </FrameDiv>
           <FrameDiv>
             <Divbox>위치</Divbox>
+            <BeachWrapper>
+              {beachLoading
+                ? "Loading..."
+                : beachData.map((beach) => {
+                    return (
+                      <BeachTag
+                        key={beach.id}
+                        beach={beach}
+                        // handleTagClicked 함수를 onClick props로 전달
+                        onClick={() => {
+                          handleTagClicked(beach.id);
+                          setSelectedBeachId(beach.id);
+                        }}
+                        hasClicked={clickedTags.includes(beach.id)}
+                      />
+                    );
+                  })}
+            </BeachWrapper>
           </FrameDiv>
           <FrameDiv1>
-            {/* <FrameDiv>
-              <Divbox>종목</Divbox>
-              <Dropdown>
-                <option value="surfing">서핑</option>
-                <option value="waterskiing">수상스키</option>
-                <option value="wakeboarding">웨이크보드</option>
-                <option value="snorkeling">스노클링</option>
-                <option value="freediving">프리다이빙</option>
-                <option value="yacht">요트</option>
-                <option value="kayak">카약</option>
-                <option value="paddleboarding">패들보딩</option>
-                <option value="etc">기타</option>
-              </Dropdown>
-            </FrameDiv> */}
+          <FrameDiv>
+            <Divbox>종목</Divbox>
+            <Dropdown {...register("sports_id", { required: "종목을 선택해 주세요." })}>
+              <option value="">스포츠 종목 선택</option>
+              {sportsLoading ? (
+                <option value="" disabled>
+                  Loading...
+                </option>
+              ) : (
+                sportsData.map((sport) => (
+                  <option key={sport.id} value={sport.id}>
+                    {sport.title}
+                  </option>
+                ))
+              )}
+            </Dropdown>
+          </FrameDiv>
             <FrameDiv>
               <Divbox>난이도</Divbox>
                 <Radio
@@ -395,7 +464,7 @@ const MatchingWrite = () => {
             <Radio
               type="radio"
               value="필요"
-
+              name='radio'
               id="yes"
               style={{ opacity: '0' }}
               onChange={handleNecessityChange}
@@ -405,7 +474,7 @@ const MatchingWrite = () => {
             <Radio
               type="radio"
               value="불필요"
-
+              name='radio'
               id="no"
               style={{ opacity: '0' }}
               onChange={handleNecessityChange}

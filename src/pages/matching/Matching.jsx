@@ -1,10 +1,11 @@
-import Menubar1 from "./components/Menubar1";
+import Sports from "./components/Sports";
 import MainContent from "./components/MainContent";
 import MatchingOptions from "./components/MatchingOptions";
 import ExploreMatchesBar from "./components/ExploreMatchesBar";
 import Calendar from "./components/Calendar";
 import styled from "styled-components";
 import MatchingGroup from "./components/MatchingGroup";
+import { useState } from "react";
 
 
 const MatchingRoot = styled.div`
@@ -40,16 +41,21 @@ const ExploreMatchesBarWrapper = styled.section`
 `;
 
 const Matching = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+  };
+
   return (
     <MatchingRoot>
-      <Menubar1 />
       <MainContent />
       <MatchingOptions />
       <Wrapper>
-        <Calendar />
+        <Calendar onSelectDate={handleDateSelect}/>
         <ExploreMatchesBar />
         <ExploreMatchesBarWrapper> 
-          <MatchingGroup />
+          <MatchingGroup selectedDate={selectedDate}/>
         </ExploreMatchesBarWrapper>
       </Wrapper>
     </MatchingRoot>

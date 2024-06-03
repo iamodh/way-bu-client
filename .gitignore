@@ -25,5 +25,6 @@ dist-ssr
 
 .env
 .gitignorebackup/
+package-lock.json
 # Test: Seojin
 backup/
