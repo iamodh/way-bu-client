@@ -107,8 +107,6 @@ const StyledLink = styled(Link)`
   color: black;
 `;
 const Footer = styled.footer`
-  position: relative;
-  bottom: 0;
   display: flex;
   justify-content: center;
   align-items: center;
