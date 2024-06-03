@@ -27,9 +27,9 @@ const Sports = () => {
 
   // 스포츠 태그 클릭 시 selectedTags 배열에 추가 또는 제거
   const handleTagClick = (id) => {
-    setSelectedTags(prevSelectedTags =>
+    setSelectedTags((prevSelectedTags) =>
       prevSelectedTags.includes(id)
-        ? prevSelectedTags.filter(tagId => tagId !== id)
+        ? prevSelectedTags.filter((tagId) => tagId !== id)
         : [...prevSelectedTags, id]
     );
   };
@@ -39,13 +39,14 @@ const Sports = () => {
       {sportsLoading
         ? "Loading..."
         : sportsData.map((sport) => {
+            console.log(sport);
+
             return (
               <SportsTag
                 key={sport.id}
                 sport={sport}
                 onClick={() => handleTagClick(sport.id)}
                 hasClicked={selectedTags.includes(sport.id)}
-                
               />
             );
           })}

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import StarContainer from "./StarContainer";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -27,12 +28,14 @@ const ProfileImage = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
   background-image: url(${(props) => props.$imageUrl});
+  cursor: pointer;
 `;
 
 const RateBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  cursor: pointer;
 `;
 
 const UserName = styled.h4`
@@ -64,10 +67,14 @@ const ReviewImage = styled.div`
 `;
 
 export default function Review({ review }) {
+  const navigate = useNavigate();
   return (
-    <Wrapper>
+    <Wrapper id={review.id}>
       <ReviewMeta>
-        <ProfileImage $imageUrl={review.USER_PROFILE.avatar_url} />
+        <ProfileImage
+          onClick={() => navigate(`/mypage/13`)}
+          $imageUrl={review.USER_PROFILE.avatar_url}
+        />
         <RateBox>
           <UserName>{review.USER_PROFILE.user_nickname}</UserName>
           <StarContainer review={review} width={"16"} />
