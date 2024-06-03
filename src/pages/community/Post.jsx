@@ -4,176 +4,31 @@ import { useState, useEffect } from "react";
 import { client } from "../../../libs/supabase";
 import { useRecoilState } from "recoil";
 import { useForm } from "react-hook-form";
-import styled from "styled-components";
-
-const PostWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  max-width: 1000px;
-  width: 80%;
-  min-width: 350px;
-  margin: 2rem auto;
-  flex-direction: column;
-  & * {
-    box-sizing: border-box;
-    border-collapse: collapse;
-  }
-  border: 1px solid var(--color-blue-main);
-  padding: 1rem;
-  border-radius: 0.5rem;
-`;
-
-const PostTitleContainer = styled.div`
-  display: flex;
-  width: 100%;
-  padding: 1rem 0%;
-  align-items: center;
-`;
-
-const PostTitle = styled.div`
-  font-size: var(--font-size-xl);
-  margin-left: 1.5rem;
-  font-weight: 700;
-`;
-
-const PostTag = styled.div`
-  border-radius: 0.6rem;
-  margin: 0.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.6);
-  width: 4rem;
-  height: 2.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const PostInfoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  width: 100%;
-  border: 1px solid var(--color-blue-main);
-  border-radius: 0.5rem;
-  position: relative;
-  margin-bottom: 1rem;
-`;
-
-const PostInfoBottom = styled.div`
-  display: flex;
-  margin-top: 0.5rem;
-  @media screen and (max-width: 768px) {
-    flex-direction: column;
-  }
-`;
-
-const PostInfoBox = styled.div`
-  display: flex;
-  &:nth-child(2) {
-    position: absolute;
-    right: 2rem;
-  }
-`;
-
-const PostInfoItem = styled.div`
-  &:first-child {
-    margin-right: 0.5rem;
-    background-color: var(--color-skyblue-main);
-    font-weight: 600;
-  }
-  padding: 0.4rem;
-`;
-
-const PostContent = styled.div`
-  width: 100%;
-  border: 1px solid var(--color-blue-main);
-  border-radius: 0.5rem;
-  min-height: 15rem;
-  padding: 2rem;
-  position: relative;
-`;
-
-const PostBtn = styled.button``;
-
-const ThumbBtn = styled.button`
-  position: absolute;
-  bottom: 1rem;
-  right: 50%;
-  background-color: rgba(0, 0, 0, 0);
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-radius: 0.5rem;
-  font-size: 2rem;
-  padding: 0.8rem;
-  transform: translate(50%, 0);
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
-const CommentContainer = styled.div`
-  width: 100%;
-`;
-
-const CommentForm = styled.form`
-  margin: 1rem 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const CommentInput = styled.textarea`
-  height: 3.5rem;
-  border-radius: 0.2rem;
-  flex: 1;
-  padding: 0.3rem;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-`;
-
-const CommentInputBtn = styled.button`
-  border: none;
-  background-color: var(--color-blue-main);
-  color: white;
-  height: 3.5rem;
-  width: 6rem;
-  margin-left: 0.5rem;
-  border-radius: 0.2rem;
-`;
-
-const CommentBox = styled.div`
-  margin: 1rem 0;
-  background-color: var(--color-skyblue-background);
-  padding: 1rem;
-  border-radius: 0.3rem;
-`;
-
-const CommentInfo = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-`;
-
-const CommentItem = styled.div`
-  margin-right: 0.5rem;
-  &:nth-child(2) {
-    opacity: 0.6;
-  }
-`;
-
-const CommentContent = styled.div`
-  background-color: white;
-  margin: 0 1rem;
-  padding: 0.5rem;
-  border-radius: 0.3rem;
-`;
-
-const CommentBtn = styled.button`
-  background-color: rgba(0, 0, 0, 0);
-  border: none;
-  &:hover {
-    cursor: pointer;
-  }
-`;
+import { Link } from "react-router-dom";
+import {
+  PostWrapper,
+  PostTitleContainer,
+  PostTitle,
+  PostTag,
+  PostAvatar,
+  PostInfoContainer,
+  PostInfoBox,
+  PostInfoItem,
+  PostInfoBottom,
+  PostContent,
+  ThumbBtn,
+  PostBtn,
+  PostBtnContainer,
+  CommentContainer,
+  CommentForm,
+  CommentInput,
+  CommentInputBtn,
+  CommentBox,
+  CommentInfo,
+  CommentItem,
+  CommentContent,
+  CommentBtn,
+} from "./components/PostLayout";
 
 export default function Post() {
   const {
@@ -198,12 +53,21 @@ export default function Post() {
       const { data: post, error: fetchError } = await client
         .from("POST")
         .select(
-          "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, created_at, updated_at, comment_count, user_recommend"
+          "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, created_at, updated_at, comment_count, user_recommend, sport"
         )
         .eq("post_id", postId)
         .single();
-
       if (fetchError) {
+        throw new Error(fetchError.message);
+      }
+
+      const { data: user, error: userError } = await client
+        .from("USER_PROFILE")
+        .select("avatar_url")
+        .eq("user_id", post.user_id)
+        .single();
+
+      if (userError) {
         throw new Error(fetchError.message);
       }
 
@@ -226,7 +90,7 @@ export default function Post() {
         throw new Error(commentError.message);
       }
 
-      setPost(updatedPost[0]);
+      setPost({ ...updatedPost[0], user_avatar: user.avatar_url });
       setComments(comments);
       setIsLoading(false);
     } catch (error) {
@@ -419,6 +283,7 @@ export default function Post() {
       <PostInfoContainer>
         <PostInfoBox>
           <PostInfoItem>작성자</PostInfoItem>
+          <PostAvatar src={post.user_avatar} />
           <PostInfoItem>{post.user_nickname}</PostInfoItem>
         </PostInfoBox>
         <PostInfoBottom>
@@ -426,6 +291,12 @@ export default function Post() {
             <PostInfoItem>작성일</PostInfoItem>
             <PostInfoItem>{formatTime(post.created_at)}</PostInfoItem>
           </PostInfoBox>
+          {post.updated_at && (
+            <PostInfoBox>
+              <PostInfoItem>수정일</PostInfoItem>
+              <PostInfoItem>{formatTime(post.updated_at)}</PostInfoItem>
+            </PostInfoBox>
+          )}
           <PostInfoBox>
             <PostInfoItem>조회수</PostInfoItem>
             <PostInfoItem>{post.views}</PostInfoItem>
@@ -437,7 +308,12 @@ export default function Post() {
         <ThumbBtn onClick={() => clickThumb()}>{post.thumbs} 👍🏻</ThumbBtn>
       </PostContent>
       {loggedInUser && post.user_id == loggedInUser.id && (
-        <PostBtn onClick={() => deletePost()}>삭제하기</PostBtn>
+        <PostBtnContainer>
+          <PostBtn>
+            <Link to={`edit`}>수정하기</Link>
+          </PostBtn>
+          <PostBtn onClick={() => deletePost()}>삭제하기</PostBtn>
+        </PostBtnContainer>
       )}
       <CommentContainer>
         <CommentForm onSubmit={handleSubmit(onCommentSubmit)}>
