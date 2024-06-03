@@ -37,12 +37,16 @@ export const PostTitleContainer = styled.div`
 
 export const PostTitle = styled.div`
   @media (max-width: 768px) {
-    font-size: 1.2rem;
+    font-size: 1rem;
     margin-left: 1rem;
   }
-  font-size: var(--font-size-xl);
+  flex: 1;
+  font-size: var(--font-size-l);
   margin-left: 1.5rem;
   font-weight: 700;
+  word-break: break-all;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 `;
 
 export const PostTag = styled.div`

@@ -56,6 +56,23 @@ export const PostLeftBottom = styled.div`
 `;
 export const PostTitle = styled.div`
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40rem;
+  @media (max-width: 1280px) {
+    max-width: 30rem;
+  }
+
+  @media (max-width: 1000px) {
+    max-width: 22rem;
+  }
+  @media (max-width: 768px) {
+    max-width: 15rem;
+  }
+  @media (max-width: 480px) {
+    max-width: 10rem;
+  }
 `;
 
 export const PostUser = styled.div`
