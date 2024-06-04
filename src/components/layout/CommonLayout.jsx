@@ -41,6 +41,7 @@ const SignItem = styled.div`
   padding: var(--padding-9xs) var(--padding-xs);
   cursor: pointer;
   font-size: inherit;
+  margin-right: 1rem;
   @media screen and (max-width: 768px) {
     padding: var(--padding-9xs) var(--padding-5xs);
   }
@@ -200,17 +201,13 @@ export default function CommonLayout() {
             <Logo src="/img/logo.png" />
           </StyledLink>
           <Div />
-          <StyledLink to={"/login"}>
-            <SignItem>로그인</SignItem>
-          </StyledLink>
           {loggedInUser ? (
-            <button onClick={handleLogout}>로그아웃</button>
-          ) : null}
-          {!loggedInUser ? (
-            <Link to={"/signup"}>
-              <NavItem>Signup</NavItem>
-            </Link>
-          ) : null}
+            <SignItem onClick={handleLogout}>로그아웃</SignItem>
+          ) : (
+            <StyledLink to={"/login"}>
+              <SignItem>로그인</SignItem>
+            </StyledLink>
+          )}
           <Search>
             <SearchInput type="text" />
             <SearchButton />

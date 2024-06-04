@@ -145,6 +145,9 @@ export const PostDesc = styled.div`
 `;
 
 export const TagWrapper = styled.div`
+  @media screen and (max-width: 1080px) {
+    display: none;
+  }
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -158,7 +161,7 @@ export const TagContainer = styled.div`
   min-width: 320px;
   display: flex;
   align-items: center;
-  width: 60%;
+  width: 80%;
 `;
 
 export const TagBox = styled.div`
@@ -169,7 +172,7 @@ export const TagBox = styled.div`
   padding: 0.3rem 0.5rem;
   margin: 0.5rem;
   border: 1px solid rgba(0, 0, 0, 0.6);
-  width: 4rem;
+  width: 5rem;
   text-align: center;
   background-color: ${(props) =>
     props.selected ? "var(--color-skyblue-main)" : "white"};
