@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./root/Home";
 import Login from "./root/Login";
 import Signup from "./root/Signup";
-import Coummunity from "./community/Community";
+import Community from "./community/Community";
 import Post from "./community/Post";
 
 /* program pagse */
@@ -26,8 +26,10 @@ import ChangePwd from "./root/ChangePwd";
 import Matching from "./matching/Matching";
 import MatchingUpdate from "./matching/components/MatchingUpdate";
 import ProgramBooking from "./program/ProgramBooking";
-import Write from "./community/Write";
+import PostWrite from "./community/PostWrite";
 import ComparePrograms from "./program/ComparePrograms";
+import Sports from "./sports/Sports";
+import PostEdit from "./community/PostEdit";
 
 export default function Router() {
   return (
@@ -51,14 +53,21 @@ export default function Router() {
           <Route path="reviews" element={<ProgramReviews />} />
           <Route path="booking" element={<ProgramBooking />} />
         </Route>
-        <Route path="community" element={<Coummunity />} />
-        <Route path="community/write" element={<Write />} />
+
+        {/* Community */}
+        <Route path="community" element={<Community />} />
+        <Route path="community/write" element={<PostWrite />} />
         <Route path="community/:id" element={<Post />} />
+        <Route path="community/:id/edit" element={<PostEdit />} />
+
+        {/* Sports */}
+        <Route path="sports" element={<Sports />} />
 
         {/* Matching */}
         <Route path="matching" element={<Matching />} />
         <Route path="matching/update/:id" element={<MatchingUpdate />} />
           
+
         {/* My page */}
         <Route path="/mypage/:id" element={<MypageLayout />}>
           <Route index element={<MypageUpdate />} />

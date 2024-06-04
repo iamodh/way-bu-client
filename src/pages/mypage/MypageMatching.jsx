@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
 
 const MypageMatchingWrapper = styled.form`
   width: 90%;
