@@ -10,7 +10,6 @@ import { client } from "../../../libs/supabase";
 import StarAvgContainer from "./components/StarAvgContainer";
 import { addCommaintoMoney } from "../../../libs/formatter";
 import StarContainer from "./components/StarContainer";
-import { HashLink } from "react-router-hash-link";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -500,7 +499,7 @@ export default function ProgramIntro() {
           {reviews.length === 0
             ? "작성된 리뷰가 없습니다."
             : reviews.map((review) => (
-                <HashLink to={`reviews#${review.id}`}>
+                <Link to={"reviews"}>
                   <Review key={"review" + review.id} id={review.id}>
                     <StarContainer review={review}>
                       {[...Array(review.score)].map((_, i) => (
@@ -536,7 +535,7 @@ export default function ProgramIntro() {
                     </StarContainer>
                     <ReviewContent>{review.content}</ReviewContent>
                   </Review>
-                </HashLink>
+                </Link>
               ))}
         </ReviewContainer>
       </Reviews>
