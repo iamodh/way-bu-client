@@ -2,14 +2,17 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
   position: relative;
-  z-index: -10;
   background-color: var(--color-sand-main);
 `;
 
 const Background = styled.img`
   width: 100%;
   position: relative;
-  padding-top: 100px;
+  padding-top: 70px;
+
+  @media (max-width: 480px) {
+    padding-top: 100px;
+  }
 `;
 
 const Slides = styled.div``;
@@ -39,7 +42,7 @@ const SportItem = styled.div`
 `;
 
 const SurfingBoard = styled.img`
-  width: 190px;
+  width: 200px;
   height: auto;
 
   @media (max-width: 480px) {
