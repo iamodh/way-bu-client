@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useMatch } from "react-router-dom";
 import { styled } from "styled-components";
 import { client } from "../../../libs/supabase";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -9,7 +9,10 @@ const Header = styled.header`
   display: flex;
   flex-direction: column;
   font-family: "Pretendard-regular";
+  background-color: var(--color-white);
   box-shadow: 0px 5px 10px 0px lightgray;
+  position: ${(props) => (props.$fixed ? "fixed" : "block")};
+  width: ${(props) => (props.$fixed ? "100%" : "auto")};
 `;
 const Sign = styled.div`
   grid-row-start: 1;
@@ -104,7 +107,29 @@ const StyledLink = styled(Link)`
   color: black;
 `;
 const Footer = styled.footer`
-  /* padding-bottom: 100px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(27, 73, 101, 1);
+  height: 126px;
+`;
+
+const FooterText = styled.p`
+  color: var(--color-white);
+  text-align: center;
+
+  &:first-child {
+    flex: 1;
+  }
+  &:nth-child(3) {
+    flex: 1;
+  }
+`;
+
+const FooterDiv = styled.div`
+  width: 1px;
+  height: 66px;
+  border: 1px solid var(--color-white);
 `;
 
 export default function CommonLayout() {
@@ -163,9 +188,13 @@ export default function CommonLayout() {
     console.log("로그아웃 되었습니다.");
   };
 
+  /* index나 sorts 페이지일때 fixed */
+  const location = useLocation();
+  const fixed = location.pathname === "/";
+  console.log(fixed);
   return (
     <>
-      <Header>
+      <Header $fixed={fixed}>
         <Sign>
           <StyledLink to={"/"}>
             <Logo src="/img/logo.png" />
@@ -209,7 +238,21 @@ export default function CommonLayout() {
         </Nav>
       </Header>
       <Outlet />
-      <Footer></Footer>
+      <Footer>
+        <FooterText>
+          TEAM <span style={{ fontWeight: 700 }}>WAY-BU</span> | 대표이메일 :
+          asdf@ser | 개발자 홈페이지 <br />
+          부산광역시 남구 용소로 45, 부경대학교 대연캠퍼스 창의관 3층 (우:
+          48513)
+        </FooterText>
+        <FooterDiv />
+        <FooterText>
+          <span style={{ fontWeight: 700 }}>고객센터(09:00~18:00)</span> |
+          <span style={{ fontWeight: 700 }}>이용약관</span> |
+          <span style={{ fontWeight: 700 }}>개인정보처리방침</span> |
+          <span style={{ fontWeight: 700 }}>제휴·광고 문의</span>
+        </FooterText>
+      </Footer>
     </>
   );
 }
