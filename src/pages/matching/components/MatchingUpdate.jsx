@@ -9,6 +9,7 @@ import { getSports } from '../../../../apis/sports';
 import { useRecoilState } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../../atom";
 import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const FrameWrapperRoot = styled.form`
   align-self: stretch;
@@ -311,30 +312,71 @@ const BeachWrapper = styled.div`
     gap: var(--gap-9xs);
   }
 `
-const MatchingWrite = ({ closeModal }) => {
+const MatchingUpdate = () => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const [isNecessityRequired, setIsNecessityRequired] = useState(false);
-  const [allMatchings, setAllMatchings] = useState([]);
   const [selectedBeachId, setSelectedBeachId] = useState(null);
   const [clickedTags, setClickedTags] = useState([]);
+  const [allMatchings, setAllMatchings] = useState([]);
+  const { id } = useParams();
 
-  //매칭테이블
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
+
+  // 매칭 데이터 가져오기
   const getMatchings = async () => {
     let { data: matchings, error } = await client
-      .from("MATCHING")
+      .from('MATCHING')
       .select(
-        "id, title, difficulty, matching_date, matching_time, total_people, required, location, beach_id, sport_id, host_userId"
+        'id, title, difficulty, matching_date, matching_time, total_people, necessity, required, location, beach_id, sport_id, host_userId'
       );
     setAllMatchings(matchings);
   };
 
-  //해수욕장
+  useEffect(() => {
+    const fetchMatching = async () => {
+      let { data: matching, error } = await client
+        .from('MATCHING')
+        .select(
+          'id, title, difficulty, matching_date, matching_time, total_people, necessity, required, location, beach_id, sport_id, host_userId'
+        )
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      if (matching) {
+        // setValue를 사용하여 폼 필드에 값 설정
+        setValue('title', matching.title);
+        setValue('location', matching.location);
+        setValue('sport_id', matching.sport_id);
+        setValue('difficulty', matching.difficulty);
+        setValue('matching_date', matching.matching_date);
+        setValue('matching_time', matching.matching_time);
+        setValue('total_people', matching.total_people);
+        setValue('necessity', matching.necessity);
+        setValue('required', matching.required);
+        setSelectedBeachId(matching.beach_id);
+      }
+    };
+
+    fetchMatching();
+  }, [id, setValue]);
+
+  // 해수욕장
   const { isLoading: beachLoading, data: beachData } = useQuery(
-    ["beach"],
+    ['beach'],
     getBeach
   );
 
-  //해수욕장 태그 기능
+  // 해수욕장 태그 기능
   const handleTagClicked = (id) => {
     if (clickedTags.includes(id)) {
       setClickedTags((prev) => prev.filter((it) => it !== id));
@@ -343,69 +385,71 @@ const MatchingWrite = ({ closeModal }) => {
     }
   };
 
-  //스포츠
+  // 스포츠
   const { isLoading: sportsLoading, data: sportsData } = useQuery(
-    ["sports"],
+    ['sports'],
     getSports
   );
 
   useEffect(() => {
     getMatchings();
   }, []);
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
-  //매칭추가
-  const addMatching = async (formData) => {
+  const updateMatching = async (formData) => {
     const { data, error } = await client
-      .from("MATCHING")
-      .insert([
-        {
-          title: formData.title,
-          beach_id: selectedBeachId,
-          location: formData.location,
-          sport_id: formData.sport_id,
-          difficulty: formData.difficulty,
-          matching_date: formData.matching_date,
-          matching_time: formData.matching_time,
-          total_people: formData.total_people,
-          necessity: formData.necessity,
-          required: formData.required,
-          host_userId: loggedInUser.id
-        },
-      ])
-      .select();
+      .from('MATCHING')
+      .update({
+        title: formData.title,
+        beach_id: selectedBeachId,
+        location: formData.location,
+        sport_id: formData.sport_id,
+        difficulty: formData.difficulty,
+        matching_date: formData.matching_date,
+        matching_time: formData.matching_time,
+        total_people: formData.total_people,
+        necessity: formData.necessity,
+        required: formData.required,
+        host_userId: loggedInUser.id,
+      })
+      .eq('id', id); // 매칭 ID로 업데이트
     if (error) {
       console.error(error);
       return;
     }
     getMatchings();
-    closeModal();
     window.location.reload();
   };
 
-  //준비물
+  const onSubmit = async (formData) => {
+    if (id) {
+      await updateMatching(formData);
+    } else {
+      await addMatching(formData);
+    }
+  };
+
+  // 준비물
   const handleNecessityChange = (event) => {
     setIsNecessityRequired(event.target.value === '필요');
   };
 
   return (
-    <FrameWrapperRoot onSubmit={handleSubmit(addMatching)}>
+    <FrameWrapperRoot onSubmit={handleSubmit(onSubmit)}>
       <FrameParent1>
         <FrameGroup>
           <FrameDiv>
             <Divbox>제목</Divbox>
-            <Title type="text" {...register("title", { required: "제목을 입력해 주세요." })} id='title'/>
+            <Title
+              type="text"
+              {...register('title', { required: '제목을 입력해 주세요.' })}
+              id="title"
+            />
           </FrameDiv>
           <FrameDiv>
             <Divbox>해변</Divbox>
             <BeachWrapper>
               {beachLoading
-                ? "Loading..."
+                ? 'Loading...'
                 : beachData.map((beach) => {
                     return (
                       <BeachTag
@@ -423,65 +467,94 @@ const MatchingWrite = ({ closeModal }) => {
           </FrameDiv>
           <FrameDiv>
             <Divbox>위치</Divbox>
-            <Title type="text" {...register("location", { required: "제목을 입력해 주세요." })} id='location'/>
+            <Title
+              type="text"
+              {...register('location', { required: '위치를 입력해 주세요.' })}
+              id="location"
+            />
           </FrameDiv>
           <FrameDiv1>
-          <FrameDiv>
-            <Divbox>종목</Divbox>
-            <Dropdown {...register("sport_id", { required: "종목을 선택해 주세요." })}>
-              <option value="">스포츠 종목 선택</option>
-              {sportsLoading ? (
-                <option value="" disabled>
-                  Loading...
-                </option>
-              ) : (
-                sportsData.map((sport) => (
-                  <option key={sport.id} value={sport.id}>
-                    {sport.title}
+            <FrameDiv>
+              <Divbox>종목</Divbox>
+              <Dropdown
+                {...register('sport_id', { required: '종목을 선택해 주세요.' })}
+              >
+                <option value="">스포츠 종목 선택</option>
+                {sportsLoading ? (
+                  <option value="" disabled>
+                    Loading...
                   </option>
-                ))
-              )}
-            </Dropdown>
-          </FrameDiv>
+                ) : (
+                  sportsData.map((sport) => (
+                    <option key={sport.id} value={sport.id}>
+                      {sport.title}
+                    </option>
+                  ))
+                )}
+              </Dropdown>
+            </FrameDiv>
             <FrameDiv2>
               <Divbox>난이도</Divbox>
-                <Radio
-                  type="radio"
-                  value="상"
-                  name="level"
-                  id="level1"
-                  style={{ opacity: '0' }}
-                  {...register("difficulty", { required: "제목을 입력해 주세요." })}
-                />
-                <RadioLabel htmlFor="level1">상</RadioLabel>
-                <Radio
-                  type="radio"
-                  value="중"
-                  name="level"
-                  id="level2"
-                  style={{ opacity: '0' }}
-                  {...register("difficulty", { required: "제목을 입력해 주세요." })}
-                />
-                <RadioLabel htmlFor="level2">중</RadioLabel>
-                <Radio
-                  type="radio"
-                  value="하"
-                  name="level"
-                  id="level3"
-                  style={{ opacity: '0' }}
-                  {...register("difficulty", { required: "제목을 입력해 주세요." })}
-                />
-                <RadioLabel htmlFor="level3">하</RadioLabel>
+              <Radio
+                type="radio"
+                value="상"
+                name="level"
+                id="level1"
+                style={{ opacity: '0' }}
+                {...register('difficulty', {
+                  required: '난이도를 선택해 주세요.',
+                })}
+              />
+              <RadioLabel htmlFor="level1">상</RadioLabel>
+              <Radio
+                type="radio"
+                value="중"
+                name="level"
+                id="level2"
+                style={{ opacity: '0' }}
+                {...register('difficulty', {
+                  required: '난이도를 선택해 주세요.',
+                })}
+              />
+              <RadioLabel htmlFor="level2">중</RadioLabel>
+              <Radio
+                type="radio"
+                value="하"
+                name="level"
+                id="level3"
+                style={{ opacity: '0' }}
+                {...register('difficulty', {
+                  required: '난이도를 선택해 주세요.',
+                })}
+              />
+              <RadioLabel htmlFor="level3">하</RadioLabel>
             </FrameDiv2>
           </FrameDiv1>
           <FrameDiv>
             <Divbox>일정</Divbox>
-            <Schedulebox type="date" {...register("matching_date", { required: "제목을 입력해 주세요." })}/>
-            <Schedulebox type="time" {...register("matching_time", { required: "제목을 입력해 주세요." })}/>
+            <Schedulebox
+              type="date"
+              {...register('matching_date', {
+                required: '일정을 입력해 주세요.',
+              })}
+            />
+            <Schedulebox
+              type="time"
+              {...register('matching_time', {
+                required: '시간을 입력해 주세요.',
+              })}
+            />
           </FrameDiv>
           <FrameDiv>
             <Divbox>인원</Divbox>
-            <NumberInput type="number" min={1} max={10} {...register("total_people", { required: "제목을 입력해 주세요." })} />
+            <NumberInput
+              type="number"
+              min={1}
+              max={10}
+              {...register('total_people', {
+                required: '인원을 입력해 주세요.',
+              })}
+            />
             <Div>최대 10명까지 가능합니다.</Div>
           </FrameDiv>
           <FrameDiv2>
@@ -489,35 +562,45 @@ const MatchingWrite = ({ closeModal }) => {
             <Radio
               type="radio"
               value="필요"
-              name='radio'
+              name="radio"
               id="yes"
               style={{ opacity: '0' }}
               onChange={handleNecessityChange}
-              
             />
             <RadioLabel htmlFor="yes">필요</RadioLabel>
             <Radio
               type="radio"
               value="불필요"
-              name='radio'
+              name="radio"
               id="no"
               style={{ opacity: '0' }}
               onChange={handleNecessityChange}
-              
             />
             <RadioLabel htmlFor="no">불필요</RadioLabel>
-            {isNecessityRequired && <Necessity {...register("necessity", { required: "제목을 입력해 주세요." })} type="text" placeholder="준비물 입력" />}
+            {isNecessityRequired && (
+              <Necessity
+                {...register('necessity', {
+                  required: '준비물을 입력해 주세요.',
+                })}
+                type="text"
+                placeholder="준비물 입력"
+              />
+            )}
           </FrameDiv2>
         </FrameGroup>
       </FrameParent1>
       <DivRoot>
-        <Textbox  {...register("required", { required: "제목을 입력해 주세요." })} />
+        <Textbox
+          {...register('required', { required: '필요 사항을 입력해 주세요.' })}
+        />
       </DivRoot>
-      <Button type='submit'>
-        <Div2>올리기</Div2>
-      </Button>
+      <Link to={'/matching'}>
+        <Button type="submit">
+          <Div2>올리기</Div2>
+        </Button>
+      </Link>
     </FrameWrapperRoot>
   );
 };
 
-export default MatchingWrite;
+export default MatchingUpdate;

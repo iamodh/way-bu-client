@@ -223,10 +223,6 @@ const MainContent = () => {
       console.log(error.message);
       return null;
     }
-    if (data.length === 0) {
-      console.log("데이터없음");
-      return null;
-    }
     return data[0];
   }
   
@@ -241,11 +237,11 @@ const MainContent = () => {
     setSelectedBeach(beach);
   };  
   
-  
+
 
   const closeModal = () => {
     setSelectedMatching(null);
-    setSelectedSport(null); // 추가: 선택된 스포츠 정보 초기화
+    setSelectedSport(null);
     setSelectedBeach(null);
   };
 

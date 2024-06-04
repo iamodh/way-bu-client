@@ -2,8 +2,6 @@ import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { loggedInUserState } from "../../../atom";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { client } from "../../../../libs/supabase";
 
 const FrameWrapperRoot = styled.div`
   align-self: stretch;
@@ -133,7 +131,7 @@ const Divbox = styled.div`
 `
 const Textbox = styled.div`
   font-weight: bold;
-  height: 256px;
+  height: 200px;
   width: 100%;
   padding: 20px;
   text-align: left;
@@ -231,69 +229,61 @@ const Divbox1 = styled.div`
     font-size: var(--font-size-s);
   }
 `
+const CommentWrapper = styled.div`
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  height: 150px;
+  line-height: 20px;
+  width: 550px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  @media screen and (max-width: 376px) {
+    width: 70px;
+    height: 30px;
+    line-height: 10px;
+    font-size: var(--font-size-s);
+  }
+`
 
-const MatchingWatch = ({ matching, sport, beach }) => {
+const CommentBox = styled.input`
+  
+`
+
+
+const MatchingApply = ({ matching, sport, beach }) => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const [isHostUser, setIsHostUser] = useState(matching.host_userId === loggedInUser.id);
   const [isApplied, setIsApplied] = useState(false);
-  const [isUserJoined, setIsUserJoined] = useState(false); // 초기값은 false로 설정합니다.
+  const [allMatchingComments, setAllMatchingComments] = useState([]);
 
-  useEffect(() => {
-    // matching 객체가 변경될 때마다 isUserJoined 상태를 업데이트합니다.
-    setIsUserJoined(matching.joining_users && matching.joining_users.includes(loggedInUser.id));
-  }, [matching, loggedInUser.id]);
+  const getMatchingComments = async () => {
+    let { data: matchings, error } = await client
+      .from("MATCHING_COMMENT")
+      .select(
+        "comment, user_id"
+      );
+    setAllMatchingComments(matchingcomments);
+  };
 
-  useEffect(() => {
-    // 컴포넌트가 처음 마운트될 때 isHostUser 상태를 업데이트합니다.
-    setIsHostUser(matching.host_userId === loggedInUser.id);
-  }, [matching.host_userId, loggedInUser.id]);
-
-  const handleButtonClick = async () => {
+  const handleButtonClick = () => {
     if (isHostUser) {
       return;
     } else {
-      if (isUserJoined) {
+      if (isApplied) {
         const cancel = window.confirm('매칭을 취소하시겠습니까?');
         if (cancel) {
-          setIsUserJoined(false);
-          try {
-            // 매칭을 취소할 때 join_users 배열에서 사용자 ID를 제거합니다.
-            const updatedJoiningUsers = Array.isArray(matching.joining_users) ? matching.joining_users.filter(userId => userId !== loggedInUser.id) : [];
-            console.log('Updated join_users after cancellation:', updatedJoiningUsers);
-            await client
-              .from('MATCHING')
-              .update({
-                joining_users: updatedJoiningUsers,
-              })
-              .eq('id', matching.id);
-          } catch (error) {
-            console.error('Error cancelling application for matching:', error.message);
-            setIsUserJoined(true); // 에러 발생 시 신청 상태를 롤백하지 않고, 다시 취소할 수 있도록 합니다.
-          }
+          setIsApplied(false);
         }
       } else {
         const apply = window.confirm('매칭을 신청하시겠습니까?');
         if (apply) {
-          setIsUserJoined(true);
-          try {
-            // 매칭을 신청할 때 join_users 배열에 사용자 ID를 추가합니다.
-            const updatedJoiningUsers = Array.isArray(matching.joining_users) ? [...matching.joining_users, loggedInUser.id] : [loggedInUser.id];
-            console.log('Updated join_users after application:', updatedJoiningUsers);
-            await client
-              .from('MATCHING')
-              .update({
-                joining_users: updatedJoiningUsers,
-              })
-              .eq('id', matching.id);
-          } catch (error) {
-            console.error('Error applying for matching:', error.message);
-            setIsUserJoined(false); // 에러 발생 시 신청 상태를 롤백
-          }
+          setIsApplied(true);
         }
       }
     }
   };
-  
   
 
   return (
@@ -310,7 +300,7 @@ const MatchingWatch = ({ matching, sport, beach }) => {
         <FrameGroup1>
           <FrameDiv>
             <Divbox>참가인원</Divbox>
-            <Divbox1>{matching.total_people}명</Divbox1>
+            <Divbox1>{matching.joining_user}/{matching.total_people}명</Divbox1>
           </FrameDiv>
           <FrameDiv>
             <Divbox>모집상태</Divbox>
@@ -321,12 +311,18 @@ const MatchingWatch = ({ matching, sport, beach }) => {
           <Divbox>일정</Divbox>
           <Schedulebox>{matching.matching_date} {matching.matching_time}</Schedulebox>
         </FrameDiv>
+        <FrameDiv style={{paddingTop:"0px"}}>
+          <Divbox>멤버</Divbox>
+          <Schedulebox></Schedulebox>
+        </FrameDiv>
         <DivRoot>
-          <Textbox>{matching.required}<br/><br/>
-          준비물 : {matching.necessity}</Textbox>
-          <Textbox1 placeholder="신청 메세지를 입력해주세요." />
+          <Textbox>{matching.required}</Textbox>
+          <CommentWrapper>
+            <CommentBox type="text"></CommentBox>
+            <Button></Button>
+          </CommentWrapper>
           <Button onClick={handleButtonClick}>
-            <Div2>{isHostUser ? '수정하기' : isUserJoined ? '신청 취소하기' : '신청하기'}</Div2>
+            <Div2>신청 취소하기</Div2>
           </Button>
         </DivRoot>
       </FrameParent1>
@@ -334,4 +330,5 @@ const MatchingWatch = ({ matching, sport, beach }) => {
   );
 };
 
-export default MatchingWatch;
+export default MatchingApply;
+

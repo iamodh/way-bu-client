@@ -24,6 +24,7 @@ import FindId from "./root/FindId";
 import FindPwd from "./root/FindPwd";
 import ChangePwd from "./root/ChangePwd";
 import Matching from "./matching/Matching";
+import MatchingUpdate from "./matching/components/MatchingUpdate";
 import ProgramBooking from "./program/ProgramBooking";
 import Write from "./community/Write";
 import ComparePrograms from "./program/ComparePrograms";
@@ -56,6 +57,7 @@ export default function Router() {
 
         {/* Matching */}
         <Route path="matching" element={<Matching />} />
+        <Route path="matching/update/:id" element={<MatchingUpdate />} />
           
         {/* My page */}
         <Route path="/mypage/:id" element={<MypageLayout />}>

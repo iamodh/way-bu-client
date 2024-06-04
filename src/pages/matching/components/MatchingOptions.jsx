@@ -1,5 +1,6 @@
 import Sports from "./Sports";
 import styled from "styled-components";
+import { useState } from "react";
 
 const Wrapper = styled.section`
   align-self: stretch;
@@ -25,11 +26,14 @@ const OptionsBar = styled.div`
   }
 `;
 
+
 const MatchingOptions = () => {
+  const [selectedSportId, setSelectedSportId] = useState(null);
+
   return (
     <Wrapper>
       <OptionsBar>
-        <Sports />
+        <Sports selectedSportId={selectedSportId}/>
       </OptionsBar>
     </Wrapper>
   );
