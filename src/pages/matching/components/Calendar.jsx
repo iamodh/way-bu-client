@@ -10,6 +10,7 @@ const CalendarContainer = styled.div`
 `;
 
 const YearMonth = styled.div`
+  color: black;
   margin-bottom: 10px;
   display: flex;
   flex-direction: row;

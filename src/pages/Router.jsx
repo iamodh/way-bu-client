@@ -30,6 +30,7 @@ import PostWrite from "./community/PostWrite";
 import ComparePrograms from "./program/ComparePrograms";
 import Sports from "./sports/Sports";
 import PostEdit from "./community/PostEdit";
+import MatchingApply from "./matching/components/MatchingApply";
 
 export default function Router() {
   return (
@@ -66,7 +67,7 @@ export default function Router() {
         {/* Matching */}
         <Route path="matching" element={<Matching />} />
         <Route path="matching/update/:id" element={<MatchingUpdate />} />
-          
+        <Route path="matching/apply/:id" element={<MatchingApply />} />
 
         {/* My page */}
         <Route path="/mypage/:id" element={<MypageLayout />}>

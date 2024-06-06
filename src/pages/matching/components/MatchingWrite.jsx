@@ -313,7 +313,7 @@ const BeachWrapper = styled.div`
 `
 const MatchingWrite = ({ closeModal }) => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
-  const [isNecessityRequired, setIsNecessityRequired] = useState(false);
+  // const [isNecessityRequired, setIsNecessityRequired] = useState(false);
   const [allMatchings, setAllMatchings] = useState([]);
   const [selectedBeachId, setSelectedBeachId] = useState(null);
   const [clickedTags, setClickedTags] = useState([]);
@@ -374,6 +374,7 @@ const MatchingWrite = ({ closeModal }) => {
           matching_time: formData.matching_time,
           total_people: formData.total_people,
           necessity: formData.necessity,
+          necessity_details: formData.necessity_details,
           required: formData.required,
           host_userId: loggedInUser.id
         },
@@ -389,9 +390,9 @@ const MatchingWrite = ({ closeModal }) => {
   };
 
   //준비물
-  const handleNecessityChange = (event) => {
-    setIsNecessityRequired(event.target.value === '필요');
-  };
+  // const handleNecessityChange = (event) => {
+  //   setIsNecessityRequired(event.target.value === '필요');
+  // };
 
   return (
     <FrameWrapperRoot onSubmit={handleSubmit(addMatching)}>
@@ -492,8 +493,9 @@ const MatchingWrite = ({ closeModal }) => {
               name='radio'
               id="yes"
               style={{ opacity: '0' }}
-              onChange={handleNecessityChange}
-              
+              {...register('necessity', {
+                required: '준비물을 선택해 주세요.',
+              })}
             />
             <RadioLabel htmlFor="yes">필요</RadioLabel>
             <Radio
@@ -502,11 +504,12 @@ const MatchingWrite = ({ closeModal }) => {
               name='radio'
               id="no"
               style={{ opacity: '0' }}
-              onChange={handleNecessityChange}
-              
+              {...register('necessity', {
+                required: '준비물을 선택해 주세요.',
+              })}
             />
             <RadioLabel htmlFor="no">불필요</RadioLabel>
-            {isNecessityRequired && <Necessity {...register("necessity", { required: "제목을 입력해 주세요." })} type="text" placeholder="준비물 입력" />}
+            <Necessity {...register("necessity_details", { required: "제목을 입력해 주세요." })} type="text" placeholder="필요시 준비물 입력" />
           </FrameDiv2>
         </FrameGroup>
       </FrameParent1>

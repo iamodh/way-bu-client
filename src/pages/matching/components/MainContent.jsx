@@ -45,6 +45,7 @@ const HotMatching = styled.div`
   flex-wrap: wrap;
 `;
 const HotMatchingBox = styled.div`
+  color: black;
   border: 1px solid var(--color-blue-vivid);
   background-color: var(--color-white);
   height: 200px;

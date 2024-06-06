@@ -59,16 +59,6 @@ const Title = styled.input`
   }
 `;
 
-const SportTagWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  box-sizing: border-box;
-  max-width: 100%;
-  gap: var(--gap-3xs);
-`;
-
-
 const FrameGroup = styled.div`
   margin: 0;
   width: 100%;
@@ -209,6 +199,7 @@ const Button = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 20px;
   &:hover {
     background-color: var(--color-navy);
     box-sizing: border-box;
@@ -332,7 +323,7 @@ const MatchingUpdate = () => {
     let { data: matchings, error } = await client
       .from('MATCHING')
       .select(
-        'id, title, difficulty, matching_date, matching_time, total_people, necessity, required, location, beach_id, sport_id, host_userId'
+        'id, title, difficulty, matching_date, matching_time, total_people, necessity, required, location, beach_id, sport_id, host_userId,necessity_details'
       );
     setAllMatchings(matchings);
   };
@@ -342,7 +333,7 @@ const MatchingUpdate = () => {
       let { data: matching, error } = await client
         .from('MATCHING')
         .select(
-          'id, title, difficulty, matching_date, matching_time, total_people, necessity, required, location, beach_id, sport_id, host_userId'
+          'id, title, difficulty, matching_date, matching_time, total_people, necessity, required, location, beach_id, sport_id, host_userId, necessity_details'
         )
         .eq('id', id)
         .single();
@@ -362,6 +353,7 @@ const MatchingUpdate = () => {
         setValue('matching_time', matching.matching_time);
         setValue('total_people', matching.total_people);
         setValue('necessity', matching.necessity);
+        setValue('necessity_details', matching.necessity_details);
         setValue('required', matching.required);
         setSelectedBeachId(matching.beach_id);
       }
@@ -398,7 +390,8 @@ const MatchingUpdate = () => {
   const updateMatching = async (formData) => {
     const { data, error } = await client
       .from('MATCHING')
-      .update({
+      .update([
+        {
         title: formData.title,
         beach_id: selectedBeachId,
         location: formData.location,
@@ -408,9 +401,11 @@ const MatchingUpdate = () => {
         matching_time: formData.matching_time,
         total_people: formData.total_people,
         necessity: formData.necessity,
+        necessity_details: formData.necessity_details,
         required: formData.required,
         host_userId: loggedInUser.id,
-      })
+      },
+    ])
       .eq('id', id); // 매칭 ID로 업데이트
     if (error) {
       console.error(error);
@@ -429,9 +424,9 @@ const MatchingUpdate = () => {
   };
 
   // 준비물
-  const handleNecessityChange = (event) => {
-    setIsNecessityRequired(event.target.value === '필요');
-  };
+  // const handleNecessityChange = (event) => {
+  //   setIsNecessityRequired(event.target.value === '필요');
+  // };
 
   return (
     <FrameWrapperRoot onSubmit={handleSubmit(onSubmit)}>
@@ -459,7 +454,7 @@ const MatchingUpdate = () => {
                           handleTagClicked(beach.id);
                           setSelectedBeachId(beach.id);
                         }}
-                        hasClicked={clickedTags.includes(beach.id)}
+                        hasClicked={selectedBeachId === beach.id}
                       />
                     );
                   })}
@@ -565,7 +560,9 @@ const MatchingUpdate = () => {
               name="radio"
               id="yes"
               style={{ opacity: '0' }}
-              onChange={handleNecessityChange}
+              {...register('necessity', {
+                required: '준비물을 선택해 주세요.',
+              })}
             />
             <RadioLabel htmlFor="yes">필요</RadioLabel>
             <Radio
@@ -574,18 +571,18 @@ const MatchingUpdate = () => {
               name="radio"
               id="no"
               style={{ opacity: '0' }}
-              onChange={handleNecessityChange}
+              {...register('necessity', {
+                required: '준비물을 선택해 주세요.',
+              })}
             />
             <RadioLabel htmlFor="no">불필요</RadioLabel>
-            {isNecessityRequired && (
-              <Necessity
-                {...register('necessity', {
-                  required: '준비물을 입력해 주세요.',
-                })}
-                type="text"
-                placeholder="준비물 입력"
-              />
-            )}
+            <Necessity
+              {...register('necessity_details', {
+                required: '준비물을 입력해 주세요.',
+              })}
+              type="text"
+              placeholder="필요시 준비물 입력"
+            />
           </FrameDiv2>
         </FrameGroup>
       </FrameParent1>
@@ -594,11 +591,8 @@ const MatchingUpdate = () => {
           {...register('required', { required: '필요 사항을 입력해 주세요.' })}
         />
       </DivRoot>
-      <Link to={'/matching'}>
-        <Button type="submit">
-          <Div2>올리기</Div2>
-        </Button>
-      </Link>
+        <Button type="submit"><Div2>수정하기</Div2></Button>
+        <Link to = "/matching"><Button>돌아가기</Button></Link>
     </FrameWrapperRoot>
   );
 };

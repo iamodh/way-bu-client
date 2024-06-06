@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { client } from "../../../../libs/supabase";
 import MatchingWatch from "./MatchingWatch";
 import MatchingApply from "./MatchingApply";
+import { useRecoilState } from "recoil";
+import { loggedInUserState } from "../../../atom";
 
 
 const MatchingIcon = styled.img`
@@ -36,6 +38,7 @@ const Wrapper = styled.div`
 `;
 
 const MatchingContainer = styled.div`
+  color: black;
   max-width: 500px;
   min-width: 400px;
   height: 150px;
@@ -152,6 +155,8 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
   const [selectedMatching, setSelectedMatching] = useState(null);
   const [selectedBeach, setSelectedBeach] = useState(null);
   const [selectedSport, setSelectedSport] = useState(null);
+  const [modalContent, setModalContent] = useState("");
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
 
   useEffect(() => {
     getMatchings();
@@ -169,7 +174,7 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
-      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId, joining_users`);
+      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId, joining_users, necessity_details, necessity`);
     setMatchings(data);
     setIsLoading(false);
     if (error) {
@@ -241,6 +246,12 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
     const beach = await getBeach(matching.beach_id);
     setSelectedMatching(matching);
     setSelectedBeach(beach);
+  
+    if (matching.joining_users && matching.joining_users.includes(loggedInUser.id)) {
+      setModalContent("MatchingApply");
+    } else {
+      setModalContent("MatchingWatch"); // 선택한 매칭이 없거나 현재 사용자가 신청하지 않은 경우 모달을 닫습니다.
+    }
   };  
   
   const closeModal = () => {
@@ -272,7 +283,12 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
         <ModalWrapper onClick={closeModal}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <CloseButton onClick={closeModal}>&times;</CloseButton>
-            <MatchingWatch matching={selectedMatching} sport={selectedSport} beach={selectedBeach} />
+            {modalContent === "MatchingApply" && (
+              <MatchingApply matching={selectedMatching} sport={selectedSport} beach={selectedBeach} />
+            )}
+            {modalContent !== "MatchingApply" && (
+              <MatchingWatch matching={selectedMatching} sport={selectedSport} beach={selectedBeach} />
+            )}
           </ModalContent>
         </ModalWrapper>
       )}

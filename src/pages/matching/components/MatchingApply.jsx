@@ -1,7 +1,9 @@
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
-import { loggedInUserState } from "../../../atom";
+import { loggedInUserState, loggedInUserProfileState } from "../../../atom";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { client } from "../../../../libs/supabase";
 
 const FrameWrapperRoot = styled.div`
   align-self: stretch;
@@ -131,7 +133,7 @@ const Divbox = styled.div`
 `
 const Textbox = styled.div`
   font-weight: bold;
-  height: 200px;
+  height: 256px;
   width: 100%;
   padding: 20px;
   text-align: left;
@@ -146,7 +148,7 @@ const Textbox = styled.div`
   }
 `;
 
-const Textbox1 = styled.textarea`
+const Textbox1 = styled.div`
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   width: 100%;
   height: 100px;
@@ -229,62 +231,126 @@ const Divbox1 = styled.div`
     font-size: var(--font-size-s);
   }
 `
-const CommentWrapper = styled.div`
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
-  height: 150px;
-  line-height: 20px;
-  width: 550px;
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
-  @media screen and (max-width: 376px) {
-    width: 70px;
-    height: 30px;
-    line-height: 10px;
-    font-size: var(--font-size-s);
-  }
-`
 
-const CommentBox = styled.input`
-  
-`
+const Avatar = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 5px;
+`;
+
+const MembersContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 
 const MatchingApply = ({ matching, sport, beach }) => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const [isHostUser, setIsHostUser] = useState(matching.host_userId === loggedInUser.id);
   const [isApplied, setIsApplied] = useState(false);
-  const [allMatchingComments, setAllMatchingComments] = useState([]);
+  const [isUserJoined, setIsUserJoined] = useState(false); // 초기값은 false로 설정합니다.
+  const [isMatchingFull, setIsMatchingFull] = useState(false); // 모집 상태를 관리하는 상태
+  const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(loggedInUserProfileState);
 
-  const getMatchingComments = async () => {
-    let { data: matchings, error } = await client
-      .from("MATCHING_COMMENT")
-      .select(
-        "comment, user_id"
-      );
-    setAllMatchingComments(matchingcomments);
+  useEffect(() => {
+    // matching 객체가 변경될 때마다 isUserJoined 상태를 업데이트합니다.
+    setIsUserJoined(matching.joining_users && matching.joining_users.includes(loggedInUser.id));
+  }, [matching, loggedInUser.id]);
+
+  useEffect(() => {
+    // 컴포넌트가 처음 마운트될 때 isHostUser 상태를 업데이트합니다.
+    setIsHostUser(matching.host_userId === loggedInUser.id);
+  }, [matching.host_userId, loggedInUser.id]);
+
+  useEffect(() => {
+    // 매칭 상태 업데이트
+    const currentParticipants = matching.joining_users ? matching.joining_users.length : 0;
+    if (currentParticipants >= matching.total_people) {
+      matching.state = "모집완료";
+      setIsMatchingFull(true);
+    } else {
+      matching.state = "모집중";
+      setIsMatchingFull(false);
+    }
+  }, [matching]);
+
+  const getUserProfiles = async (userIds) => {
+    try {
+      const { data, error } = await client
+        .from('USER_PROFILE')
+        .select('id, avatar_url')
+        .in('user_id', userIds);
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error fetching user profiles:', error.message);
+      return [];
+    }
   };
 
-  const handleButtonClick = () => {
+  const [userProfiles, setUserProfiles] = useState([]);
+
+  useEffect(() => {
+    const fetchUserProfiles = async () => {
+      if (matching.joining_users) {
+        const profiles = await getUserProfiles(matching.joining_users);
+        setUserProfiles(profiles);
+      }
+    };
+    fetchUserProfiles();
+  }, [matching.joining_users]);
+
+  
+
+  const handleButtonClick = async () => {
     if (isHostUser) {
       return;
     } else {
-      if (isApplied) {
+      if (isUserJoined) {
         const cancel = window.confirm('매칭을 취소하시겠습니까?');
         if (cancel) {
-          setIsApplied(false);
+          setIsUserJoined(false);
+          try {
+            // 매칭을 취소할 때 join_users 배열에서 사용자 ID를 제거합니다.
+            const updatedJoiningUsers = Array.isArray(matching.joining_users) ? matching.joining_users.filter(userId => userId !== loggedInUser.id) : [];
+            console.log('Updated join_users after cancellation:', updatedJoiningUsers);
+            await client
+              .from('MATCHING')
+              .update({
+                joining_users: updatedJoiningUsers,
+              })
+              .eq('id', matching.id);
+            window.location.reload();
+          } catch (error) {
+            console.error('Error cancelling application for matching:', error.message);
+            setIsUserJoined(true); // 에러 발생 시 신청 상태를 롤백하지 않고, 다시 취소할 수 있도록 합니다.
+          }
         }
       } else {
         const apply = window.confirm('매칭을 신청하시겠습니까?');
         if (apply) {
-          setIsApplied(true);
+          setIsUserJoined(true);
+          try {
+            // 매칭을 신청할 때 join_users 배열에 사용자 ID를 추가합니다.
+            const updatedJoiningUsers = Array.isArray(matching.joining_users) ? [...matching.joining_users, loggedInUser.id] : [loggedInUser.id];
+            console.log('Updated join_users after application:', updatedJoiningUsers);
+            await client
+              .from('MATCHING')
+              .update({
+                joining_users: updatedJoiningUsers,
+              })
+              .eq('id', matching.id);
+            window.location.reload();
+          } catch (error) {
+            console.error('Error applying for matching:', error.message);
+            setIsUserJoined(false); // 에러 발생 시 신청 상태를 롤백
+          }
         }
       }
     }
   };
-  
 
   return (
     <FrameWrapperRoot>
@@ -300,7 +366,7 @@ const MatchingApply = ({ matching, sport, beach }) => {
         <FrameGroup1>
           <FrameDiv>
             <Divbox>참가인원</Divbox>
-            <Divbox1>{matching.joining_user}/{matching.total_people}명</Divbox1>
+            <Divbox1>{matching.joining_users ? matching.joining_users.length : 0}/{matching.total_people}명</Divbox1>
           </FrameDiv>
           <FrameDiv>
             <Divbox>모집상태</Divbox>
@@ -313,17 +379,29 @@ const MatchingApply = ({ matching, sport, beach }) => {
         </FrameDiv>
         <FrameDiv style={{paddingTop:"0px"}}>
           <Divbox>멤버</Divbox>
-          <Schedulebox></Schedulebox>
+          <MembersContainer>
+            {userProfiles.map(profile => (
+              <Avatar key={profile.user_id} src={profile.avatar_url} alt="user avatar" />
+            ))}
+          </MembersContainer>
         </FrameDiv>
         <DivRoot>
-          <Textbox>{matching.required}</Textbox>
-          <CommentWrapper>
-            <CommentBox type="text"></CommentBox>
-            <Button></Button>
-          </CommentWrapper>
-          <Button onClick={handleButtonClick}>
-            <Div2>신청 취소하기</Div2>
-          </Button>
+          <Textbox>{matching.required}<br/><br/>
+          준비물 : {matching.necessity_details}</Textbox>
+          <Textbox1 placeholder="신청 메세지를 입력해주세요." />
+          {
+            isHostUser ? (
+              <Link to={`/matching/update/${matching.id}`}>
+                <Button>
+                  <Div2>수정하기</Div2>
+                </Button>
+              </Link>
+            ) : (
+              <Button onClick={handleButtonClick} disabled={isMatchingFull}>
+                <Div2>{isMatchingFull ? '신청마감' : isUserJoined ? '신청 취소하기' : '신청하기'}</Div2>
+              </Button>
+            )
+          }
         </DivRoot>
       </FrameParent1>
     </FrameWrapperRoot>
@@ -331,4 +409,3 @@ const MatchingApply = ({ matching, sport, beach }) => {
 };
 
 export default MatchingApply;
-

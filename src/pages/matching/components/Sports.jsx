@@ -39,7 +39,6 @@ const Sports = () => {
       {sportsLoading
         ? "Loading..."
         : sportsData.map((sport) => {
-            console.log(sport);
 
             return (
               <SportsTag
