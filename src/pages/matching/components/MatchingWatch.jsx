@@ -61,6 +61,19 @@ const MatchingWatch = ({ matching, sport, beach }) => {
     }
   }, [matching]);
 
+  const handleDeleteMatching = async () => {
+    const confirmDelete = window.confirm('정말 삭제하시겠습니까?');
+    if (confirmDelete) {
+      try {
+        await client.from('MATCHING').delete().eq('id', matching.id);
+        window.location.reload();
+      } catch (error) {
+        console.error('Error deleting matching:', error.message);
+      }
+    }
+  };
+  
+
   const handleButtonClick = async () => {
     if (isHostUser) {
       return;
@@ -70,7 +83,6 @@ const MatchingWatch = ({ matching, sport, beach }) => {
         if (cancel) {
           setIsUserJoined(false);
           try {
-            // 매칭을 취소할 때 join_users 배열에서 사용자 ID를 제거합니다.
             const updatedJoiningUsers = Array.isArray(matching.joining_users) ? matching.joining_users.filter(userId => userId !== loggedInUser.id) : [];
             console.log('Updated join_users after cancellation:', updatedJoiningUsers);
             await client
@@ -82,7 +94,7 @@ const MatchingWatch = ({ matching, sport, beach }) => {
             window.location.reload();
           } catch (error) {
             console.error('Error cancelling application for matching:', error.message);
-            setIsUserJoined(true); // 에러 발생 시 신청 상태를 롤백하지 않고, 다시 취소할 수 있도록 합니다.
+            setIsUserJoined(true); 
           }
         }
       } else {
@@ -90,7 +102,6 @@ const MatchingWatch = ({ matching, sport, beach }) => {
         if (apply) {
           setIsUserJoined(true);
           try {
-            // 매칭을 신청할 때 join_users 배열에 사용자 ID를 추가합니다.
             const updatedJoiningUsers = Array.isArray(matching.joining_users) ? [...matching.joining_users, loggedInUser.id] : [loggedInUser.id];
             console.log('Updated join_users after application:', updatedJoiningUsers);
             await client
@@ -102,7 +113,7 @@ const MatchingWatch = ({ matching, sport, beach }) => {
             window.location.reload();
           } catch (error) {
             console.error('Error applying for matching:', error.message);
-            setIsUserJoined(false); // 에러 발생 시 신청 상태를 롤백
+            setIsUserJoined(false);
           }
         }
       }
@@ -140,11 +151,16 @@ const MatchingWatch = ({ matching, sport, beach }) => {
           <ApplyBox placeholder="신청 메세지를 입력해주세요." />
           {
             isHostUser ? (
-              <Link to={`/matching/update/${matching.id}`}>
-                <Button>
-                  <ButtonText>수정하기</ButtonText>
+              <>
+                <Link to={`/matching/update/${matching.id}`}>
+                  <Button>
+                    <ButtonText>수정하기</ButtonText>
+                  </Button>
+                </Link>
+                <Button onClick={handleDeleteMatching}>
+                  <ButtonText>삭제하기</ButtonText>
                 </Button>
-              </Link>
+              </>
             ) : (
               <Button onClick={handleButtonClick} disabled={isMatchingFull}>
                 <ButtonText>{isMatchingFull ? '신청마감' : isUserJoined ? '신청 취소하기' : '신청하기'}</ButtonText>
