@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { client } from "../../../../libs/supabase";
 import MatchingWatch from "./MatchingWatch";
+import { ModalWrapper, ModalContent, CloseButton } from "./MatchingLayout";
 
 const MatchingTop = styled.div`
   flex: 1; // 너비가 변할 때 동일한 비율 적용
@@ -58,9 +59,6 @@ const HotMatchingBox = styled.div`
     box-shadow: 0px 10px 10px var(--color-gray);
     background-color: var(--color-skyblue-light);
   }
-
-
-
   @media screen and (max-width: 376px) {
     width: 130px;
     height: 130px;
@@ -100,46 +98,7 @@ const P = styled.div`
   }
 `;
 
-const ModalWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-`;
 
-const ModalContent = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: var(--br-3xs);
-  height: 700px;
-  width: 600px;
-  text-align: center;
-  position: relative;
-  @media screen and (max-width: 376px) {
-    width: 350px;
-    height: 600px;
-  }
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: var(--color-dark);
-  &:hover {
-    color: var(--color-navy);
-  }
-`;
 
 const MainContent = () => {
   const [matchings, setMatchings] = useState([]);

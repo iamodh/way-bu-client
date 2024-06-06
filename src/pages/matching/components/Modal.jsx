@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import MatchingWrite from './MatchingWrite';
+import { ModalWrapper, ModalContent, CloseButton } from "./MatchingLayout";
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -47,47 +48,6 @@ const Div = styled.div`
   }
 `;
 
-const ModalWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-`;
-
-const ModalContent = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: var(--br-3xs);
-  height: 750px;
-  width: 600px;
-  text-align: center;
-  position: relative;
-  @media screen and (max-width: 376px) {
-    width: 350px;
-    height: 600px;
-  }
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: var(--color-dark);
-  &:hover {
-    color: var(--color-navy);
-  }
-`;
-
 const StyledLink = styled(Link)`
   color: white;
   cursor: pointer;
@@ -99,6 +59,12 @@ const Modal = () => {
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
+
+  if (isOpen) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = 'auto';
+  }
 
   return (
     <>
