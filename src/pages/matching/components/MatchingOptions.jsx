@@ -28,12 +28,12 @@ const OptionsBar = styled.div`
 
 
 const MatchingOptions = () => {
-  const [selectedSportId, setSelectedSportId] = useState(null);
+
 
   return (
     <Wrapper>
       <OptionsBar>
-        <Sports selectedSportId={selectedSportId}/>
+        <Sports />
       </OptionsBar>
     </Wrapper>
   );

@@ -206,7 +206,7 @@ const MainContent = () => {
   async function getSports(sportId) {
     const { data, error } = await client
       .from("SPORT")
-      .select("title")
+      .select("id, title")
       .eq("id", sportId); // sport_id와 일치하는 스포츠 정보 가져오기
     if (error) {
       console.log(error.message);
@@ -236,7 +236,7 @@ const MainContent = () => {
     const beach = await getBeach(matching.beach_id); // matching.beach_id를 전달하여 해당하는 해변 정보 가져오기
     setSelectedMatching(matching);
     setSelectedBeach(beach);
-  };  
+  };   
   
 
 

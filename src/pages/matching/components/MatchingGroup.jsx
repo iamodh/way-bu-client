@@ -149,6 +149,27 @@ const CloseButton = styled.button`
   }
 `;
 
+const PageWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const PageBtn = styled.button`
+  margin: 0 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+`;
+
+const PageBox = styled.div`
+  margin: 0 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+`;
+
 const MatchingGroup = ({ selectedDate, selectedTags }) => {
   const [matchings, setMatchings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -157,6 +178,14 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
   const [selectedSport, setSelectedSport] = useState(null);
   const [modalContent, setModalContent] = useState("");
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const postPerPage = 6;
+  const [maxPage, setMaxPage] = useState(0);
+  const [postPage, setPostPage] = useState(1);
+  const [pageSection, setPageSection] = useState(1);
+
+  useEffect(() => {
+    setPageSection(Math.ceil(postPage / postPerPage));
+  }, [postPage]);
 
   useEffect(() => {
     getMatchings();
@@ -175,14 +204,15 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
     const { data, error } = await client
       .from("MATCHING")
       .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId, joining_users, necessity_details, necessity`);
-    setMatchings(data);
-    setIsLoading(false);
     if (error) {
       console.log(error.message);
+      setIsLoading(false);
       return;
     }
+    setMatchings(data);
+    setIsLoading(false);
   }
-
+  
   //날짜 필터링
   const filteredMatchings = matchings.filter((matching) => {
     const matchingDate = new Date(matching.matching_date);
@@ -194,30 +224,34 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
       matchingDate.getDate() === selectedDate.getDate()
     ));
   });
-  
+
+  useEffect(() => {
+    setMaxPage(Math.ceil(filteredMatchings.length / postPerPage));
+  }, [filteredMatchings]);
+
+  const currentMatchings = filteredMatchings.slice((postPage - 1) * postPerPage, postPage * postPerPage);
 
   //클릭시 조회수 업데이트
   async function updateMatchingViews(matching) {
     const { data, error } = await client
-    .from("MATCHING")
-    .update({views : matching.views+1})
-    .eq("id", matching.id)
-    .select();
+      .from("MATCHING")
+      .update({ views: matching.views + 1 })
+      .eq("id", matching.id)
+      .select();
     if (error) {
       console.log(error.message);
       return;
     }
-    setMatchings((currentMatchings) => 
+    setMatchings((currentMatchings) =>
       currentMatchings.map((m) => (m.id === matching.id ? data[0] : m))
     );
-    
   }
 
   //스포츠 드롭다운 내용 불러오기
   async function getSports(sportId) {
     const { data, error } = await client
       .from("SPORT")
-      .select("title")
+      .select("id, title")
       .eq("id", sportId);
     if (error) {
       console.log(error.message);
@@ -238,26 +272,36 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
     }
     return data[0];
   }
-  
+
   const openModal = async (matching) => {
     const sport = await getSports(matching.sport_id);
     setSelectedSport(sport);
-    
+
     const beach = await getBeach(matching.beach_id);
     setSelectedMatching(matching);
     setSelectedBeach(beach);
-  
+
     if (matching.joining_users && matching.joining_users.includes(loggedInUser.id)) {
       setModalContent("MatchingApply");
     } else {
-      setModalContent("MatchingWatch"); // 선택한 매칭이 없거나 현재 사용자가 신청하지 않은 경우 모달을 닫습니다.
+      setModalContent("MatchingWatch");
     }
-  };  
-  
+  };
+
   const closeModal = () => {
     setSelectedMatching(null);
     setSelectedSport(null);
     setSelectedBeach(null);
+  };
+
+  const pageList = () => {
+    const pages = [];
+    const first = (pageSection - 1) * postPerPage + 1;
+    const last = pageSection * postPerPage < maxPage ? pageSection * postPerPage : maxPage;
+    for (let i = first; i <= last; i++) {
+      pages.push(<PageBox key={i} onClick={() => setPostPage(i)}>{i}</PageBox>);
+    }
+    return pages;
   };
 
   return (
@@ -265,8 +309,8 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
       {isLoading ? (
         "Loading..."
       ) : (
-        filteredMatchings.map((m) => (
-          <MatchingContainer onClick={() => {openModal(m); updateMatchingViews(m);}} key={m.id}>
+        currentMatchings.map((m) => (
+          <MatchingContainer onClick={() => { openModal(m); updateMatchingViews(m); }} key={m.id}>
             <MatchingIcon />
             <ContainerDetails>
               <Title>
@@ -292,6 +336,21 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
           </ModalContent>
         </ModalWrapper>
       )}
+      <PageWrapper>
+        {pageSection > 1 && (
+          <>
+            <PageBtn onClick={() => setPostPage(1)}>◀️◀️</PageBtn>
+            <PageBtn onClick={() => setPostPage((pageSection - 2) * postPerPage + 1)}>◀️</PageBtn>
+          </>
+        )}
+        {pageList()}
+        {pageSection < maxPage / postPerPage && (
+          <>
+            <PageBtn onClick={() => setPostPage(pageSection * postPerPage + 1)}>▶️</PageBtn>
+            <PageBtn onClick={() => setPostPage(maxPage)}>▶️▶️</PageBtn>
+          </>
+        )}
+      </PageWrapper>
     </Wrapper>
   );
 };

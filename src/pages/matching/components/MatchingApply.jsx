@@ -4,6 +4,7 @@ import { loggedInUserState, loggedInUserProfileState } from "../../../atom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { client } from "../../../../libs/supabase";
+import { useForm } from "react-hook-form";
 
 const FrameWrapperRoot = styled.div`
   align-self: stretch;
@@ -240,32 +241,111 @@ const Avatar = styled.img`
   margin: 5px;
 `;
 
+const Nickname = styled.div`
+  text-align: center;
+  font-size: 12px;
+  margin-top: 5px;
+`;
+
 const MembersContainer = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
+export const CommentContainer = styled.div`
+  width: 100%;
+`;
+
+export const CommentForm = styled.form`
+  margin: 1rem 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const CommentInput = styled.textarea`
+  @media (max-width: 768px) {
+    height: 3rem;
+  }
+  height: 3.5rem;
+  border-radius: 0.2rem;
+  flex: 1;
+  padding: 0.3rem;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+`;
+
+export const CommentInputBtn = styled.button`
+  @media (max-width: 768px) {
+    width: 4rem;
+    height: 3rem;
+  }
+  border: none;
+  background-color: var(--color-blue-main);
+  color: white;
+  height: 3.5rem;
+  width: 6rem;
+  margin-left: 0.5rem;
+  border-radius: 0.2rem;
+`;
+
+const CommentBox = styled.div`
+  margin: 1rem 0;
+  background-color: var(--color-skyblue-background);
+  padding: 1rem;
+  border-radius: 0.3rem;
+`;
+
+const CommentInfo = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+`;
+
+const CommentItem = styled.div`
+  margin-right: 0.5rem;
+  &:nth-child(2) {
+    opacity: 0.6;
+  }
+`;
+
+const CommentContent = styled.div`
+  background-color: white;
+  margin: 0 1rem;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+`;
+
+const CommentBtn = styled.button`
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 const MatchingApply = ({ matching, sport, beach }) => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const [isHostUser, setIsHostUser] = useState(matching.host_userId === loggedInUser.id);
   const [isApplied, setIsApplied] = useState(false);
-  const [isUserJoined, setIsUserJoined] = useState(false); // 초기값은 false로 설정합니다.
-  const [isMatchingFull, setIsMatchingFull] = useState(false); // 모집 상태를 관리하는 상태
+  const [isUserJoined, setIsUserJoined] = useState(false);
+  const [isMatchingFull, setIsMatchingFull] = useState(false);
+  const [userProfiles, setUserProfiles] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [editingCommentId, setEditingCommentId] = useState(null);
   const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(loggedInUserProfileState);
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
   useEffect(() => {
-    // matching 객체가 변경될 때마다 isUserJoined 상태를 업데이트합니다.
     setIsUserJoined(matching.joining_users && matching.joining_users.includes(loggedInUser.id));
   }, [matching, loggedInUser.id]);
 
   useEffect(() => {
-    // 컴포넌트가 처음 마운트될 때 isHostUser 상태를 업데이트합니다.
     setIsHostUser(matching.host_userId === loggedInUser.id);
   }, [matching.host_userId, loggedInUser.id]);
 
   useEffect(() => {
-    // 매칭 상태 업데이트
     const currentParticipants = matching.joining_users ? matching.joining_users.length : 0;
     if (currentParticipants >= matching.total_people) {
       matching.state = "모집완료";
@@ -276,11 +356,19 @@ const MatchingApply = ({ matching, sport, beach }) => {
     }
   }, [matching]);
 
+  useEffect(() => {
+    const fetchComments = async () => {
+      const comments = await getComments(matching.id);
+      setComments(comments);
+    };
+    fetchComments();
+  }, [matching.id]);
+
   const getUserProfiles = async (userIds) => {
     try {
       const { data, error } = await client
         .from('USER_PROFILE')
-        .select('id, avatar_url')
+        .select('id, avatar_url, user_nickname')
         .in('user_id', userIds);
       if (error) throw error;
       return data;
@@ -290,7 +378,114 @@ const MatchingApply = ({ matching, sport, beach }) => {
     }
   };
 
-  const [userProfiles, setUserProfiles] = useState([]);
+  const getComments = async (matchingId) => {
+    try {
+      const { data, error } = await client
+        .from('MATCHING_COMMENT')
+        .select('*')
+        .eq('matching_id', matchingId);
+      if (error) {
+        throw error;
+      }
+      return data;
+    } catch (error) {
+      console.error('Error fetching comments:', error.message);
+      return [];
+    }
+  };
+
+  const onCommentSubmit = async (formData) => {
+    const { comment } = formData;
+    try {
+      const { data, error } = await client
+        .from('MATCHING_COMMENT')
+        .insert([{
+          matching_id: matching.id,
+          user_id: loggedInUser.id,
+          content: comment,
+          user_nickname: loggedInUserProfile.user_nickname,
+        }]);
+      if (error) {
+        throw error;
+      }
+      const updatedComments = await getComments(matching.id);
+      setComments(updatedComments);
+    } catch (error) {
+      console.error('Error adding comment:', error.message);
+    }
+  };
+
+  const startEditComment = (comment) => {
+    setEditingCommentId(comment.id);
+    setEditContent(comment.comment);
+  };
+
+  const saveEditComment = async (commentId) => {
+    const { data, error } = await client
+      .from("MATCHING_COMMENT")
+      .update({ comment: editContent, updated_at: new Date() })
+      .eq("id", commentId)
+      .select();
+    if (error) {
+      console.error(error.message);
+      return;
+    }
+    setEditingCommentId(null);
+    setEditContent("");
+  };
+
+  const deleteComment = async (commentId) => {
+    try {
+      const { data, deleteError } = await client
+        .from("MATCHING_COMMENT")
+        .delete()
+        .eq("id", commentId)
+        .select();
+      if (deleteError) {
+        throw new Error(deleteError.message);
+      }
+    } catch (error) {
+      console.error(error.message);
+      return;
+    }
+  };
+
+  const commentList = () => {
+    comments.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    const list = comments.map((comment, key) => {
+      return (
+        <CommentBox key={comment.id}>
+          <CommentInfo>
+            <CommentItem>{comment.user_id}</CommentItem>
+            <CommentItem>{formatTime(comment.created_at)}</CommentItem>
+            {comment.updated_at && (
+              <CommentItem>{formatTime(comment.updated_at)} 수정됨</CommentItem>
+            )}
+            {loggedInUser && comment.user_id === loggedInUser.id && (
+              <>
+                <CommentBtn onClick={() => startEditComment(comment)}>수정하기</CommentBtn>
+                <CommentBtn onClick={() => deleteComment(comment.id)}>삭제하기</CommentBtn>
+              </>
+            )}
+          </CommentInfo>
+          {editingCommentId === comment.id ? (
+            <div>
+              <input
+                type="text"
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+              />
+              <button onClick={() => saveEditComment(comment.id)}>Save</button>
+              <button onClick={() => setEditingCommentId(null)}>Cancel</button>
+            </div>
+          ) : (
+            <CommentContent>{comment.comment}</CommentContent>
+          )}
+        </CommentBox>
+      );
+    });
+    return list;
+  };
 
   useEffect(() => {
     const fetchUserProfiles = async () => {
@@ -302,8 +497,6 @@ const MatchingApply = ({ matching, sport, beach }) => {
     fetchUserProfiles();
   }, [matching.joining_users]);
 
-  
-
   const handleButtonClick = async () => {
     if (isHostUser) {
       return;
@@ -313,39 +506,15 @@ const MatchingApply = ({ matching, sport, beach }) => {
         if (cancel) {
           setIsUserJoined(false);
           try {
-            // 매칭을 취소할 때 join_users 배열에서 사용자 ID를 제거합니다.
             const updatedJoiningUsers = Array.isArray(matching.joining_users) ? matching.joining_users.filter(userId => userId !== loggedInUser.id) : [];
-            console.log('Updated join_users after cancellation:', updatedJoiningUsers);
             await client
               .from('MATCHING')
-              .update({
-                joining_users: updatedJoiningUsers,
-              })
+              .update({ joining_users: updatedJoiningUsers })
               .eq('id', matching.id);
             window.location.reload();
           } catch (error) {
             console.error('Error cancelling application for matching:', error.message);
-            setIsUserJoined(true); // 에러 발생 시 신청 상태를 롤백하지 않고, 다시 취소할 수 있도록 합니다.
-          }
-        }
-      } else {
-        const apply = window.confirm('매칭을 신청하시겠습니까?');
-        if (apply) {
-          setIsUserJoined(true);
-          try {
-            // 매칭을 신청할 때 join_users 배열에 사용자 ID를 추가합니다.
-            const updatedJoiningUsers = Array.isArray(matching.joining_users) ? [...matching.joining_users, loggedInUser.id] : [loggedInUser.id];
-            console.log('Updated join_users after application:', updatedJoiningUsers);
-            await client
-              .from('MATCHING')
-              .update({
-                joining_users: updatedJoiningUsers,
-              })
-              .eq('id', matching.id);
-            window.location.reload();
-          } catch (error) {
-            console.error('Error applying for matching:', error.message);
-            setIsUserJoined(false); // 에러 발생 시 신청 상태를 롤백
+            setIsUserJoined(true);
           }
         }
       }
@@ -377,31 +546,41 @@ const MatchingApply = ({ matching, sport, beach }) => {
           <Divbox>일정</Divbox>
           <Schedulebox>{matching.matching_date} {matching.matching_time}</Schedulebox>
         </FrameDiv>
-        <FrameDiv style={{paddingTop:"0px"}}>
+        <FrameDiv style={{ paddingTop: "0px" }}>
           <Divbox>멤버</Divbox>
           <MembersContainer>
             {userProfiles.map(profile => (
-              <Avatar key={profile.user_id} src={profile.avatar_url} alt="user avatar" />
+              <div key={profile.id} style={{display:"flex", flexDirection:"column"}}>
+                <Avatar src={profile.avatar_url} alt="user avatar" />
+                <Nickname>{profile.user_nickname}</Nickname>
+              </div>
             ))}
           </MembersContainer>
         </FrameDiv>
         <DivRoot>
-          <Textbox>{matching.required}<br/><br/>
-          준비물 : {matching.necessity_details}</Textbox>
-          <Textbox1 placeholder="신청 메세지를 입력해주세요." />
-          {
-            isHostUser ? (
-              <Link to={`/matching/update/${matching.id}`}>
-                <Button>
-                  <Div2>수정하기</Div2>
-                </Button>
-              </Link>
-            ) : (
-              <Button onClick={handleButtonClick} disabled={isMatchingFull}>
-                <Div2>{isMatchingFull ? '신청마감' : isUserJoined ? '신청 취소하기' : '신청하기'}</Div2>
+          <Textbox>{matching.required}<br/><br/>준비물 : {matching.necessity_details}</Textbox>
+          <Textbox1>
+            <CommentContainer>
+              <CommentForm onSubmit={handleSubmit(onCommentSubmit)}>
+                <CommentInput
+                  {...register("content", { required: "댓글을 입력해주세요" })}
+                  col="3"
+                ></CommentInput>
+                <CommentInputBtn type="submit">댓글 추가</CommentInputBtn>
+              </CommentForm>
+            </CommentContainer>
+          </Textbox1>
+          {isHostUser ? (
+            <Link to={`/matching/update/${matching.id}`}>
+              <Button>
+                <Div2>수정하기</Div2>
               </Button>
-            )
-          }
+            </Link>
+          ) : (
+            <Button onClick={handleButtonClick} disabled={isMatchingFull}>
+              <Div2>{isMatchingFull ? '신청마감' : isUserJoined ? '신청 취소하기' : '신청하기'}</Div2>
+            </Button>
+          )}
         </DivRoot>
       </FrameParent1>
     </FrameWrapperRoot>
@@ -409,3 +588,4 @@ const MatchingApply = ({ matching, sport, beach }) => {
 };
 
 export default MatchingApply;
+
