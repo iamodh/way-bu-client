@@ -203,13 +203,15 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
-      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId, joining_users, necessity_details, necessity`);
+      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId, joining_users, necessity_details, necessity, created_at`);
     if (error) {
       console.log(error.message);
       setIsLoading(false);
       return;
     }
-    setMatchings(data);
+    // created_at 기준으로 최신순으로 정렬
+    const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    setMatchings(sortedData);
     setIsLoading(false);
   }
   

@@ -334,8 +334,9 @@ const MatchingApply = ({ matching, sport, beach }) => {
   const [userProfiles, setUserProfiles] = useState([]);
   const [comments, setComments] = useState([]);
   const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editContent, setEditContent] = useState("");
   const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(loggedInUserProfileState);
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
   useEffect(() => {
     setIsUserJoined(matching.joining_users && matching.joining_users.includes(loggedInUser.id));
@@ -378,6 +379,21 @@ const MatchingApply = ({ matching, sport, beach }) => {
     }
   };
 
+  const formatTime = (time) => {
+    const date = new Date(time);
+    const koreanDate = new Date(
+      date.toLocaleString("en-US", { timeZone: "Asia/Seoul" })
+    );
+    const padZero = (num) => String(num).padStart(2, "0");
+    const formattedDate = `${koreanDate.getFullYear()}.${padZero(
+      koreanDate.getMonth() + 1
+    )}.${padZero(koreanDate.getDate())}.${padZero(
+      koreanDate.getHours()
+    )}:${padZero(koreanDate.getMinutes())}:${padZero(koreanDate.getSeconds())}`;
+
+    return formattedDate;
+  };
+
   const getComments = async (matchingId) => {
     try {
       const { data, error } = await client
@@ -395,14 +411,14 @@ const MatchingApply = ({ matching, sport, beach }) => {
   };
 
   const onCommentSubmit = async (formData) => {
-    const { comment } = formData;
+    const { content } = formData;
     try {
       const { data, error } = await client
         .from('MATCHING_COMMENT')
         .insert([{
           matching_id: matching.id,
           user_id: loggedInUser.id,
-          content: comment,
+          content: content,
           user_nickname: loggedInUserProfile.user_nickname,
         }]);
       if (error) {
@@ -410,6 +426,7 @@ const MatchingApply = ({ matching, sport, beach }) => {
       }
       const updatedComments = await getComments(matching.id);
       setComments(updatedComments);
+      reset();  // Reset the form fields after submission
     } catch (error) {
       console.error('Error adding comment:', error.message);
     }
@@ -417,21 +434,26 @@ const MatchingApply = ({ matching, sport, beach }) => {
 
   const startEditComment = (comment) => {
     setEditingCommentId(comment.id);
-    setEditContent(comment.comment);
+    setEditContent(comment.content);
   };
 
   const saveEditComment = async (commentId) => {
-    const { data, error } = await client
-      .from("MATCHING_COMMENT")
-      .update({ comment: editContent, updated_at: new Date() })
-      .eq("id", commentId)
-      .select();
-    if (error) {
-      console.error(error.message);
-      return;
+    try {
+      const { data, error } = await client
+        .from("MATCHING_COMMENT")
+        .update({ content: editContent, updated_at: new Date() })
+        .eq("id", commentId);
+      if (error) {
+        console.error(error.message);
+        return;
+      }
+      setEditingCommentId(null);
+      setEditContent("");
+      const updatedComments = await getComments(matching.id);
+      setComments(updatedComments);
+    } catch (error) {
+      console.error('Error updating comment:', error.message);
     }
-    setEditingCommentId(null);
-    setEditContent("");
   };
 
   const deleteComment = async (commentId) => {
@@ -439,11 +461,12 @@ const MatchingApply = ({ matching, sport, beach }) => {
       const { data, deleteError } = await client
         .from("MATCHING_COMMENT")
         .delete()
-        .eq("id", commentId)
-        .select();
+        .eq("id", commentId);
       if (deleteError) {
         throw new Error(deleteError.message);
       }
+      const updatedComments = await getComments(matching.id);
+      setComments(updatedComments);
     } catch (error) {
       console.error(error.message);
       return;
@@ -456,7 +479,7 @@ const MatchingApply = ({ matching, sport, beach }) => {
       return (
         <CommentBox key={comment.id}>
           <CommentInfo>
-            <CommentItem>{comment.user_id}</CommentItem>
+            <CommentItem>{comment.user_nickname}</CommentItem>
             <CommentItem>{formatTime(comment.created_at)}</CommentItem>
             {comment.updated_at && (
               <CommentItem>{formatTime(comment.updated_at)} 수정됨</CommentItem>
@@ -479,7 +502,7 @@ const MatchingApply = ({ matching, sport, beach }) => {
               <button onClick={() => setEditingCommentId(null)}>Cancel</button>
             </div>
           ) : (
-            <CommentContent>{comment.comment}</CommentContent>
+            <CommentContent>{comment.content}</CommentContent>
           )}
         </CommentBox>
       );
@@ -515,6 +538,22 @@ const MatchingApply = ({ matching, sport, beach }) => {
           } catch (error) {
             console.error('Error cancelling application for matching:', error.message);
             setIsUserJoined(true);
+          }
+        }
+      } else {
+        const apply = window.confirm('매칭에 신청하시겠습니까?');
+        if (apply) {
+          setIsUserJoined(true);
+          try {
+            const updatedJoiningUsers = Array.isArray(matching.joining_users) ? [...matching.joining_users, loggedInUser.id] : [loggedInUser.id];
+            await client
+              .from('MATCHING')
+              .update({ joining_users: updatedJoiningUsers })
+              .eq('id', matching.id);
+            window.location.reload();
+          } catch (error) {
+            console.error('Error applying for matching:', error.message);
+            setIsUserJoined(false);
           }
         }
       }
@@ -569,6 +608,7 @@ const MatchingApply = ({ matching, sport, beach }) => {
                 <CommentInputBtn type="submit">댓글 추가</CommentInputBtn>
               </CommentForm>
             </CommentContainer>
+            {commentList()}
           </Textbox1>
           {isHostUser ? (
             <Link to={`/matching/update/${matching.id}`}>
@@ -577,8 +617,8 @@ const MatchingApply = ({ matching, sport, beach }) => {
               </Button>
             </Link>
           ) : (
-            <Button onClick={handleButtonClick} disabled={isMatchingFull}>
-              <Div2>{isMatchingFull ? '신청마감' : isUserJoined ? '신청 취소하기' : '신청하기'}</Div2>
+            <Button onClick={handleButtonClick}>
+              <Div2>신청 취소하기</Div2>
             </Button>
           )}
         </DivRoot>
@@ -588,4 +628,3 @@ const MatchingApply = ({ matching, sport, beach }) => {
 };
 
 export default MatchingApply;
-
