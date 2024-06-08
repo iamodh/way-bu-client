@@ -22,6 +22,7 @@ export const ModalContent = styled.div`
   width: 600px;
   text-align: center;
   position: relative;
+  overflow: auto;
   @media screen and (max-width: 376px) {
     width: 350px;
     height: 600px;
@@ -83,6 +84,7 @@ export const FrameWrapperRoot = styled.form`
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  overflow: auto;
   max-width: 100%;
   height: 100%;
   gap: var(--gap-base);
@@ -358,7 +360,7 @@ export const FrameWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   box-sizing: border-box;
   max-width: 100%;
   height: 100%;
@@ -372,45 +374,47 @@ export const FrameWrapper = styled.div`
 
 export const FrameParent = styled.div`
   margin-top: 10px;
-  margin-bottom: 0px;
+  margin-bottom: 10px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: center; 
+  justify-content: flex-start;
   max-width: 100%;
-  height: 200px;
+  height: auto;
 `;
 
 export const TitleBox = styled.div`
   margin: 10px;
+  margin-bottom: 15px;
   box-sizing: border-box;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
-  height: 50px;
+  height: 60px;
   width: 550px;
-  line-height: 50px;
+  line-height: 60px;
   text-align: center;
   background-color: aliceblue;
+  font-size: var(--font-size-xl);
   @media screen and (max-width: 750px) {
     width: 300px;
     height: 40px;
     line-height: 40px;
+    font-size: var(--font-size-m);
+    margin-bottom: 10px;
   }
 `;
 
 export const TitleText = styled.div`
   width: 274px;
   position: relative;
-  font-size: var(--m-size);
-  font-family: var(--l-bold);
-  color: var(--gray);
   text-align: center;
   display: inline-block;
   font-weight: bold;
 `;
 
-export const TagGroup = styled.nav`
+export const TagGroup = styled.div`
   margin: 0px;
+  margin-bottom: 25px;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -420,6 +424,7 @@ export const TagGroup = styled.nav`
   margin-bottom: 10px;
   @media screen and (max-width: 750px) {
     flex-wrap: wrap;
+    margin-bottom: 8px;
   }
 `;
 
@@ -441,27 +446,122 @@ export const Text = styled.div`
   }
 `;
 
+export const TextSport = styled.div`
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  height: 40px;
+  line-height: 20px;
+  width: 110px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  @media screen and (max-width: 376px) {
+    width: 90px;
+    height: 30px;
+    line-height: 10px;
+    font-size: var(--font-size-s);
+  }
+`;
+
+export const TextDifficulty = styled.div`
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  height: 40px;
+  line-height: 20px;
+  width: 90px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  @media screen and (max-width: 376px) {
+    width: 40px;
+    height: 30px;
+    line-height: 10px;
+    font-size: var(--font-size-s);
+  }
+`;
+
+export const TextBeach = styled.div`
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  height: 40px;
+  line-height: 20px;
+  width: 150px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  @media screen and (max-width: 376px) {
+    width: 100px;
+    height: 30px;
+    line-height: 10px;
+    font-size: var(--font-size-s);
+  }
+`;
+
+export const TextHost = styled.div`
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  height: 40px;
+  line-height: 20px;
+  width: 90px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  @media screen and (max-width: 376px) {
+    width: 70px;
+    height: 30px;
+    line-height: 10px;
+    font-size: var(--font-size-s);
+  }
+`;
+
+export const TextState = styled.div`
+  font-weight: bold;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  height: 40px;
+  line-height: 40px;
+  flex: 1;
+  border-radius: var(--br-8xs);
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 245px;
+ @media screen and (max-width: 376px) {
+    width: 115px;
+    height: 30px;
+    line-height: 30px;
+    font-size: var(--font-size-s);
+  }
+`;
+
 export const Group = styled.div`
-  margin: 0px;
-  width: 100%;
+  margin-top: 10px;
+  width: 500px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   gap: var(--gap-9xs);
   white-space: nowrap;
+  @media screen and (max-width: 376px) {
+    margin: 0px;
+    width: 330px;
+    justify-content: center;
+  }
 `;
 
 export const GroupDiv = styled.div`
   width: 767px;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
   gap: var(--gap-3xs);
   box-sizing: border-box;
-  max-width: 100%;
   padding: 5px 10px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+  @media screen and (max-width: 376px) {
+    margin-bottom: 5px;
+  }
 `;
 
 export const TextBox = styled.div`
@@ -470,7 +570,7 @@ export const TextBox = styled.div`
   border-radius: 5px;
   text-align: center;
   font-weight: bold;
-  height: 40px;
+  height: 41px;
   line-height: 30px;
   background-color: var(--color-blue-vivid);
   width: 80px;
@@ -493,10 +593,9 @@ export const Schedule = styled.div`
   border-radius: var(--br-8xs);
   box-sizing: border-box;
   overflow: hidden;
-  min-width: 374px;
-  max-width: 100%;
+  width: 245px;
  @media screen and (max-width: 376px) {
-    min-width: 210px;
+    width: 115px;
     height: 30px;
     line-height: 30px;
     font-size: var(--font-size-s);
@@ -505,8 +604,8 @@ export const Schedule = styled.div`
 
 export const RequiredBox = styled.div`
   font-weight: bold;
-  height: 256px;
-  width: 100%;
+  height: 250px;
+  width: 550px;
   padding: 20px;
   text-align: left;
   box-sizing: border-box;
@@ -517,7 +616,8 @@ export const RequiredBox = styled.div`
   overflow: auto;
   @media screen and (max-width: 376px) {
     width: 300px;
-    height: 130px;
+    height: 170px;
+    padding: 15px;
     font-size: var(--font-size-s);
   }
 `;
@@ -525,15 +625,22 @@ export const RequiredBox = styled.div`
 export const GroupRoot = styled.div`
   margin: 0px;
   margin-top: 10px;
-  width: 100%;
+  width: 550px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   box-sizing: border-box;
   gap: var(--gap-base);
-  @media screen and (max-width: 675px) {
+  @media screen and (max-width: 376px) {
     gap: var(--gap-base);
     box-sizing: border-box;
+    width: 350px;
   }
 `;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-3xs);
+`

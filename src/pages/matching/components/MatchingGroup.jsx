@@ -7,6 +7,12 @@ import { useRecoilState } from "recoil";
 import { loggedInUserState } from "../../../atom";
 import { ModalWrapper, ModalContent, CloseButton } from "./MatchingLayout";
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
 const MatchingIcon = styled.img`
   height: 100px;
@@ -21,7 +27,7 @@ const MatchingIcon = styled.img`
   }
 `;
 
-const Wrapper = styled.div`
+const DivWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--gap-13xl);
@@ -90,7 +96,7 @@ const H = styled.div`
   font-size: var(--font-size-xl);
   font-weight: bold;
   overflow: hidden;
-  text-overflow: ellipsis;	
+  text-overflow: ellipsis;    
   white-space: nowrap;
   @media screen and (max-width: 450px) {
     font-size: var(--font-size-l);
@@ -105,7 +111,7 @@ const P = styled.div`
   font-weight: bold;
   gap: var(--gap-5xs);
   overflow: hidden;
-  text-overflow: ellipsis;	
+  text-overflow: ellipsis;    
   white-space: nowrap;
 `;
 
@@ -113,8 +119,10 @@ const PageWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: black;
-  margin: 20px;
+  bottom: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 30px;
 `;
 
 const PageBtn = styled.button`
@@ -127,9 +135,10 @@ const PageBox = styled.div`
   margin: 0 5px;
   padding: 5px 10px;
   cursor: pointer;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
   border-radius: 3px;
+  background-color: var(--color-blue-main);
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  color: white;
 `;
 
 const MatchingGroup = ({ selectedDate, selectedTags }) => {
@@ -144,6 +153,7 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
   const [maxPage, setMaxPage] = useState(0);
   const [postPage, setPostPage] = useState(1);
   const [pageSection, setPageSection] = useState(1);
+  const [hostProfile, setHostProfile] = useState(null);
 
   useEffect(() => {
     setPageSection(Math.ceil(postPage / postPerPage));
@@ -161,7 +171,6 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
     getBeach();
   }, []);
 
-  //매칭 테이블
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
@@ -171,13 +180,25 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
       setIsLoading(false);
       return;
     }
-    // created_at 기준으로 최신순으로 정렬
     const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     setMatchings(sortedData);
     setIsLoading(false);
   }
-  
-  //날짜 필터링
+
+  const getHostProfile = async (hostUserId) => {
+    try {
+      const { data, error } = await client
+        .from('USER_PROFILE')
+        .select('avatar_url, user_nickname')
+        .eq('user_id', hostUserId);
+      if (error) throw error;
+      return data[0];
+    } catch (error) {
+      console.error('Error fetching host profile:', error.message);
+      return null;
+    }
+  };
+
   const filteredMatchings = matchings.filter((matching) => {
     const matchingDate = new Date(matching.matching_date);
     const today = new Date();
@@ -195,7 +216,6 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
 
   const currentMatchings = filteredMatchings.slice((postPage - 1) * postPerPage, postPage * postPerPage);
 
-  //클릭시 조회수 업데이트
   async function updateMatchingViews(matching) {
     const { data, error } = await client
       .from("MATCHING")
@@ -211,7 +231,6 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
     );
   }
 
-  //스포츠 드롭다운 내용 불러오기
   async function getSports(sportId) {
     const { data, error } = await client
       .from("SPORT")
@@ -221,10 +240,9 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
       console.log(error.message);
       return null;
     }
-    return data[0]; // 데이터는 배열로 오므로 첫 번째 요소 반환
+    return data[0];
   }
 
-  //해수욕장 태그 내용 불러오기
   async function getBeach(beachId) {
     const { data, error } = await client
       .from("BEACH")
@@ -245,17 +263,28 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
     setSelectedMatching(matching);
     setSelectedBeach(beach);
 
+    const hostProfile = await getHostProfile(matching.host_userId);
+    setHostProfile(hostProfile);
+
+    const isHostUser = matching.host_userId === loggedInUser.id;
+
     if (matching.joining_users && matching.joining_users.includes(loggedInUser.id)) {
       setModalContent("MatchingApply");
+    } else if (isHostUser) {
+      setModalContent("MatchingApply")
     } else {
       setModalContent("MatchingWatch");
     }
+
+    document.body.style.overflow = 'hidden';
   };
 
   const closeModal = () => {
     setSelectedMatching(null);
     setSelectedSport(null);
     setSelectedBeach(null);
+    setHostProfile(null);
+    document.body.style.overflow = 'auto';
   };
 
   const pageList = () => {
@@ -270,47 +299,49 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
 
   return (
     <Wrapper>
-      {isLoading ? (
-        "Loading..."
-      ) : (
-        currentMatchings.map((m) => (
-          <MatchingContainer onClick={() => { openModal(m); updateMatchingViews(m); }} key={m.id}>
-            <MatchingIcon />
-            <ContainerDetails>
-              <Title>
-                <H>{m.title}</H>
-              </Title>
-              <P>위치 : <div style={{ fontWeight: "normal" }}>{m.location}</div></P>
-              <P>시간 : <div style={{ fontWeight: "normal" }}>{m.matching_time}</div></P>
-              <P>난이도 : <div style={{ fontWeight: "normal" }}>{m.difficulty}</div></P>
-            </ContainerDetails>
-          </MatchingContainer>
-        ))
-      )}
-      {selectedMatching && (
-        <ModalWrapper onClick={closeModal}>
-          <ModalContent onClick={(e) => e.stopPropagation()}>
-            <CloseButton onClick={closeModal}>&times;</CloseButton>
-            {modalContent === "MatchingApply" && (
-              <MatchingApply matching={selectedMatching} sport={selectedSport} beach={selectedBeach} />
-            )}
-            {modalContent !== "MatchingApply" && (
-              <MatchingWatch matching={selectedMatching} sport={selectedSport} beach={selectedBeach} />
-            )}
-          </ModalContent>
-        </ModalWrapper>
-      )}
+      <DivWrapper>
+        {isLoading ? (
+          "Loading..."
+        ) : (
+          currentMatchings.map((m) => (
+            <MatchingContainer onClick={() => { openModal(m); updateMatchingViews(m); }} key={m.id}>
+              <MatchingIcon />
+              <ContainerDetails>
+                <Title>
+                  <H>{m.title}</H>
+                </Title>
+                <P>위치 : <div style={{ fontWeight: "normal" }}>{m.location}</div></P>
+                <P>시간 : <div style={{ fontWeight: "normal" }}>{m.matching_time}</div></P>
+                <P>난이도 : <div style={{ fontWeight: "normal" }}>{m.difficulty}</div></P>
+              </ContainerDetails>
+            </MatchingContainer>
+          ))
+        )}
+        {selectedMatching && (
+          <ModalWrapper onClick={closeModal}>
+            <ModalContent onClick={(e) => e.stopPropagation()}>
+              <CloseButton onClick={closeModal}>&times;</CloseButton>
+              {modalContent === "MatchingApply" && (
+                <MatchingApply matching={selectedMatching} sport={selectedSport} beach={selectedBeach} hostProfile={hostProfile} />
+              )}
+              {modalContent !== "MatchingApply" && (
+                <MatchingWatch matching={selectedMatching} sport={selectedSport} beach={selectedBeach} hostProfile={hostProfile} />
+              )}
+            </ModalContent>
+          </ModalWrapper>
+        )}
+      </DivWrapper>
       <PageWrapper>
-        {pageSection > 1 && (
+        {postPage > 1 && (
           <>
             <PageBtn onClick={() => setPostPage(1)}>◀️◀️</PageBtn>
-            <PageBtn onClick={() => setPostPage((pageSection - 2) * postPerPage + 1)}>◀️</PageBtn>
+            <PageBtn onClick={() => setPostPage(postPage - 1)}>◀️</PageBtn>
           </>
         )}
         {pageList()}
-        {pageSection < maxPage / postPerPage && (
+        {postPage < maxPage && (
           <>
-            <PageBtn onClick={() => setPostPage(pageSection * postPerPage + 1)}>▶️</PageBtn>
+            <PageBtn onClick={() => setPostPage(postPage + 1)}>▶️</PageBtn>
             <PageBtn onClick={() => setPostPage(maxPage)}>▶️▶️</PageBtn>
           </>
         )}

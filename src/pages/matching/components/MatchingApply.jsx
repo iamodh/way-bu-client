@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { client } from "../../../../libs/supabase";
 import { useForm } from "react-hook-form";
-import { Button, FrameWrapper, FrameParent, TitleBox, TitleText, TagGroup, Text, Group, GroupDiv,TextBox, Schedule, RequiredBox, ButtonText, GroupRoot } from "./MatchingLayout";
+import { Button, FrameWrapper, FrameParent, TitleBox, TitleText, TagGroup, Text, Group, GroupDiv,TextBox, Schedule, RequiredBox, ButtonText, GroupRoot, ButtonGroup } from "./MatchingLayout";
 
 const MembersContainer = styled.div`
   display: flex;
@@ -87,79 +87,115 @@ const DivRoot = styled.div`
   }
 `;
 
-const CommentContainer = styled.div`
-  width: 100%;
+const CommentWrapper = styled.div`
+  width: 550px;
+  height: 250px;
+  background-color: aliceblue;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  @media screen and (max-width: 376px) {
+    width: 330px;
+    height: 220px;
+  }
 `;
 
 const CommentForm = styled.form`
-  margin: 1rem 0;
-  width: 100%;
+  width: 550px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  @media screen and (max-width: 376px) {
+    width: 330px;
+  }
 `;
 
 const CommentInput = styled.textarea`
-  @media (max-width: 768px) {
-    height: 3rem;
+  width: 550px;
+  height: 40px;
+  resize: none;
+  border-radius: 5px;
+  @media screen and (max-width: 376px) {
+    width: 300px;
   }
-  height: 3.5rem;
-  border-radius: 0.2rem;
-  flex: 1;
-  padding: 0.3rem;
-  border: 1px solid rgba(0, 0, 0, 0.3);
 `;
 
 const CommentInputBtn = styled.button`
-  @media (max-width: 768px) {
-    width: 4rem;
-    height: 3rem;
-  }
-  border: none;
+  width: 80px;
+  height: 40px;
   background-color: var(--color-blue-main);
+  border: none;
+  border-radius: 5px;
   color: white;
-  height: 3.5rem;
-  width: 6rem;
-  margin-left: 0.5rem;
-  border-radius: 0.2rem;
 `;
 
 const CommentBox = styled.div`
-  margin: 1rem 0;
-  background-color: var(--color-skyblue-background);
-  padding: 1rem;
-  border-radius: 0.3rem;
+  padding: 5px;
+  width: 550px;
+  height: 55px;
+  margin-bottom: 0px;
+  @media screen and (max-width: 376px) {
+    width: 330px;
+  }
 `;
 
 const CommentInfo = styled.div`
+  padding-left: 5px;
+  height: 16px;
+  line-height: 16px;
   display: flex;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1px;
+  gap: var(--gap-3xs);
+  @media screen and (max-width: 376px) {
+    width: 330px;
+  }
+`;
+
+const CommentName = styled.div`
+  font-weight: bold;
+  background-color: aliceblue;
+  font-size: 15px;
+  @media screen and (max-width: 376px) {
+    font-size: 12px;
+  }
+`;
+
+const CommentTime = styled.div`
+  opacity: 0.5;
+  font-size: var(--font-size-s);
+  @media screen and (max-width: 376px) {
+    font-size: var(--font-size-xs);
+  }
 `;
 
 const CommentItem = styled.div`
-  margin-right: 0.5rem;
-  &:nth-child(2) {
-    opacity: 0.6;
-  }
+  font-weight: bold;
 `;
 
 const CommentContent = styled.div`
   background-color: white;
-  margin: 0 1rem;
-  padding: 0.5rem;
-  border-radius: 0.3rem;
+  width: 540px;
+  height:25px;
+  line-height: 19px;
+  padding: 3px;
+  padding-left: 8px;
+  font-size: var(--font-size-s);
+  text-align: left;
+  @media screen and (max-width: 376px) {
+    width: 320px;
+  }
 `;
 
 const CommentBtn = styled.button`
   background-color: rgba(0, 0, 0, 0);
+  font-size: var(--font-size-s);
   border: none;
   &:hover {
     cursor: pointer;
   }
 `;
 
-const MatchingApply = ({ matching, sport, beach }) => {
+const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const [isHostUser, setIsHostUser] = useState(matching.host_userId === loggedInUser.id);
   const [isApplied, setIsApplied] = useState(false);
@@ -313,8 +349,8 @@ const MatchingApply = ({ matching, sport, beach }) => {
       return (
         <CommentBox key={comment.id}>
           <CommentInfo>
-            <CommentItem>{comment.user_nickname}</CommentItem>
-            <CommentItem>{formatTime(comment.created_at)}</CommentItem>
+            <CommentName>{comment.user_nickname}</CommentName>
+            <CommentTime>{formatTime(comment.created_at)}</CommentTime>
             {comment.updated_at && (
               <CommentItem>{formatTime(comment.updated_at)} 수정됨</CommentItem>
             )}
@@ -332,8 +368,8 @@ const MatchingApply = ({ matching, sport, beach }) => {
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
               />
-              <button onClick={() => saveEditComment(comment.id)}>Save</button>
-              <button onClick={() => setEditingCommentId(null)}>Cancel</button>
+              <button onClick={() => saveEditComment(comment.id)}>수정</button>
+              <button onClick={() => setEditingCommentId(null)}>취소</button>
             </div>
           ) : (
             <CommentContent>{comment.content}</CommentContent>
@@ -353,6 +389,18 @@ const MatchingApply = ({ matching, sport, beach }) => {
     };
     fetchUserProfiles();
   }, [matching.joining_users]);
+
+  const handleDeleteMatching = async () => {
+    const confirmDelete = window.confirm('정말 삭제하시겠습니까?');
+    if (confirmDelete) {
+      try {
+        await client.from('MATCHING').delete().eq('id', matching.id);
+        window.location.reload();
+      } catch (error) {
+        console.error('Error deleting matching:', error.message);
+      }
+    }
+  };
 
   const handleButtonClick = async () => {
     if (isHostUser) {
@@ -379,7 +427,7 @@ const MatchingApply = ({ matching, sport, beach }) => {
   };
 
   return (
-    <FrameWrapper>
+    <FrameWrapper >
       <FrameParent key={matching.id}>
         <TitleBox>
           <TitleText>{matching.title}</TitleText>
@@ -399,10 +447,16 @@ const MatchingApply = ({ matching, sport, beach }) => {
             <Text>{matching.state}</Text>
           </GroupDiv>
         </Group>
-        <GroupDiv style={{paddingTop:"0px"}}>
-          <TextBox>일정</TextBox>
-          <Schedule>{matching.matching_date} {matching.matching_time}</Schedule>
-        </GroupDiv>
+        <Group>
+          <GroupDiv style={{paddingTop:"0px"}}>
+            <TextBox>일정</TextBox>
+            <Schedule>{matching.matching_date} {matching.matching_time}</Schedule>
+          </GroupDiv>
+          <GroupDiv style={{paddingTop:"0px"}}>
+            <TextBox>호스트</TextBox>
+            <Text>{hostProfile ? hostProfile.user_nickname : "Loading..."}</Text>
+          </GroupDiv>
+        </Group>
         <GroupDiv style={{ paddingTop: "0px" }}>
           <TextBox>멤버</TextBox>
           <MembersContainer>
@@ -416,8 +470,7 @@ const MatchingApply = ({ matching, sport, beach }) => {
         </GroupDiv>
         <GroupRoot>
           <RequiredBox>{matching.required}<br/><br/>준비물 : {matching.necessity_details}</RequiredBox>
-          <Textbox1>
-            <CommentContainer>
+          <CommentWrapper>
               <CommentForm onSubmit={handleSubmit(onCommentSubmit)}>
                 <CommentInput
                   {...register("content", { required: "댓글을 입력해주세요" })}
@@ -425,20 +478,28 @@ const MatchingApply = ({ matching, sport, beach }) => {
                 ></CommentInput>
                 <CommentInputBtn type="submit">댓글 추가</CommentInputBtn>
               </CommentForm>
-            </CommentContainer>
-            {commentList()}
-          </Textbox1>
-          {isHostUser ? (
-            <Link to={`/matching/update/${matching.id}`}>
-              <Button>
-                <ButtonText>수정하기</ButtonText>
-              </Button>
-            </Link>
-          ) : (
-            <Button onClick={handleButtonClick}>
-              <ButtonText>신청 취소하기</ButtonText>
-            </Button>
-          )}
+              {commentList()}
+            </CommentWrapper>
+          <ButtonGroup>
+            {
+              isHostUser ? (
+                <>
+                  <Link to={`/matching/update/${matching.id}`}>
+                    <Button>
+                      <ButtonText>수정하기</ButtonText>
+                    </Button>
+                  </Link>
+                  <Button onClick={handleDeleteMatching}>
+                    <ButtonText>삭제하기</ButtonText>
+                  </Button>
+                </>
+              ) : (
+                <Button onClick={handleButtonClick}>
+                  <ButtonText>매칭 취소하기</ButtonText>
+                </Button>
+              )
+            }
+          </ButtonGroup>
         </GroupRoot>
       </FrameParent>
     </FrameWrapper>
