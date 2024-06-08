@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { client } from "../../../../libs/supabase";
 import { useForm } from "react-hook-form";
-import { Button, FrameWrapper, FrameParent, TitleBox, TitleText, TagGroup, Text, Group, GroupDiv,TextBox, Schedule, RequiredBox, ButtonText, GroupRoot, ButtonGroup } from "./MatchingLayout";
+import { Button, FrameWrapper, FrameParent, TitleBox, TitleText, TagGroup, Text, Group, GroupDiv,TextBox, Schedule, RequiredBox, ButtonText, GroupRoot, ButtonGroup, TextDifficulty, TextBeach, TextSport, TextHost, TextState } from "./MatchingLayout";
 
 const MembersContainer = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const MembersContainer = styled.div`
   gap: var(--gap-5xs);
   cursor: pointer;
   @media screen and (max-width: 376px) {
-    width: 240px;
+    width: 260px;
     height: 30px;
     line-height: 30px;
   }
@@ -89,33 +89,37 @@ const DivRoot = styled.div`
 
 const CommentWrapper = styled.div`
   width: 550px;
-  height: 250px;
-  background-color: aliceblue;
+  height: auto;
   overflow: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  padding: 25px 0px;
   @media screen and (max-width: 376px) {
     width: 330px;
-    height: 220px;
+    height: auto;
+    padding: 15px 0px;
   }
 `;
 
 const CommentForm = styled.form`
   width: 550px;
   display: flex;
+  gap: var(--gap-9xs);
   @media screen and (max-width: 376px) {
     width: 330px;
+    gap: var(--gap-5xs);
   }
 `;
 
 const CommentInput = styled.textarea`
-  width: 550px;
+  width: 466px;
   height: 40px;
   resize: none;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  border: none;
   border-radius: 5px;
   @media screen and (max-width: 376px) {
-    width: 300px;
+    width: 250px;
+    height: 30px;
+    font-size: var(--font-size-s);
   }
 `;
 
@@ -126,15 +130,22 @@ const CommentInputBtn = styled.button`
   border: none;
   border-radius: 5px;
   color: white;
+  @media screen and (max-width: 376px) {
+    width: 70px;
+    height: 30px;
+    font-size: var(--font-size-s);
+  }
 `;
 
 const CommentBox = styled.div`
   padding: 5px;
   width: 550px;
-  height: 55px;
+  height: auto;
+  margin-top: 15px;
   margin-bottom: 0px;
+  background-color: aliceblue;
   @media screen and (max-width: 376px) {
-    width: 330px;
+    width: 320px;
   }
 `;
 
@@ -147,7 +158,7 @@ const CommentInfo = styled.div`
   margin-bottom: 1px;
   gap: var(--gap-3xs);
   @media screen and (max-width: 376px) {
-    width: 330px;
+    width: 320px;
   }
 `;
 
@@ -168,31 +179,58 @@ const CommentTime = styled.div`
   }
 `;
 
-const CommentItem = styled.div`
-  font-weight: bold;
+const EditBtn = styled.button`
+  background-color: var(--color-blue-main);
+  border: none;
+  color: white;
+  font-size: var(--font-size-s);
+  padding: 3px 5px;
+  border-radius: 3px;
+  cursor: pointer;
 `;
 
 const CommentContent = styled.div`
   background-color: white;
   width: 540px;
-  height:25px;
+  height:auto;
   line-height: 19px;
-  padding: 3px;
-  padding-left: 8px;
+  padding: 3px 8px;
   font-size: var(--font-size-s);
   text-align: left;
   @media screen and (max-width: 376px) {
-    width: 320px;
+    width: 310px;
+  }
+`;
+
+const CommentBtnBox = styled.div`
+  @media screen and (max-width: 376px) {
+    gap: var(--gap-9xs);
+    margin-bottom: 6px;
   }
 `;
 
 const CommentBtn = styled.button`
-  background-color: rgba(0, 0, 0, 0);
+  background-color: transparent;
   font-size: var(--font-size-s);
   border: none;
   &:hover {
     cursor: pointer;
   }
+  @media screen and (max-width: 376px) {
+    font-size: var(--font-size-xs);
+  }
+`;
+
+const EditInput = styled.input`
+  width: 200px;
+`;
+
+const Edit = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-9xs);
+  margin-left: 5px;
+  margin-top: 5px;
 `;
 
 const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
@@ -309,6 +347,10 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
 
   const saveEditComment = async (commentId) => {
     try {
+      const confirmEdit = window.confirm("댓글을 수정하시겠습니까?");
+      if (!confirmEdit) {
+        return;
+      }
       const { data, error } = await client
         .from("MATCHING_COMMENT")
         .update({ content: editContent, updated_at: new Date() })
@@ -328,6 +370,10 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
 
   const deleteComment = async (commentId) => {
     try {
+      const confirmDelete = window.confirm("댓글을 삭제하시겠습니까?");
+      if (!confirmDelete) {
+        return;
+      }
       const { data, deleteError } = await client
         .from("MATCHING_COMMENT")
         .delete()
@@ -352,25 +398,25 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
             <CommentName>{comment.user_nickname}</CommentName>
             <CommentTime>{formatTime(comment.created_at)}</CommentTime>
             {comment.updated_at && (
-              <CommentItem>{formatTime(comment.updated_at)} 수정됨</CommentItem>
+              <CommentTime>{formatTime(comment.updated_at)} 수정됨</CommentTime>
             )}
             {loggedInUser && comment.user_id === loggedInUser.id && (
-              <>
+              <CommentBtnBox>
                 <CommentBtn onClick={() => startEditComment(comment)}>수정하기</CommentBtn>
                 <CommentBtn onClick={() => deleteComment(comment.id)}>삭제하기</CommentBtn>
-              </>
+              </CommentBtnBox>
             )}
           </CommentInfo>
           {editingCommentId === comment.id ? (
-            <div>
-              <input
+            <Edit>
+              <EditInput
                 type="text"
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
               />
-              <button onClick={() => saveEditComment(comment.id)}>수정</button>
-              <button onClick={() => setEditingCommentId(null)}>취소</button>
-            </div>
+              <EditBtn onClick={() => saveEditComment(comment.id)}>수정</EditBtn>
+              <EditBtn onClick={() => setEditingCommentId(null)}>취소</EditBtn>
+            </Edit>
           ) : (
             <CommentContent>{comment.content}</CommentContent>
           )}
@@ -391,7 +437,7 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
   }, [matching.joining_users]);
 
   const handleDeleteMatching = async () => {
-    const confirmDelete = window.confirm('정말 삭제하시겠습니까?');
+    const confirmDelete = window.confirm('매칭을 삭제하시겠습니까?');
     if (confirmDelete) {
       try {
         await client.from('MATCHING').delete().eq('id', matching.id);
@@ -430,38 +476,43 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
     document.body.style.overflow = 'auto';
   };
 
+  const formatScheduleTime = (timeString) => {
+    const [hour, minute] = timeString.split(':');
+    return `${hour}시${minute}분`;
+  };
+  
   return (
-    <FrameWrapper >
+    <FrameWrapper>
       <FrameParent key={matching.id}>
         <TitleBox>
           <TitleText>{matching.title}</TitleText>
         </TitleBox>
         <TagGroup>
-          <Text style={{width:"110px"}}>#{sport.title}</Text>
-          <Text>#{matching.difficulty}</Text>
-          <Text style={{width:"150px"}}>#{beach.beach_name}</Text>
+          <TextSport>#{sport.title}</TextSport>
+          <TextDifficulty>#{matching.difficulty}</TextDifficulty>
+          <TextBeach>#{beach.beach_name}</TextBeach>
         </TagGroup>
         <Group>
           <GroupDiv>
             <TextBox>참가인원</TextBox>
-            <Text>{matching.joining_users ? matching.joining_users.length : 0}/{matching.total_people}명</Text>
+            <TextState>{matching.joining_users ? matching.joining_users.length : 0}/{matching.total_people}명</TextState>
           </GroupDiv>
-          <GroupDiv>
+          <GroupDiv style={{paddingLeft:"0px"}}>
             <TextBox>모집상태</TextBox>
             <Text>{matching.state}</Text>
           </GroupDiv>
         </Group>
-        <Group>
+        <Group style={{marginTop:"0px"}}>
           <GroupDiv style={{paddingTop:"0px"}}>
             <TextBox>일정</TextBox>
-            <Schedule>{matching.matching_date} {matching.matching_time}</Schedule>
+            <Schedule>{matching.matching_date} {formatScheduleTime(matching.matching_time)}</Schedule>
           </GroupDiv>
-          <GroupDiv style={{paddingTop:"0px"}}>
+          <GroupDiv style={{paddingTop:"0px", paddingLeft:"0px"}}>
             <TextBox>호스트</TextBox>
-            <Text>{hostProfile ? hostProfile.user_nickname : "Loading..."}</Text>
+            <TextHost>{hostProfile ? hostProfile.user_nickname : "불러오는 중..."}</TextHost>
           </GroupDiv>
         </Group>
-        <GroupDiv style={{ paddingTop: "0px" }}>
+        <GroupDiv style={{ paddingTop: "0px"}}>
           <TextBox>멤버</TextBox>
           <MembersContainer>
             {userProfiles.map(profile => (
@@ -473,17 +524,24 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
           </MembersContainer>
         </GroupDiv>
         <GroupRoot>
-          <RequiredBox>{matching.required}<br/><br/>준비물 : {matching.necessity_details}</RequiredBox>
+          <RequiredBox>
+            상세위치: {matching.location}<br/><br/>
+            {matching.necessity_details ? `준비물 : ${matching.necessity_details}` : '준비물이 없습니다.'}<br/><br/>
+            [공지사항]<br />
+            {matching.required}
+          </RequiredBox>
+        </GroupRoot>
+        <GroupRoot>
           <CommentWrapper>
-              <CommentForm onSubmit={handleSubmit(onCommentSubmit)}>
-                <CommentInput
-                  {...register("content", { required: "댓글을 입력해주세요" })}
-                  col="3"
-                ></CommentInput>
-                <CommentInputBtn type="submit">댓글 추가</CommentInputBtn>
-              </CommentForm>
-              {commentList()}
-            </CommentWrapper>
+            <CommentForm onSubmit={handleSubmit(onCommentSubmit)}>
+              <CommentInput
+                {...register("content", { required: "댓글을 입력해주세요" })}
+              ></CommentInput>
+              <CommentInputBtn type="submit">댓글 추가</CommentInputBtn>
+            </CommentForm>
+            {commentList()}
+          </CommentWrapper>
+        </GroupRoot>
           <ButtonGroup>
             {
               isHostUser ? (
@@ -504,7 +562,6 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
               )
             }
           </ButtonGroup>
-        </GroupRoot>
       </FrameParent>
     </FrameWrapper>
   );

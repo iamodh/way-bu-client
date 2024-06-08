@@ -192,7 +192,7 @@ const MainContent = () => {
     const sport = await getSports(matching.sport_id);
     setSelectedSport(sport);
     
-    const beach = await getBeach(matching.beach_id); // matching.beach_id를 전달하여 해당하는 해변 정보 가져오기
+    const beach = await getBeach(matching.beach_id);
     setSelectedMatching(matching);
     setSelectedBeach(beach);
   };   

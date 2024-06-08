@@ -577,7 +577,7 @@ export const Group = styled.div`
 `;
 
 export const GroupDiv = styled.div`
-  width: 767px;
+  width: 550px;
   display: flex;
   flex-direction: row;
   gap: var(--gap-3xs);
@@ -586,6 +586,7 @@ export const GroupDiv = styled.div`
   margin-bottom: 10px;
   @media screen and (max-width: 376px) {
     margin-bottom: 5px;
+    width: 340px;
   }
 `;
 
@@ -623,7 +624,7 @@ export const Schedule = styled.div`
     width: 115px;
     height: 30px;
     line-height: 30px;
-    font-size: var(--font-size-s);
+    font-size: 10px;
   }
 `;
 
@@ -640,7 +641,7 @@ export const RequiredBox = styled.div`
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   overflow: auto;
   @media screen and (max-width: 376px) {
-    width: 300px;
+    width: 330px;
     height: 170px;
     padding: 15px;
     font-size: var(--font-size-s);
@@ -672,6 +673,6 @@ export const ButtonGroup = styled.div`
   margin-bottom: 25px;
   @media screen and (max-width: 376px) {
     gap: var(--gap-3xs);
-    margin-top: 0px;
+    margin-top: 20px;
   }
 `

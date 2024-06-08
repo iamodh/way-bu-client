@@ -25,7 +25,7 @@ const ApplyBox = styled.textarea`
   resize: none;
   outline: none;
   @media screen and (max-width: 376px) {
-    width: 300px;
+    width: 330px;
     height: 100px;
     font-size: var(--font-size-s);
   }
@@ -60,7 +60,7 @@ const MatchingWatch = ({ matching, sport, beach, hostProfile }) => {
 
   const formatTime = (timeString) => {
     const [hour, minute] = timeString.split(':');
-    return `${hour}:${minute}`;
+    return `${hour}시${minute}분`;
   };
 
   const handleButtonClick = async () => {
