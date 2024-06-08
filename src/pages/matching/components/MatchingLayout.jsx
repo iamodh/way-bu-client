@@ -78,19 +78,18 @@ export const ButtonText = styled.div`
 
 /////////////////////////////// MatchingWrite, Matchingupdate ///////////////////////////////
 export const FrameWrapperRoot = styled.form`
-  align-self: stretch;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   box-sizing: border-box;
   overflow: auto;
-  max-width: 100%;
+  width: 560px;
   height: 100%;
   gap: var(--gap-base);
   margin: auto;
   @media screen and (max-width: 376px) {
-    gap: var(--gap-3xs);
+    width: 300px;
   }
 `;
 
@@ -99,8 +98,8 @@ export const Div = styled.div`
   font-weight: bold;
   color: var(--color-blue-main);
   text-align: center;
-  height: 45px;
-  line-height: 45px;
+  height: 40px;
+  line-height: 40px;
   @media screen and (max-width: 376px) {
   height: 30px;
   line-height: 30px;
@@ -109,8 +108,27 @@ export const Div = styled.div`
 `;
 
 export const Title = styled.input.attrs({
-  maxLength: 17
+  maxLength: 20
 })`
+  height: 40px;
+  flex: 1;
+  border-radius: var(--br-8xs);
+  border: none;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow: hidden;
+  min-width: 374px;
+  max-width: 100%;
+  padding: 10px;
+  background-color: aliceblue;
+  @media screen and (max-width: 376px) {
+    min-width: 190px;
+    height: 30px;
+    font-size: var(--font-size-s);
+  }
+`;
+
+export const Location = styled.input`
   height: 40px;
   flex: 1;
   border-radius: var(--br-8xs);
@@ -139,15 +157,17 @@ export const SportTagWrapper = styled.div`
 
 export const FrameGroup = styled.div`
   margin: 0;
-  width: 100%;
+  height: 430px;
+  width: 560px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   gap: var(--gap-xl);
   white-space: nowrap;
-  margin-bottom: 10px;
   @media screen and (max-width: 376px) {
     flex-wrap: wrap;
+    gap: var(--gap-base);
+    width: 300px;
   }
 `;
 export const Schedulebox = styled.input`
@@ -184,7 +204,7 @@ export const NumberInput = styled.input`
   }
 `;
 export const FrameDiv = styled.div`
-  width: 767px;
+  width: 560px;
   display: flex;
   justify-content: flex-start;
   gap: var(--gap-3xs);
@@ -195,16 +215,17 @@ export const FrameDiv = styled.div`
   }
 `;
 export const FrameDiv2 = styled.div`
-  width: 767px;
+  width: 560px;
+  height: 40px;
   display: flex;
   justify-content: flex-start;
   gap: var(--gap-3xs);
   box-sizing: border-box;
-  max-width: 100%;
   @media screen and (max-width: 376px) {
     width: 300px;
     font-size: var(--font-size-s);
     gap: 0px;
+    height: 30px;
   }
 `;
 
@@ -213,14 +234,14 @@ export const FrameParent1 = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  max-width: 100%;
-  height: 60%;
-  margin-top: 25px;
+  justify-content: flex-start;
+  width: 560px;
+  height: 447px;
+  margin-top: 18px;
   @media screen and (max-width: 376px) {
-    height: 400px;
-    width: 350px;
-
+    height: 350px;
+    width: 300px;
+    margin-top: 20px;
   }
 `;
 export const Divbox = styled.div`
@@ -242,7 +263,7 @@ export const Divbox = styled.div`
   }
 `;
 export const Textbox = styled.textarea`
-  height: 150px;
+  height: 200px;
   width: 100%;
   padding: 10px;
   box-sizing: border-box;
@@ -254,18 +275,18 @@ export const Textbox = styled.textarea`
   outline: none;
   background-color: aliceblue;
   @media screen and (max-width: 376px) {
-    height: 80px;
+    height: 110px;
     font-size: var(--font-size-s);
   }
 `;
 
 export const DivRoot = styled.div`
-  width: 100%;
+  width: 560px;
   box-sizing: border-box;
   gap: var(--gap-base);
-  @media screen and (max-width: 675px) {
-    gap: var(--gap-mini);
+  @media screen and (max-width: 376px) {
     box-sizing: border-box;
+    width: 300px;
   }
 `;
 
@@ -276,6 +297,9 @@ export const Div2 = styled.div`
   text-align: center;
   display: inline-block;
   white-space: nowrap;
+  @media screen and (max-width: 376px) {
+    font-size: var(--font-size-s);
+  }
 `;
 
 export const FrameDiv1 = styled.div`
@@ -284,7 +308,7 @@ export const FrameDiv1 = styled.div`
   justify-content: flex-start;
   @media screen and (max-width: 376px) {
     flex-direction: column;
-    gap: var(--gap-xl);
+    gap: var(--gap-base);
   }
 `;
 export const Radio = styled.input`
@@ -328,20 +352,22 @@ export const Dropdown = styled.select`
   }
 `;
 export const Necessity = styled.input`
+  width: 290px;
   margin-left: 23px;
-  height: 45px;
-  flex: 1;
+  height: 40px;
+  border: none;
   border-radius: var(--br-8xs);
-  border: 1px solid var(--color-blue-main);
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   overflow: hidden;
-  min-width: 30px;
-  max-width: 100%;
   padding: 10px;
   background-color: aliceblue;
   @media screen and (max-width: 376px) {
+    width: 128px;
     height: 30px;
     padding: 3px;
+    padding-left: 7px;
+    margin-left: 17px;
     font-size: var(--font-size-s);
   }
 `;
@@ -405,7 +431,6 @@ export const TitleBox = styled.div`
 `;
 
 export const TitleText = styled.div`
-  width: 274px;
   position: relative;
   text-align: center;
   display: inline-block;

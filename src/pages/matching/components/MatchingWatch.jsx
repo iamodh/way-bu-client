@@ -14,7 +14,6 @@ const ApplyBox = styled.textarea`
   border-radius: 5px;
   border: none;
   box-sizing: border-box;
-  overflow: hidden;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -142,8 +141,12 @@ const MatchingWatch = ({ matching, sport, beach, hostProfile }) => {
           </GroupDiv>
         </Group>
         <GroupRoot>
-          <RequiredBox>{matching.required}<br/><br/>
-          {matching.necessity_details ? `준비물 : ${matching.necessity_details}` : '준비물이 없습니다.'}</RequiredBox>
+          <RequiredBox>
+            상세위치: {matching.location}<br/><br/>
+            {matching.necessity_details ? `준비물 : ${matching.necessity_details}` : '준비물이 없습니다.'}<br/><br/>
+            [공지사항]<br />
+            {matching.required}
+          </RequiredBox>
           <ApplyBox placeholder="신청 메세지를 입력해주세요." />
           <Button onClick={handleButtonClick} disabled={isMatchingFull}>
             <ButtonText>{isMatchingFull ? '매칭 마감' : isUserJoined ? '매칭 취소하기' : '매칭하기'}</ButtonText>

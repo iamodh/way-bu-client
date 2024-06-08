@@ -9,7 +9,7 @@ import { getSports } from '../../../../apis/sports';
 import { useRecoilState } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../../atom";
 import { useParams } from 'react-router-dom';
-import { FrameWrapperRoot, Div, Title, SportTagWrapper, FrameGroup, Schedulebox, NumberInput, FrameDiv, FrameDiv2, FrameParent1, Divbox, Textbox, Button, DivRoot, Div2, FrameDiv1, Radio, RadioLabel, Dropdown, Necessity, BeachWrapper } from "./MatchingLayout";
+import { FrameWrapperRoot, Div, Title, Location, SportTagWrapper, FrameGroup, Schedulebox, NumberInput, FrameDiv, FrameDiv2, FrameParent1, Divbox, Textbox, Button, DivRoot, Div2, FrameDiv1, Radio, RadioLabel, Dropdown, Necessity, BeachWrapper } from "./MatchingLayout";
 
 const MatchingWrite = ({ closeModal }) => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
@@ -34,14 +34,16 @@ const MatchingWrite = ({ closeModal }) => {
     getBeach
   );
 
-  //해수욕장 태그 기능
+  useEffect(() => {
+    getMatchings();
+  }, [beachData]);
+
+// 해수욕장 태그 기능
   const handleTagClicked = (id) => {
-    if (clickedTags.includes(id)) {
-      setClickedTags((prev) => prev.filter((it) => it !== id));
-    } else {
-      setClickedTags((prev) => [...prev, id]);
-    }
+    setClickedTags([id]);  // 항상 클릭된 태그를 설정
+    setSelectedBeachId(id);  // 선택된 해변 ID를 설정
   };
+
 
   //스포츠
   const { isLoading: sportsLoading, data: sportsData } = useQuery(
@@ -101,7 +103,7 @@ const MatchingWrite = ({ closeModal }) => {
           <FrameDiv>
             <Divbox>제목</Divbox>
             <Title type="text"
-              placeholder='17자까지 입력가능합니다.' {...register("title", { required: "제목을 입력해 주세요." })} id='title'/>
+              placeholder='20자까지 입력가능합니다.' {...register("title", { required: "제목을 입력해 주세요." })} id='title'/>
           </FrameDiv>
           <FrameDiv>
             <Divbox>해변</Divbox>
@@ -113,10 +115,7 @@ const MatchingWrite = ({ closeModal }) => {
                       <BeachTag
                         key={beach.id}
                         beach={beach}
-                        onClick={() => {
-                          handleTagClicked(beach.id);
-                          setSelectedBeachId(beach.id);
-                        }}
+                        onClick={() => handleTagClicked(beach.id)}
                         hasClicked={clickedTags.includes(beach.id)}
                       />
                     );
@@ -125,26 +124,26 @@ const MatchingWrite = ({ closeModal }) => {
           </FrameDiv>
           <FrameDiv>
             <Divbox>위치</Divbox>
-            <Title type="text" {...register("location", { required: "제목을 입력해 주세요." })} id='location'/>
+            <Location type="text" {...register("location", { required: "제목을 입력해 주세요." })} id='location'/>
           </FrameDiv>
           <FrameDiv1>
-          <FrameDiv>
-            <Divbox>종목</Divbox>
-            <Dropdown {...register("sport_id", { required: "종목을 선택해 주세요." })}>
-              <option value="">스포츠 종목 선택</option>
-              {sportsLoading ? (
-                <option value="" disabled>
-                  Loading...
-                </option>
-              ) : (
-                sportsData.map((sport) => (
-                  <option key={sport.id} value={sport.id}>
-                    {sport.title}
+            <FrameDiv>
+              <Divbox>종목</Divbox>
+              <Dropdown {...register("sport_id", { required: "종목을 선택해 주세요." })}>
+                <option value="">스포츠 종목 선택</option>
+                {sportsLoading ? (
+                  <option value="" disabled>
+                    Loading...
                   </option>
-                ))
-              )}
-            </Dropdown>
-          </FrameDiv>
+                ) : (
+                  sportsData.map((sport) => (
+                    <option key={sport.id} value={sport.id}>
+                      {sport.title}
+                    </option>
+                  ))
+                )}
+              </Dropdown>
+            </FrameDiv>
             <FrameDiv2>
               <Divbox>난이도</Divbox>
                 <Radio
@@ -215,7 +214,7 @@ const MatchingWrite = ({ closeModal }) => {
         </FrameGroup>
       </FrameParent1>
       <DivRoot>
-        <Textbox  {...register("required")} />
+        <Textbox  {...register("required")} placeholder='상세 설명을 적어주세요.' />
       </DivRoot>
       <Button type='submit'>
         <Div2>올리기</Div2>

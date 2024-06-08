@@ -297,7 +297,7 @@ const MatchingUpdate = () => {
       </FrameParent1>
       <DivRoot>
         <Textbox
-          {...register('required', { required: '필요 사항을 입력해 주세요.' })}
+          {...register('required')}
         />
       </DivRoot>
         <Button type="submit"><ButtonText>수정하기</ButtonText></Button>
