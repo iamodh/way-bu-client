@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { styled } from "styled-components";
 
 const Wrapper = styled.div`
@@ -207,9 +208,17 @@ export default function Home() {
         <Inner className="second">
           <IntroTitle>웨이부만의 기능 알아보기</IntroTitle>
           <IntroBox>
-            <IntroItem>스포츠</IntroItem>
-            <IntroItem>매칭</IntroItem>
-            <IntroItem>비교하기</IntroItem>
+            <Link to="sports">
+              <IntroItem>스포츠</IntroItem>
+            </Link>
+
+            <Link to="matching">
+              <IntroItem>매칭</IntroItem>
+            </Link>
+
+            <Link to="program">
+              <IntroItem>비교하기</IntroItem>
+            </Link>
           </IntroBox>
         </Inner>
         <Divider className="second" />

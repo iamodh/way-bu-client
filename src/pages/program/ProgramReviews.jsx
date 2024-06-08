@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import StarAvgContainer from "./components/StarAvgContainer";
-import StarContainer from "./components/StarContainer";
 import { useOutletContext } from "react-router-dom";
 import Review from "./components/Review";
 const Wrapper = styled.div`
