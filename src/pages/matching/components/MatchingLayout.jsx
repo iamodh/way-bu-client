@@ -76,7 +76,7 @@ export const ButtonText = styled.div`
   }
 `;
 
-/////////////////////////////// MatchingWrite, Matchingupdate ///////////////////////////////
+/////////////////////////////// MatchingWrite, MatchingUpdate ///////////////////////////////
 export const FrameWrapperRoot = styled.form`
   display: flex;
   flex-direction: column;
@@ -667,5 +667,11 @@ export const GroupRoot = styled.div`
 export const ButtonGroup = styled.div`
   display: flex;
   flex-direction: row;
-  gap: var(--gap-3xs);
+  gap: var(--gap-base);
+  margin-top: 8px;
+  margin-bottom: 25px;
+  @media screen and (max-width: 376px) {
+    gap: var(--gap-3xs);
+    margin-top: 0px;
+  }
 `

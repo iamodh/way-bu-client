@@ -426,6 +426,10 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
     }
   };
 
+  const closeModal = () => {
+    document.body.style.overflow = 'auto';
+  };
+
   return (
     <FrameWrapper >
       <FrameParent key={matching.id}>
@@ -485,7 +489,7 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
               isHostUser ? (
                 <>
                   <Link to={`/matching/update/${matching.id}`}>
-                    <Button>
+                    <Button onClick={closeModal}>
                       <ButtonText>수정하기</ButtonText>
                     </Button>
                   </Link>

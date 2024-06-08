@@ -10,7 +10,7 @@ import { useRecoilState } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../../atom";
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { FrameWrapperRoot, Div, Title, SportTagWrapper, FrameGroup, Schedulebox, NumberInput, FrameDiv, FrameDiv2, FrameParent1, Divbox, Textbox, Button, DivRoot, Div2, FrameDiv1, Radio, RadioLabel, Dropdown, Necessity, BeachWrapper, ButtonText } from "./MatchingLayout";
+import { FrameWrapperRoot, Div, Title, Location, ButtonText, FrameGroup, Schedulebox, NumberInput, FrameDiv, FrameDiv2, FrameParent1, Divbox, Textbox, Button, DivRoot, ButtonGroup, FrameDiv1, Radio, RadioLabel, Dropdown, Necessity, BeachWrapper } from "./MatchingLayout";
 
 const MatchingUpdate = () => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
@@ -79,11 +79,8 @@ const MatchingUpdate = () => {
 
   // 해수욕장 태그 기능
   const handleTagClicked = (id) => {
-    if (clickedTags.includes(id)) {
-      setClickedTags((prev) => prev.filter((it) => it !== id));
-    } else {
-      setClickedTags((prev) => [...prev, id]);
-    }
+    setClickedTags([id]);  // 항상 클릭된 태그를 설정
+    setSelectedBeachId(id);  // 선택된 해변 ID를 설정
   };
 
   // 스포츠
@@ -144,7 +141,7 @@ const MatchingUpdate = () => {
           <FrameDiv>
             <Divbox>제목</Divbox>
             <Title
-              type="text"
+              type="text" placeholder='20자까지 입력가능합니다.'
               {...register('title', { required: '제목을 입력해 주세요.' })}
               id="title"
             />
@@ -153,17 +150,14 @@ const MatchingUpdate = () => {
             <Divbox>해변</Divbox>
             <BeachWrapper>
               {beachLoading
-                ? 'Loading...'
+                ? "Loading..."
                 : beachData.map((beach) => {
                     return (
                       <BeachTag
                         key={beach.id}
                         beach={beach}
-                        onClick={() => {
-                          handleTagClicked(beach.id);
-                          setSelectedBeachId(beach.id);
-                        }}
-                        hasClicked={selectedBeachId === beach.id}
+                        onClick={() => handleTagClicked(beach.id)}
+                        hasClicked={clickedTags.includes(beach.id)}
                       />
                     );
                   })}
@@ -171,7 +165,7 @@ const MatchingUpdate = () => {
           </FrameDiv>
           <FrameDiv>
             <Divbox>위치</Divbox>
-            <Title
+            <Location
               type="text"
               {...register('location', { required: '위치를 입력해 주세요.' })}
               id="location"
@@ -300,8 +294,10 @@ const MatchingUpdate = () => {
           {...register('required')}
         />
       </DivRoot>
-        <Button type="submit"><ButtonText>수정하기</ButtonText></Button>
-        <Link to = "/matching"><Button><ButtonText>돌아가기</ButtonText></Button></Link>
+        <ButtonGroup>
+          <Button type="submit"><ButtonText>수정하기</ButtonText></Button>
+          <Link to = "/matching"><Button><ButtonText>돌아가기</ButtonText></Button></Link>
+        </ButtonGroup>
     </FrameWrapperRoot>
   );
 };
