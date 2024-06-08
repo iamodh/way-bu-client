@@ -116,6 +116,7 @@ const CommentInput = styled.textarea`
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
   border: none;
   border-radius: 5px;
+  padding: 5px;
   @media screen and (max-width: 376px) {
     width: 250px;
     height: 30px;

@@ -23,7 +23,7 @@ const MatchingIcon = styled.img`
   min-height: 100px;
   @media screen and (max-width: 376px) {
     flex: 1;
-    width: 100px;
+    width: 90px;
   }
 `;
 
@@ -33,7 +33,6 @@ const DivWrapper = styled.div`
   gap: var(--gap-13xl);
   box-sizing: border-box;
   padding: 0 20%;
-
   @media screen and (max-width: 850px) {
     grid-template-columns: 1fr;
     padding: 0 10%;
@@ -61,6 +60,9 @@ const MatchingContainer = styled.div`
   box-shadow: 1px 1px 1px 1px gainsboro;
   gap: var(--gap-base);
   background-color: white;
+  overflow: hidden;
+  text-overflow: ellipsis;    
+  white-space: nowrap;
   cursor: pointer;
   &:hover {
     background-color: var(--color-skyblue-main);
@@ -68,6 +70,7 @@ const MatchingContainer = styled.div`
 
   @media screen and (max-width: 376px) {
     min-width: 300px;
+    gap: var(--gap-xl);
   }
 `;
 
@@ -86,8 +89,12 @@ const Title = styled.div`
   align-items: center;
   justify-content: flex-start;
   margin-bottom: 15px;
-  @media screen and (max-width: 450px) {
-    flex-wrap: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;    
+  white-space: nowrap;
+  width: 250px;
+  @media screen and (max-width: 376px) {
+    width: 130px;
   }
 `;
 
@@ -103,6 +110,15 @@ const H = styled.div`
   }
 `;
 
+const Content = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;    
+  white-space: nowrap;
+  font-weight: normal;
+  @media screen and (max-width: 376px) {
+    width: 130px;
+  }
+`;
 const P = styled.div`
   margin: 0;
   display: flex;
@@ -110,9 +126,13 @@ const P = styled.div`
   font-size: var(--font-size-m);
   font-weight: bold;
   gap: var(--gap-5xs);
+  width: 250px;
   overflow: hidden;
   text-overflow: ellipsis;    
   white-space: nowrap;
+  @media screen and (max-width: 376px) {
+    width: 130px;
+  }
 `;
 
 const PageWrapper = styled.div`
@@ -128,7 +148,12 @@ const PageWrapper = styled.div`
 const PageBtn = styled.button`
   margin: 0 5px;
   padding: 5px 10px;
+  line-height: 10px;
   cursor: pointer;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  font-size: var(--font-size-xs);
 `;
 
 const PageBox = styled.div`
@@ -136,10 +161,10 @@ const PageBox = styled.div`
   padding: 5px 10px;
   cursor: pointer;
   border-radius: 3px;
-  background-color: var(--color-blue-main);
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
-  color: white;
+  color: ${props => props.isActive ? 'white' : 'var(--color-blue-main)'};
+  background-color: ${props => props.isActive ? 'var(--color-blue-main)' : 'transparent'};
 `;
+
 
 const MatchingGroup = ({ selectedDate, selectedTags }) => {
   const [matchings, setMatchings] = useState([]);
@@ -154,6 +179,7 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
   const [postPage, setPostPage] = useState(1);
   const [pageSection, setPageSection] = useState(1);
   const [hostProfile, setHostProfile] = useState(null);
+  const [sportsData, setSportsData] = useState({}); // 추가된 상태
 
   useEffect(() => {
     setPageSection(Math.ceil(postPage / postPerPage));
@@ -164,7 +190,7 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
   }, []);
 
   useEffect(() => {
-    getSports();
+    getAllSports(); // 모든 스포츠 데이터를 미리 가져옴
   }, []);
 
   useEffect(() => {
@@ -224,23 +250,22 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
       .select();
     if (error) {
       console.log(error.message);
-      return;
     }
-    setMatchings((currentMatchings) =>
-      currentMatchings.map((m) => (m.id === matching.id ? data[0] : m))
-    );
   }
 
-  async function getSports(sportId) {
+  async function getAllSports() {
     const { data, error } = await client
       .from("SPORT")
-      .select("id, title")
-      .eq("id", sportId);
+      .select("id, title, icon_url");
     if (error) {
       console.log(error.message);
       return null;
     }
-    return data[0];
+    const sportsDataMap = data.reduce((acc, sport) => {
+      acc[sport.id] = sport;
+      return acc;
+    }, {});
+    setSportsData(sportsDataMap); // 모든 스포츠 데이터를 상태로 설정
   }
 
   async function getBeach(beachId) {
@@ -256,7 +281,7 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
   }
 
   const openModal = async (matching) => {
-    const sport = await getSports(matching.sport_id);
+    const sport = sportsData[matching.sport_id]; // 이미 가져온 스포츠 데이터 사용
     setSelectedSport(sport);
 
     const beach = await getBeach(matching.beach_id);
@@ -292,9 +317,18 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
     const first = (pageSection - 1) * postPerPage + 1;
     const last = pageSection * postPerPage < maxPage ? pageSection * postPerPage : maxPage;
     for (let i = first; i <= last; i++) {
-      pages.push(<PageBox key={i} onClick={() => setPostPage(i)}>{i}</PageBox>);
+      pages.push(
+        <PageBox key={i} onClick={() => setPostPage(i)} isActive={i === postPage}>
+          {i}
+        </PageBox>
+      );
     }
     return pages;
+  };
+  
+  const formatTime = (timeString) => {
+    const [hour, minute] = timeString.split(':');
+    return `${hour}시 ${minute}분`;
   };
 
   return (
@@ -303,19 +337,21 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
         {isLoading ? (
           "Loading..."
         ) : (
-          currentMatchings.map((m) => (
-            <MatchingContainer onClick={() => { openModal(m); updateMatchingViews(m); }} key={m.id}>
-              <MatchingIcon />
-              <ContainerDetails>
-                <Title>
-                  <H>{m.title}</H>
-                </Title>
-                <P>위치 : <div style={{ fontWeight: "normal" }}>{m.location}</div></P>
-                <P>시간 : <div style={{ fontWeight: "normal" }}>{m.matching_time}</div></P>
-                <P>난이도 : <div style={{ fontWeight: "normal" }}>{m.difficulty}</div></P>
-              </ContainerDetails>
-            </MatchingContainer>
-          ))
+          currentMatchings.map((m) => {
+            return (
+              <MatchingContainer onClick={() => { openModal(m); updateMatchingViews(m); }} key={m.id}>
+                <MatchingIcon src={sportsData[m.sport_id]?.icon_url} alt={'Sport Icon'} />
+                <ContainerDetails>
+                  <Title>
+                    <H>{m.title}</H>
+                  </Title>
+                  <P>위치 : <Content>{m.location}</Content></P>
+                  <P>시간 : <Content>{formatTime(m.matching_time)}</Content></P>
+                  <P>난이도 : <Content>{m.difficulty}</Content></P>
+                </ContainerDetails>
+              </MatchingContainer>
+            );
+          })
         )}
         {selectedMatching && (
           <ModalWrapper onClick={closeModal}>

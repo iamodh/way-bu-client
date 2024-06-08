@@ -60,7 +60,7 @@ const MatchingWatch = ({ matching, sport, beach, hostProfile }) => {
 
   const formatTime = (timeString) => {
     const [hour, minute] = timeString.split(':');
-    return `${hour}시${minute}분`;
+    return `${hour}시 ${minute}분`;
   };
 
   const handleButtonClick = async () => {

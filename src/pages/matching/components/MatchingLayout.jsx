@@ -422,7 +422,7 @@ export const TitleBox = styled.div`
   background-color: aliceblue;
   font-size: var(--font-size-xl);
   @media screen and (max-width: 750px) {
-    width: 300px;
+    width: 330px;
     height: 40px;
     line-height: 40px;
     font-size: var(--font-size-m);
