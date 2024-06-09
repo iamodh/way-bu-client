@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
 const Wrapper = styled.div`
   position: relative;
   height: 100vh;

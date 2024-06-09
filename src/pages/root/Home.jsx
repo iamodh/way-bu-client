@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { styled } from "styled-components";
+import { animate, motion, spring } from "framer-motion";
 
 const Wrapper = styled.div`
   overflow-y: hidden;
@@ -20,7 +21,7 @@ const Outer = styled.div`
   }
 `;
 
-const Inner = styled.div`
+const Inner = styled(motion.div)`
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -88,12 +89,12 @@ const IntroTitle = styled.h3`
   font-weight: 700;
 `;
 
-const IntroBox = styled.div`
+const IntroBox = styled(motion.div)`
   display: flex;
   gap: 32px;
 `;
 
-const IntroItem = styled.div`
+const IntroItem = styled(motion.div)`
   width: 200px;
   height: 250px;
   background-color: rgba(250, 250, 244, 1);
@@ -106,7 +107,7 @@ const IntroItem = styled.div`
 
 /* Beaches */
 
-const BeachIcon = styled.div``;
+const BeachIcon = styled(motion.div)``;
 
 export default function Home() {
   // useRef를 사용해 Outer의 DOM (current)에 접근
@@ -191,6 +192,44 @@ export default function Home() {
     };
   }, []);
 
+  const introBoxVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        type: "tween",
+        delayChildren: 0.4,
+        staggerChildren: 0.3,
+        duration: 3,
+      },
+    },
+  };
+
+  const introVariants = {
+    hidden: {
+      opacity: 0,
+      y: 40,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+    },
+  };
+
+  const beachBoxVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.2,
+        duration: 3,
+      },
+    },
+  };
+
+  const beachVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { type: "spring" } },
+  };
   return (
     <Wrapper>
       <Outer ref={outerDivRef}>
@@ -207,43 +246,67 @@ export default function Home() {
         <Divider className="first" />
         <Inner className="second">
           <IntroTitle>웨이부만의 기능 알아보기</IntroTitle>
-          <IntroBox>
+          <IntroBox
+            variants={introBoxVariants}
+            initial="hidden"
+            animate={currentPage === 2 ? "visible" : "hidden"}
+          >
             <Link to="sports">
-              <IntroItem>스포츠</IntroItem>
+              <IntroItem variants={introVariants}>스포츠</IntroItem>
             </Link>
 
             <Link to="matching">
-              <IntroItem>매칭</IntroItem>
+              <IntroItem variants={introVariants}>매칭</IntroItem>
             </Link>
 
             <Link to="program">
-              <IntroItem>비교하기</IntroItem>
+              <IntroItem variants={introVariants}>비교하기</IntroItem>
             </Link>
           </IntroBox>
         </Inner>
         <Divider className="second" />
-        <Inner className="third">
-          <BeachIcon>
-            <img src="img/beaches/songjung.png" />
-          </BeachIcon>
-          <BeachIcon>
-            <img src="img/beaches/ilgwang.png" />
-          </BeachIcon>
-          <BeachIcon>
-            <img src="img/beaches/imrang.png" />
-          </BeachIcon>
-          <BeachIcon>
-            <img src="img/beaches/dadaepo.png" />
-          </BeachIcon>
-          <BeachIcon>
-            <img src="img/beaches/songdo.png" />
-          </BeachIcon>
-          <BeachIcon>
-            <img src="img/beaches/haeundae.png" />
-          </BeachIcon>
-          <BeachIcon>
-            <img src="img/beaches/gwanganli.png" />
-          </BeachIcon>
+        <Inner
+          className="third"
+          variants={beachBoxVariants}
+          initial={"hidden"}
+          animate={currentPage === 3 ? "visible" : "hidden"}
+        >
+          <Link to={"program?beach=송정해수욕장"}>
+            <BeachIcon variants={beachVariants}>
+              <img src="img/beaches/songjung.png" />
+            </BeachIcon>
+          </Link>
+          <Link to={"program?beach=일광해수욕장"}>
+            <BeachIcon variants={beachVariants}>
+              <img src="img/beaches/ilgwang.png" />
+            </BeachIcon>
+          </Link>
+          <Link to={"program?beach=임랑해수욕장"}>
+            <BeachIcon variants={beachVariants}>
+              <img src="img/beaches/imrang.png" />
+            </BeachIcon>
+          </Link>
+          <Link to={"program?beach=다대포해수욕장"}>
+            <BeachIcon variants={beachVariants}>
+              <img src="img/beaches/dadaepo.png" />
+            </BeachIcon>
+          </Link>
+          <Link to={"program?beach=송도해수욕장"}>
+            <BeachIcon variants={beachVariants}>
+              <img src="img/beaches/songdo.png" />
+            </BeachIcon>
+          </Link>
+
+          <Link to={"program?beach=해운대해수욕장"}>
+            <BeachIcon variants={beachVariants}>
+              <img src="img/beaches/haeundae.png" />
+            </BeachIcon>
+          </Link>
+          <Link to={"program?beach=광안리해수욕장"}>
+            <BeachIcon variants={beachVariants}>
+              <img src="img/beaches/gwanganli.png" />
+            </BeachIcon>
+          </Link>
         </Inner>
       </Outer>
     </Wrapper>
