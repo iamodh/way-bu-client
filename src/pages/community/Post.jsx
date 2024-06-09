@@ -28,6 +28,7 @@ import {
   CommentItem,
   CommentContent,
   CommentBtn,
+  CommentCount,
 } from "./components/PostLayout";
 
 export default function Post() {
@@ -230,10 +231,7 @@ export default function Post() {
             <CommentItem>{comment.user_nickname}</CommentItem>
             <CommentItem>{formatTime(comment.created_at)}</CommentItem>
             {comment.updated_at && (
-              <CommentItem>
-                {" "}
-                {formatTime(comment.updated_at)} 수정됨{" "}
-              </CommentItem>
+              <CommentItem>{formatTime(comment.updated_at)} 수정됨</CommentItem>
             )}
             {loggedInUser && comment.user_id === loggedInUser.id && (
               <>
@@ -316,6 +314,8 @@ export default function Post() {
         </PostBtnContainer>
       )}
       <CommentContainer>
+        <CommentCount>댓글 {comments.length}개</CommentCount>
+        {commentList()}
         <CommentForm onSubmit={handleSubmit(onCommentSubmit)}>
           <CommentInput
             {...register("comment", { required: "댓글을 입력해주세요" })}
@@ -323,7 +323,6 @@ export default function Post() {
           ></CommentInput>
           <CommentInputBtn type="submit">댓글 추가</CommentInputBtn>
         </CommentForm>
-        {commentList()}
       </CommentContainer>
     </PostWrapper>
   );

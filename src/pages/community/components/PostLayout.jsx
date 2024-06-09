@@ -118,6 +118,7 @@ export const PostContent = styled.div`
   min-height: 15rem;
   padding: 2rem;
   position: relative;
+  margin-bottom: 1rem;
 `;
 
 export const PostBtn = styled.button`
@@ -192,10 +193,18 @@ export const CommentInputBtn = styled.button`
 `;
 
 export const CommentBox = styled.div`
-  margin: 1rem 0;
   background-color: var(--color-skyblue-background);
-  padding: 1rem;
-  border-radius: 0.3rem;
+  padding: 0.6rem 1rem;
+  &:nth-child(2) {
+    padding-top: 1rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+  }
+  &:nth-last-child(2) {
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    padding-bottom: 1rem;
+  }
 `;
 
 export const CommentInfo = styled.div`
@@ -206,22 +215,43 @@ export const CommentInfo = styled.div`
 
 export const CommentItem = styled.div`
   margin-right: 0.5rem;
-  &:nth-child(2) {
+  &:nth-child(2),
+  &:nth-child(3) {
     opacity: 0.6;
+  }
+  @media (max-width: 768px) {
+    &:nth-child(3) {
+      display: none;
+    }
   }
 `;
 
 export const CommentContent = styled.div`
   background-color: white;
   margin: 0 1rem;
-  padding: 0.5rem;
+  padding: 0.6rem;
   border-radius: 0.3rem;
+  @media (max-width: 768px) {
+    margin: 0 0.5rem;
+  }
 `;
 
 export const CommentBtn = styled.button`
   background-color: rgba(0, 0, 0, 0);
   border: none;
+  font-size: 0.7rem;
+  padding: 0;
+  margin-right: 0.5rem;
   &:hover {
     cursor: pointer;
+  }
+`;
+
+export const CommentCount = styled.div`
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  @media (max-width: 768px) {
+    font-size: 1rem;
   }
 `;
