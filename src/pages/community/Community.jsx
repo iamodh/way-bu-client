@@ -312,7 +312,6 @@ export default function Community() {
   return (
     <>
       <ComWrapper>
-        <TitleBox>게시판</TitleBox>
         <TagList />
         <PostWrapper>
           <PostBox>

@@ -38,11 +38,11 @@ export const PostTitleContainer = styled.div`
 export const PostTitle = styled.div`
   @media (max-width: 768px) {
     font-size: 1rem;
-    margin-left: 1rem;
+    margin-left: 0;
   }
   flex: 1;
+  margin-left: 0.5rem;
   font-size: var(--font-size-l);
-  margin-left: 1.5rem;
   font-weight: 700;
   word-break: break-all;
   white-space: pre-wrap;
@@ -51,14 +51,12 @@ export const PostTitle = styled.div`
 
 export const PostTag = styled.div`
   @media (max-width: 768px) {
-    width: 3rem;
-    margin: 0.3rem;
     height: 2rem;
   }
   border-radius: 0.6rem;
-  margin: 0.5rem;
+  margin-right: 0.5rem;
+  padding: 0 0.5rem;
   border: 1px solid rgba(0, 0, 0, 0.6);
-  width: 4rem;
   height: 2.5rem;
   display: flex;
   justify-content: center;
@@ -147,8 +145,8 @@ export const ThumbBtn = styled.button`
   background-color: rgba(0, 0, 0, 0);
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 0.5rem;
-  font-size: 2rem;
-  padding: 0.8rem;
+  font-size: 1.5rem;
+  padding: 0.5rem;
   transform: translate(50%, 0);
   &:hover {
     cursor: pointer;
