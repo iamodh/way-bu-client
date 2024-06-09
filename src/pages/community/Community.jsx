@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { client } from "../../../libs/supabase";
 import { useRecoilState } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import React from "react";
 import {
   ComWrapper,
@@ -12,6 +12,7 @@ import {
   TagContainer,
   TagName,
   TagBox,
+  TagTitle,
   PostWrapper,
   PostBox,
   PostThumb,
@@ -33,6 +34,8 @@ import {
   SearchForm,
   SearchBox,
   SearchBtn,
+  DropdownBox,
+  DropdownComponent,
 } from "./components/CommunityLayout";
 
 export default function Community() {
@@ -181,6 +184,73 @@ export default function Community() {
     return pages;
   };
 
+  const DropdownList = ({ title, items, selectedItem, setSelectedItem }) => {
+    const dropdownRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+    const handleItemClick = (item) => {
+      setSelectedItem(item);
+      setIsVisible(false);
+    };
+
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsVisible(false); // 화면 다른 부분 클릭 시 드롭다운 숨기기
+      }
+    };
+
+    useEffect(() => {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, []);
+
+    return (
+      <div ref={dropdownRef}>
+        <TagTitle onClick={() => setIsVisible(!isVisible)}>
+          {selectedItem === "전체" ? title : selectedItem}
+        </TagTitle>
+        {isVisible && (
+          <DropdownBox>
+            {items.map((item) => (
+              <DropdownComponent
+                key={item}
+                selected={selectedItem === item}
+                onClick={() => handleItemClick(item)}
+              >
+                {item}
+              </DropdownComponent>
+            ))}
+          </DropdownBox>
+        )}
+      </div>
+    );
+  };
+
+  const DropDownTagList = () => {
+    const tags = ["전체", "자유", "질문", "후기", "꿀팁"];
+    return (
+      <DropdownList
+        title="태그"
+        items={tags}
+        selectedItem={postTag}
+        setSelectedItem={setPostTag}
+      />
+    );
+  };
+
+  const DropDownSportsList = () => {
+    const sports = ["전체", "서핑", "카약", "패들보드", "낚시", "기타"];
+    return (
+      <DropdownList
+        title="종목"
+        items={sports}
+        selectedItem={postSport}
+        setSelectedItem={setPostSport}
+      />
+    );
+  };
+
   const TagList = () => {
     const tags = ["전체", "자유", "질문", "후기", "꿀팁"];
     const sports = ["전체", "서핑", "카약", "패들보드", "낚시", "기타"];
@@ -247,8 +317,12 @@ export default function Community() {
         <PostWrapper>
           <PostBox>
             <PostDesc onClick={() => handleSort("thumbs")}>추천수</PostDesc>
-            <PostDesc>태그</PostDesc>
-            <PostDesc>종목</PostDesc>
+            <PostDesc>
+              <DropDownTagList />
+            </PostDesc>
+            <PostDesc>
+              <DropDownSportsList />
+            </PostDesc>
             <PostDesc onClick={() => handleSort("comment_count")}>
               댓글수
             </PostDesc>

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export const ComWrapper = styled.div`
   @media (max-width: 768px) {
@@ -115,6 +115,7 @@ export const PostThumb = styled.div`
     margin-right: 0.5rem;
     width: 1.8rem;
     height: 1.8rem;
+    line-height: 1.8rem;
   }
   border: 1px solid black;
   width: 2rem;
@@ -254,3 +255,34 @@ export const SearchBtn = styled.button`
   right: 0;
   top: 0.2rem;
 `;
+
+const expand = keyframes`
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 15rem; /* 드롭다운의 최대 높이를 설정 */
+    opacity: 1;
+  }
+`;
+
+export const DropdownBox = styled.div`
+  position: absolute;
+  width: 5rem;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  overflow: hidden;
+  animation: ${expand} 0.3s ease-in-out;
+`;
+
+export const DropdownComponent = styled.div`
+  padding: 0.5rem;
+  &:hover {
+    cursor: pointer;
+    background-color: lightgray;
+  }
+`;
+
+export const TagTitle = styled.div``;
