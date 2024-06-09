@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import Slider from "react-slick";
-// import "slick-carousel/slick/slick.css";
-// import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const MypageMatchingWrapper = styled.form`
   width: 90%;
@@ -41,7 +41,9 @@ const UserMatchingArea = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   width: 100%;
+  min-height: 100px;
 `;
 const UserMatchingList = styled(Slider)`
   width: 80%;
@@ -63,6 +65,9 @@ const PrevArrow = styled.div`
 `;
 const UserDoneMatchingArea = styled(UserMatchingArea)`
   width: 90%;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
   flex-direction: column;
   margin-bottom: var(--padding-base);
 `;
@@ -130,17 +135,23 @@ export default function MypageMatching() {
 
   /* 사용자가 참여한 매칭만 필터링하기 */
   useEffect(() => {
-    let newUserMatchings = userMatchings.filter(
-      (m) =>
-        m.joining_users.includes(loggedInUserProfile.id) && m.state === "진행중"
-    );
-    let newUserDoneMatchings = userMatchings.filter(
-      (m) =>
-        m.joining_users.includes(loggedInUserProfile.id) &&
-        m.state === "진행완료"
-    );
-    setFilteredMatchings(newUserMatchings);
-    setFilteredDoneMatchings(newUserDoneMatchings);
+    if (userMatchings) {
+      let newUserMatchings = userMatchings.filter(
+        (m) =>
+          m.joining_users &&
+          m.joining_users.includes(loggedInUserProfile.id) &&
+          m.state === "진행중"
+      );
+      let newUserDoneMatchings = userMatchings.filter(
+        (m) =>
+          m.joining_users &&
+          m.joining_users.includes(loggedInUserProfile.id) &&
+          m.state === "진행완료"
+      );
+      console.log("newUserMatchings:", newUserMatchings);
+      setFilteredMatchings(newUserMatchings);
+      setFilteredDoneMatchings(newUserDoneMatchings);
+    }
   }, [userMatchings]);
 
   /* Slider 커스텀 */
@@ -165,47 +176,55 @@ export default function MypageMatching() {
   return (
     <MypageMatchingWrapper>
       <Title>진행 중인 매칭</Title>
-      <UserMatchingArea>
-        <UserMatchingList {...settings}>
-          {filteredMatchings
-            ? filteredMatchings.map((matching) => {
-                return (
-                  <UserMatchingItem
-                    key={"matching" + matching.id}
-                    matching={matching}
-                  />
-                );
-              })
-            : null}
-        </UserMatchingList>
-      </UserMatchingArea>
+      {filteredMatchings == null ? (
+        <UserMatchingArea>
+          <UserMatchingList {...settings}>
+            {filteredMatchings
+              ? filteredMatchings.map((matching) => {
+                  return (
+                    <UserMatchingItem
+                      key={"matching" + matching.id}
+                      matching={matching}
+                    />
+                  );
+                })
+              : null}
+          </UserMatchingList>
+        </UserMatchingArea>
+      ) : (
+        <UserMatchingArea>참여중인 매칭이 없습니다.</UserMatchingArea>
+      )}
       <Hr />
       <Title>진행 종료된 매칭</Title>
-      <UserDoneMatchingArea>
-        <UserDoneMatchingList>
-          {filteredDoneMatchings
-            ? filteredDoneMatchings.map((d_matching) => {
-                /* 사용자 프로필 정보 불러오기 */
-                let userList = userProfiles.filter((u) =>
-                  d_matching.joining_users.includes(u.id)
-                );
-                return (
-                  <UserDoneMatchingItem
-                    key={"done_matching" + d_matching.id}
-                    matching={d_matching}
-                    users={userList}
-                  />
-                );
-              })
-            : null}
-        </UserDoneMatchingList>
-        <PageIndex>
-          <Page>1</Page>
-          <Page>2</Page>
-          <Page>3</Page>
-          <Page>4</Page>
-        </PageIndex>
-      </UserDoneMatchingArea>
+      {filteredDoneMatchings == null ? (
+        <UserDoneMatchingArea>
+          <UserDoneMatchingList>
+            {filteredDoneMatchings
+              ? filteredDoneMatchings.map((d_matching) => {
+                  /* 사용자 프로필 정보 불러오기 */
+                  let userList = userProfiles.filter((u) =>
+                    d_matching.joining_users.includes(u.id)
+                  );
+                  return (
+                    <UserDoneMatchingItem
+                      key={"done_matching" + d_matching.id}
+                      matching={d_matching}
+                      users={userList}
+                    />
+                  );
+                })
+              : null}
+          </UserDoneMatchingList>
+          <PageIndex>
+            <Page>1</Page>
+            <Page>2</Page>
+            <Page>3</Page>
+            <Page>4</Page>
+          </PageIndex>
+        </UserDoneMatchingArea>
+      ) : (
+        <UserDoneMatchingArea>참여한 매칭이 없습니다.</UserDoneMatchingArea>
+      )}
     </MypageMatchingWrapper>
   );
 }
