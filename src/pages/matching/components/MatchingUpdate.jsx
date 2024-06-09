@@ -65,7 +65,11 @@ const MatchingUpdate = () => {
         setValue('necessity_details', matching.necessity_details);
         setValue('required', matching.required);
         setSelectedBeachId(matching.beach_id);
+        setClickedTags([matching.beach_id]); 
+        
       }
+      console.log('Beach ID:', matching.beach_id);
+
     };
 
     fetchMatching();
