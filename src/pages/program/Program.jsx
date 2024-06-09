@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import SportsTag from "./components/SportsTag";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { useForm } from "react-hook-form";
 import { getPrograms } from "../../../apis/programs";
@@ -8,7 +8,7 @@ import { getSports } from "../../../apis/sports";
 import ProgramItem from "./components/ProgramItem";
 import StarAvgContainer from "./components/StarAvgContainer";
 import BlueButton from "./components/BlueButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const Body = styled.main`
   background-color: ${(props) => props.theme.backgroundColor};
@@ -612,6 +612,9 @@ export default function Program() {
   };
 
   const navigate = useNavigate();
+
+  const [searchParams] = useSearchParams();
+
   return (
     <Body>
       <Wrapper>
@@ -674,7 +677,12 @@ export default function Program() {
                 />
               </SmallFilterBox>
               <SmallFilterBox>
-                <select {...filterRegister("beach")}>
+                <select
+                  {...filterRegister("beach")}
+                  value={
+                    searchParams.get("beach") ? searchParams.get("beach") : ""
+                  }
+                >
                   <option value="">해수욕장</option>
                   <option value="해운대해수욕장">해운대해수욕장</option>
                   <option value="광안리해수욕장">광안리해수욕장</option>
