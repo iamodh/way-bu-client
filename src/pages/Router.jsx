@@ -32,6 +32,7 @@ import Sports from "./sports/Sports";
 import PostEdit from "./community/PostEdit";
 import MatchingApply from "./matching/components/MatchingApply";
 import SportsInfo from "./sports/SportsInfo";
+import Animation from "../components/layout/Animation";
 
 export default function Router() {
   return (
@@ -80,6 +81,12 @@ export default function Router() {
           <Route path="matching" element={<MypageMatching />} />
           <Route path="setting" element={<MypageSetting />} />
         </Route>
+      </Route>
+      <Route path="/matching">
+        <Route index element={<Matching />} />
+      </Route>
+      <Route path="/animation">
+        <Route index element={<Animation />} />
       </Route>
     </Routes>
   );
