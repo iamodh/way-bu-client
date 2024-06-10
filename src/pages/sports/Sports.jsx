@@ -1,16 +1,21 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
+
 const Wrapper = styled.div`
   position: relative;
   height: 100vh;
 `;
 
-const Background = styled.img`
+const Background = styled.div`
   width: 100%;
   height: 100%;
-  background-color: var(--color-sand-main);
-  position: relative;
+  background-image: url("/img/sports.jpeg");
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: -100;
 `;
 
@@ -22,7 +27,7 @@ const Slide = styled.div`
   background-color: var(--color-white);
   position: absolute;
   top: 10%;
-  right: 10%; /* 오른쪽에 배치 */
+  right: 10%;
   border-radius: 20px;
   display: flex;
   justify-content: center;
