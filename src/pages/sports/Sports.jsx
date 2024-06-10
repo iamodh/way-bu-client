@@ -114,13 +114,13 @@ export default function Sports() {
       {[
         {
           id: "surfing_board",
-          component: <SurfingBoard src="/img/sport_items/surfingboard.png" />,
+          component: <SurfingBoard src="/img/min/surfingboard.png" />,
         },
         {
           id: "diving_mask",
-          component: <DivingMask src="/img/sport_items/snorkling.png" />,
+          component: <DivingMask src="/img/min/snorkling.png" />,
         },
-        { id: "yacht", component: <Kayak src="/img/sport_items/yacht.png" /> },
+        { id: "yacht", component: <Kayak src="/img/min/yacht.png" /> },
       ].map((item, i) => {
         return (
           <SportObject
