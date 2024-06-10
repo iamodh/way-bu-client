@@ -8,6 +8,7 @@ import { loggedInUserState } from "../../../atom";
 import { ModalWrapper, ModalContent, CloseButton } from "./MatchingLayout";
 
 const MatchingTop = styled.div`
+  margin-top: 7px;
   flex: 1;
   background-color: var(--color-skyblue-background);
   display: flex;
@@ -16,8 +17,6 @@ const MatchingTop = styled.div`
   padding: var(--padding-45xl);
   padding-top: var(--padding-xs);
   box-sizing: border-box;
-  z-index: -1;
-
   @media screen and (max-width: 750px) {
     padding-left: var(--padding-13xl);
     padding-right: var(--padding-13xl);
@@ -58,7 +57,6 @@ const HotMatchingBox = styled.div`
   border-radius: var(--br-xl);
   box-sizing: border-box;
   box-shadow: 0px 6px 4px var(--color-gray);
-  z-index: 1;
   cursor: pointer;
   &:hover {
     box-shadow: 0px 10px 10px var(--color-gray);
@@ -73,7 +71,6 @@ const MainContentRoot = styled.section`
   align-self: stretch;
   display: flex;
   box-sizing: border-box;
-  z-index: 1;
 `;
 const H = styled.div`
   padding: 30px;
@@ -94,7 +91,7 @@ const P = styled.div`
   flex-direction: row;
   font-size: var(--font-size-m);
   font-weight: bold;
-  background-color: var(--color-skyblue-main);
+  /* background-color: var(--color-skyblue-main); */
   overflow: hidden;
   text-overflow: ellipsis;	
   white-space: nowrap;
@@ -243,7 +240,7 @@ const MainContent = () => {
           ) : (
             matchings.map((m) => (
               <HotMatchingBox onClick={() => {openModal(m), updateMatchingViews(m)}} key={m.id}>
-                <H>{m.title}</H>
+                <H>{m.title}</H><hr />
                 <P>위치: <Content>{m.location}</Content></P>
                 <P>날짜: <Content>{m.matching_date}</Content></P>
               </HotMatchingBox>
