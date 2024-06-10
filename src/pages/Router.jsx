@@ -31,6 +31,7 @@ import ComparePrograms from "./program/ComparePrograms";
 import Sports from "./sports/Sports";
 import PostEdit from "./community/PostEdit";
 import MatchingApply from "./matching/components/MatchingApply";
+import SportsInfo from "./sports/SportsInfo";
 
 export default function Router() {
   return (
@@ -63,6 +64,7 @@ export default function Router() {
 
         {/* Sports */}
         <Route path="sports" element={<Sports />} />
+        <Route path="sports/:sport" element={<SportsInfo />} />
 
         {/* Matching */}
         <Route path="matching" element={<Matching />} />

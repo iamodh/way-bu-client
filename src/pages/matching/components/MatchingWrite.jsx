@@ -23,7 +23,7 @@ const MatchingWrite = ({ closeModal }) => {
     let { data: matchings, error } = await client
       .from("MATCHING")
       .select(
-        "id, title, difficulty, matching_date, matching_time, total_people, required, location, beach_id, sport_id, host_userId"
+        "*"
       );
     setAllMatchings(matchings);
   };

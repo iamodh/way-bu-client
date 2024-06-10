@@ -1,18 +1,17 @@
 import styled from "styled-components";
-
+import { motion } from "framer-motion";
+import { useRef, useState } from "react";
 const Wrapper = styled.div`
   position: relative;
-  background-color: var(--color-sand-main);
+  height: 100vh;
 `;
 
 const Background = styled.img`
   width: 100%;
+  height: 100%;
+  background-color: var(--color-sand-main);
   position: relative;
-  padding-top: 70px;
-
-  @media (max-width: 480px) {
-    padding-top: 100px;
-  }
+  z-index: -100;
 `;
 
 const Slides = styled.div``;
@@ -35,76 +34,78 @@ const Slide = styled.div`
   }
 `;
 
-const SportItem = styled.div`
+const SportObject = styled.div`
   position: absolute;
-  bottom: 10%;
-  right: 10%;
+  top: ${(props) => props.$top};
+  left: ${(props) => props.$left};
+  transition: all 0.1s ease-in;
+  cursor: pointer;
 `;
 
-const SurfingBoard = styled.img`
-  width: 200px;
-  height: auto;
-
-  @media (max-width: 480px) {
-    width: 70px;
-  }
-`;
-
-const DivingMask = styled.img`
-  width: 80px;
-  height: auto;
-
-  @media (max-width: 480px) {
-    width: 25px;
-  }
-`;
-
-const Kayak = styled.img`
-  width: 200px;
-  height: auto;
-
-  @media (max-width: 480px) {
-    width: 70px;
-  }
-`;
-
-const ColorBox = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100px;
-  background-color: #6cddff;
-`;
-
-const Modal = styled.div``;
-
-const Boogie = styled.div`
+const Boogie = styled(motion.img)`
   position: absolute;
   top: 0;
-
-  @media (max-width: 480px) {
-    width: 50px;
-  }
+  left: 0%;
+  cursor: pointer;
 `;
 
 export default function Sports() {
+  const wrapperRef = useRef();
+  const boogieRef = useRef();
+  const sportsRef = useRef([]);
+
+  const [selectedSport, setSelectedSport] = useState("");
+
+  const onDragEnd = (event, info) => {
+    boogieRef.current.src = "/img/sport_items/boogie.png";
+    sportsRef.current.forEach((element) => {
+      const xDiff =
+        element.parentElement.offsetLeft + element.offsetLeft - info.point.x;
+      const yDiff =
+        element.parentElement.offsetTop + element.offsetTop - info.point.y;
+      if (xDiff < 0 && xDiff > -160 && yDiff < 0 && yDiff > -160) {
+        element.style.scale = 1.2;
+        setSelectedSport(element.id);
+      } else {
+        element.style.scale = 1;
+      }
+    });
+  };
+
   return (
-    <Wrapper>
-      <ColorBox></ColorBox>
-      <Background src="/img/sports.png" />
-      <SportItem>
-        <SurfingBoard src="/img/sport_items/surfingboard.png" />
-        <DivingMask src="/img/sport_items/divingmask.png" />
-        <Kayak src="/img/sport_items/kayak.png" />
-      </SportItem>
+    <Wrapper ref={wrapperRef}>
+      <Background />
+      {["surfing_board", "yacht"].map((e, i) => {
+        return (
+          <SportObject
+            id={e}
+            key={e}
+            $top={`${(i + 1) * 3}0%`}
+            $left={`${(i + 1) * 2}0%`}
+            ref={(el) => (sportsRef.current[i] = el)}
+          >
+            <img src={`/img/sport_items/${e}.png`} />
+          </SportObject>
+        );
+      })}
+
       <Slides>
-        <Slide>Slide</Slide>
+        <Slide>{selectedSport}</Slide>
       </Slides>
-      <Boogie>
-        <img
-          style={{ width: "auto", height: "150px" }}
-          src="/img/sport_items/boogie.png"
-        />
-      </Boogie>
+      <Boogie
+        ref={boogieRef}
+        style={{ width: "100px", height: "150px" }}
+        src="/img/sport_items/boogie.png"
+        drag
+        dragConstraints={wrapperRef}
+        dragElastic={0}
+        dragMomentum={false}
+        whileDrag={{ scale: 1.2 }}
+        onDragStart={() => {
+          boogieRef.current.src = "/img/sport_items/boogie-fly.png";
+        }}
+        onDragEnd={onDragEnd}
+      ></Boogie>
     </Wrapper>
   );
 }

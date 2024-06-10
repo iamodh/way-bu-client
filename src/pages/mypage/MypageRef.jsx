@@ -125,6 +125,7 @@ const MypageUpdate = () => {
           </ContentsInner>
           <InputSignupParent>
             <InputSignup pw="이름 " />
+            <InputSignup pw="사진" />
             <InputSignup pw="생년월일" />
             <InputSignup pw="이메일" />
             <InputSignup pw="비밀번호 변경" />
