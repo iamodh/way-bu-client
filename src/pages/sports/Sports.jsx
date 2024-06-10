@@ -6,14 +6,19 @@ const Wrapper = styled.div`
   height: 100vh;
 `;
 
+const ColorBox = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  background-color: #6cddff;
+`;
+
 const Background = styled.img`
   width: 100%;
   height: 100%;
-  background-image: url("/img/sports.jpeg");
-  background-position: center;
-  background-size: cover;
   background-color: var(--color-sand-main);
   position: relative;
+  padding-top: 100px;
   z-index: -100;
 `;
 
@@ -77,8 +82,9 @@ export default function Sports() {
 
   return (
     <Wrapper ref={wrapperRef}>
-      <Background />
-      {["surfing_board", "yacht"].map((e, i) => {
+      <ColorBox />
+      <Background src="/img/sports.jpeg" />
+      {["surfingboard", "yacht"].map((e, i) => {
         return (
           <SportObject
             id={e}
