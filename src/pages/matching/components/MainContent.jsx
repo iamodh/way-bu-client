@@ -8,14 +8,14 @@ import { loggedInUserState } from "../../../atom";
 import { ModalWrapper, ModalContent, CloseButton } from "./MatchingLayout";
 
 const MatchingTop = styled.div`
-  flex: 1; // 너비가 변할 때 동일한 비율 적용
+  flex: 1;
   background-color: var(--color-skyblue-background);
   display: flex;
   justify-content: center;
   flex-direction: column;
   padding: var(--padding-45xl);
   padding-top: var(--padding-xs);
-  box-sizing: border-box; // border까지 포함
+  box-sizing: border-box;
   z-index: -1;
 
   @media screen and (max-width: 750px) {
@@ -58,6 +58,7 @@ const HotMatchingBox = styled.div`
   border-radius: var(--br-xl);
   box-sizing: border-box;
   box-shadow: 0px 6px 4px var(--color-gray);
+  z-index: 1;
   cursor: pointer;
   &:hover {
     box-shadow: 0px 10px 10px var(--color-gray);
@@ -72,6 +73,7 @@ const MainContentRoot = styled.section`
   align-self: stretch;
   display: flex;
   box-sizing: border-box;
+  z-index: 1;
 `;
 const H = styled.div`
   padding: 30px;
@@ -126,14 +128,6 @@ const MainContent = () => {
     getSports();
     getBeach();
   }, []);
-
-  // useEffect(() => {
-  //   getSports();
-  // }, []);
-
-  // useEffect(() => {
-  //   getBeach();
-  // }, []);
 
   async function getMatchings() {
     const { data, error } = await client
@@ -194,7 +188,7 @@ const MainContent = () => {
     const { data, error } = await client
       .from("SPORT")
       .select("id, title")
-      .eq("id", sportId); // sport_id와 일치하는 스포츠 정보 가져오기
+      .eq("id", sportId);
     if (error) {
       console.log(error.message);
       return null;
@@ -214,9 +208,12 @@ const MainContent = () => {
     return data[0];
   }
   
-  
-
   const openModal = async (matching) => {
+    if (!loggedInUser) {
+      window.location.href = "/login";
+      return;
+    }
+
     const sport = await getSports(matching.sport_id);
     setSelectedSport(sport);
 

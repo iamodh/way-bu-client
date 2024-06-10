@@ -281,6 +281,11 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
   }
 
   const openModal = async (matching) => {
+    if (!loggedInUser) {
+      window.location.href = "/login";
+      return;
+    }
+  
     const sport = sportsData[matching.sport_id]; // 이미 가져온 스포츠 데이터 사용
     setSelectedSport(sport);
 
