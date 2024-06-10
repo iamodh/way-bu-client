@@ -72,6 +72,7 @@ const UserReviewArea = styled(UserProgramArea)`
   margin-bottom: var(--padding-base);
 `;
 const UserReviewList = styled.ul`
+  width: 80%;
   display: flex;
   flex-direction: column;
   gap: var(--padding-5xs);
@@ -142,7 +143,7 @@ export default function MypageReview() {
   return (
     <MypageReviewWrapper>
       <Title>후기 작성</Title>
-      {userPrograms ? (
+      {userPrograms && userPrograms.length ? (
         <UserProgramArea>
           <UserProgramList {...settings}>
             {userPrograms.map((program) => {
@@ -157,26 +158,24 @@ export default function MypageReview() {
         </UserProgramArea>
       ) : (
         <UserProgramArea>
-          "후기를 작성할 수 있는 프로그램 목록이 없습니다."
+          후기를 작성할 수 있는 프로그램 목록이 없습니다.
         </UserProgramArea>
       )}
       <Hr />
       <Title>내가 작성한 후기</Title>
-      {/* <UserReviewArea>
-        <UserReviewList>
-          {filteredReviews.map((review) => {
-            return (
-              <UserReviewItem key={"program" + review.id} review={review} />
-            );
-          })}
-        </UserReviewList>
-        <PageIndex>
-          <Page>1</Page>
-          <Page>2</Page>
-          <Page>3</Page>
-          <Page>4</Page>
-        </PageIndex>
-      </UserReviewArea> */}
+      {filteredReviews && filteredReviews.length ? (
+        <UserReviewArea>
+          <UserReviewList>
+            {filteredReviews.map((review) => {
+              return (
+                <UserReviewItem key={"program" + review.id} review={review} />
+              );
+            })}
+          </UserReviewList>
+        </UserReviewArea>
+      ) : (
+        <UserProgramArea>작성한 후기가 없습니다.</UserProgramArea>
+      )}
     </MypageReviewWrapper>
   );
 }

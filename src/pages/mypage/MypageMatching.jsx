@@ -36,17 +36,18 @@ const Title = styled.div`
   }
 `;
 const UserMatchingArea = styled.div`
+  min-height: 100px;
   display: flex;
   position: relative;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  align-content: center;
   width: 100%;
-  min-height: 100px;
 `;
 const UserMatchingList = styled(Slider)`
   width: 80%;
+  display: flex;
 `;
 const SlickButtonFix = ({ currentSlide, slideCount, children, ...props }) => (
   <span {...props}>{children}</span>
@@ -67,12 +68,14 @@ const UserDoneMatchingArea = styled(UserMatchingArea)`
   width: 90%;
   min-height: 100px;
   display: flex;
-  align-items: center;
+  text-align: center;
+
   flex-direction: column;
   margin-bottom: var(--padding-base);
 `;
 const UserDoneMatchingList = styled.ul`
   display: flex;
+  width: 100%;
   flex-direction: column;
   gap: var(--padding-5xs);
   margin-bottom: var(--padding-xs);
@@ -139,16 +142,15 @@ export default function MypageMatching() {
       let newUserMatchings = userMatchings.filter(
         (m) =>
           m.joining_users &&
-          m.joining_users.includes(loggedInUserProfile.id) &&
+          m.joining_users.includes(loggedInUser.id) &&
           m.state === "진행중"
       );
       let newUserDoneMatchings = userMatchings.filter(
         (m) =>
           m.joining_users &&
-          m.joining_users.includes(loggedInUserProfile.id) &&
+          m.joining_users.includes(loggedInUser.id) &&
           m.state === "진행완료"
       );
-      console.log("newUserMatchings:", newUserMatchings);
       setFilteredMatchings(newUserMatchings);
       setFilteredDoneMatchings(newUserDoneMatchings);
     }
@@ -176,19 +178,18 @@ export default function MypageMatching() {
   return (
     <MypageMatchingWrapper>
       <Title>진행 중인 매칭</Title>
-      {filteredMatchings == null ? (
+
+      {filteredMatchings && filteredMatchings.length ? (
         <UserMatchingArea>
           <UserMatchingList {...settings}>
-            {filteredMatchings
-              ? filteredMatchings.map((matching) => {
-                  return (
-                    <UserMatchingItem
-                      key={"matching" + matching.id}
-                      matching={matching}
-                    />
-                  );
-                })
-              : null}
+            {filteredMatchings.map((matching) => {
+              return (
+                <UserMatchingItem
+                  key={"matching" + matching.id}
+                  matching={matching}
+                />
+              );
+            })}
           </UserMatchingList>
         </UserMatchingArea>
       ) : (
@@ -215,12 +216,6 @@ export default function MypageMatching() {
                 })
               : null}
           </UserDoneMatchingList>
-          <PageIndex>
-            <Page>1</Page>
-            <Page>2</Page>
-            <Page>3</Page>
-            <Page>4</Page>
-          </PageIndex>
         </UserDoneMatchingArea>
       ) : (
         <UserDoneMatchingArea>참여한 매칭이 없습니다.</UserDoneMatchingArea>
