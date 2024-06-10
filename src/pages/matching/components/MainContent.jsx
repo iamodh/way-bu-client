@@ -16,6 +16,7 @@ const MatchingTop = styled.div`
   padding: var(--padding-45xl);
   padding-top: var(--padding-xs);
   box-sizing: border-box; // border까지 포함
+  z-index: -1;
 
   @media screen and (max-width: 750px) {
     padding-left: var(--padding-13xl);
@@ -122,15 +123,17 @@ const MainContent = () => {
 
   useEffect(() => {
     getMatchings();
-  }, []);
-
-  useEffect(() => {
     getSports();
-  }, []);
-
-  useEffect(() => {
     getBeach();
   }, []);
+
+  // useEffect(() => {
+  //   getSports();
+  // }, []);
+
+  // useEffect(() => {
+  //   getBeach();
+  // }, []);
 
   async function getMatchings() {
     const { data, error } = await client

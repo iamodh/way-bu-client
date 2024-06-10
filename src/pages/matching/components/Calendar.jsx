@@ -115,6 +115,7 @@ const Calendar = ({ onSelectDate }) => {
     setCurrentMonth((currentDate.getMonth() + 1) + '월');
   }, [currentDate]);
 
+  // 주단위로 날짜 설정
   const getNextDays = (startDate) => {
     let dates = [];
     let currentDay = new Date(startDate);
@@ -135,6 +136,7 @@ const Calendar = ({ onSelectDate }) => {
 
   const nextDays = getNextDays(currentDate);
 
+  // 이전, 다음 버튼
   const previousWeekDisabled = () => {
     const startWeek = new Date(currentDate);
     startWeek.setDate(startWeek.getDate() - startWeek.getDay());
@@ -153,6 +155,7 @@ const Calendar = ({ onSelectDate }) => {
     onSelectDate(selectedDate);
   }, [selectedDate, onSelectDate]);
 
+  // 날짜 선택
   const handleDateButtonClick = (date) => {
     setSelectedDate(prevDate => prevDate && prevDate.getTime() === date.getTime() ? null : date);
   };  
