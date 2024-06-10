@@ -93,9 +93,7 @@ export const PostTag = styled.div`
   @media (max-width: 768px) {
     display: none;
   }
-  color: var(--color-tag-mint-front);
-  background-color: var(--color-tag-mint-back);
-  border: 1px solid var(--color-tag-mint-front);
+  border: 1px solid black;
   border-radius: 0.6rem;
   margin-right: 1rem;
   height: 2rem;
@@ -147,7 +145,7 @@ export const PostDesc = styled.div`
 `;
 
 export const TagWrapper = styled.div`
-  @media screen and (max-width: 1080px) {
+  @media screen and (max-width: 1120px) {
     display: none;
   }
   display: flex;
@@ -163,7 +161,7 @@ export const TagContainer = styled.div`
   min-width: 320px;
   display: flex;
   align-items: center;
-  width: 80%;
+  width: 100%;
 `;
 
 export const TagBox = styled.div`
@@ -267,7 +265,7 @@ const expand = keyframes`
 
 export const DropdownBox = styled.div`
   position: absolute;
-  width: 5rem;
+  width: 6rem;
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.3);
   z-index: 1;

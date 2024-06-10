@@ -29,10 +29,10 @@ export default function Sports() {
     const [sportsInfo, setSportsInfo] = useState({
       title: "",
       image: "",
-      caution: "",
+      caution: [],
       intro: "",
       recommend_time: "",
-      required: "",
+      required: [],
       tip: "",
     });
 
@@ -74,7 +74,9 @@ export default function Sports() {
           </InfoBox>
           <InfoBox>
             <InfoName>준비물 🛟</InfoName>
-            <InfoContent>{sportsInfo.required}</InfoContent>
+            {sportsInfo.required.map((e, i) => {
+              return <InfoContent key={i}>• {e}</InfoContent>;
+            })}
           </InfoBox>
           <InfoBox>
             <InfoName>추천시간 🕙 </InfoName>
@@ -86,7 +88,9 @@ export default function Sports() {
           </InfoBox>
           <InfoBox>
             <InfoName>유의사항 ⚠️</InfoName>
-            <InfoContent>{sportsInfo.caution}</InfoContent>
+            {sportsInfo.caution.map((e, i) => {
+              return <InfoContent key={i}>• {e}</InfoContent>;
+            })}
           </InfoBox>
         </SportsContainer>
       </SportsWrapper>
