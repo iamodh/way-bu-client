@@ -57,13 +57,7 @@ const StyledLink = styled(Link)`
 
 
 const Modal = () => {
-
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
-  // if (!loggedInUser) {
-  //   window.location.href = "/login";
-  //   return;
-  // }
-
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {

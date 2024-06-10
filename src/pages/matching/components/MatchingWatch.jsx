@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { loggedInUserState } from "../../../atom";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { client } from "../../../../libs/supabase";
 import { Button, FrameWrapper, FrameParent, TitleBox, TitleText, TagGroup, Text, Group, GroupDiv,TextBox, Schedule, RequiredBox, ButtonText, GroupRoot, ButtonGroup, TextDifficulty, TextBeach, TextSport, TextHost, TextState } from "./MatchingLayout";
 
@@ -34,7 +33,6 @@ const ApplyBox = styled.textarea`
 const MatchingWatch = ({ matching, sport, beach, hostProfile }) => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const [isHostUser, setIsHostUser] = useState(matching.host_userId === loggedInUser.id);
-  const [isApplied, setIsApplied] = useState(false);
   const [isUserJoined, setIsUserJoined] = useState(false);
   const [isMatchingFull, setIsMatchingFull] = useState(false);
 
@@ -71,39 +69,29 @@ const MatchingWatch = ({ matching, sport, beach, hostProfile }) => {
         const cancel = window.confirm('매칭을 취소하시겠습니까?');
         if (cancel) {
           setIsUserJoined(false);
-          try {
-            const updatedJoiningUsers = Array.isArray(matching.joining_users) ? matching.joining_users.filter(userId => userId !== loggedInUser.id) : [];
-            console.log('Updated join_users after cancellation:', updatedJoiningUsers);
-            await client
-              .from('MATCHING')
-              .update({
-                joining_users: updatedJoiningUsers
-              })
-              .eq('id', matching.id);
-            window.location.reload();
-          } catch (error) {
-            console.error('Error cancelling application for matching:', error.message);
-            setIsUserJoined(true); 
-          }
+          //취소 시 배열 삭제
+          const updatedJoiningUsers = Array.isArray(matching.joining_users) ? matching.joining_users.filter(userId => userId !== loggedInUser.id) : [];
+          await client
+            .from('MATCHING')
+            .update({
+              joining_users: updatedJoiningUsers
+            })
+            .eq('id', matching.id);
+          window.location.reload();
         }
       } else {
         const apply = window.confirm('매칭을 신청하시겠습니까?');
         if (apply) {
           setIsUserJoined(true);
-          try {
-            const updatedJoiningUsers = Array.isArray(matching.joining_users) ? [...matching.joining_users, loggedInUser.id] : [loggedInUser.id];
-            console.log('Updated join_users after application:', updatedJoiningUsers);
-            await client
-              .from('MATCHING')
-              .update({
-                joining_users: updatedJoiningUsers,
-              })
-              .eq('id', matching.id);
-            window.location.reload();
-          } catch (error) {
-            console.error('Error applying for matching:', error.message);
-            setIsUserJoined(false);
-          }
+          //신청 시 배열 추가
+          const updatedJoiningUsers = Array.isArray(matching.joining_users) ? [...matching.joining_users, loggedInUser.id] : [loggedInUser.id];
+          await client
+            .from('MATCHING')
+            .update({
+              joining_users: updatedJoiningUsers,
+            })
+            .eq('id', matching.id);
+          window.location.reload();
         }
       }
     }
@@ -137,7 +125,7 @@ const MatchingWatch = ({ matching, sport, beach, hostProfile }) => {
           </GroupDiv>
           <GroupDiv style={{paddingTop:"0px", paddingLeft:"0px"}}>
             <TextBox>호스트</TextBox>
-            <TextHost>{hostProfile ? hostProfile.user_nickname : "불러오는 중..."}</TextHost>
+            <TextHost>{hostProfile ? hostProfile.user_nickname : "host_nickname"}</TextHost>
           </GroupDiv>
         </Group>
         <GroupRoot>

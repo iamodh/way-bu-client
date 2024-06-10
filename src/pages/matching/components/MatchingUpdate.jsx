@@ -27,13 +27,16 @@ const MatchingUpdate = () => {
     formState: { errors },
   } = useForm();
 
+  useEffect(() => {
+    getMatchings();
+  }, []);
+
+
   // 매칭 데이터 가져오기
   const getMatchings = async () => {
     let { data: matchings, error } = await client
       .from('MATCHING')
-      .select(
-        '*'
-      );
+      .select('*');
     setAllMatchings(matchings);
   };
 
@@ -41,19 +44,12 @@ const MatchingUpdate = () => {
     const fetchMatching = async () => {
       let { data: matching, error } = await client
         .from('MATCHING')
-        .select(
-          'id, title, difficulty, matching_date, matching_time, total_people, necessity, required, location, beach_id, sport_id, host_userId, necessity_details'
-        )
+        .select('*')
         .eq('id', id)
         .single();
 
-      if (error) {
-        console.error(error);
-        return;
-      }
-////////////////////////////////////////////////////////////////////////////////////////////////수정
       if (matching) {
-        // setValue를 사용하여 폼 필드에 값 설정
+        // 폼 필드에 값 설정
         setValue('title', matching.title);
         setValue('location', matching.location);
         setValue('sport_id', matching.sport_id);
@@ -80,8 +76,8 @@ const MatchingUpdate = () => {
 
   // 해수욕장 태그 기능
   const handleTagClicked = (id) => {
-    setClickedTags([id]);  // 항상 클릭된 태그를 설정
-    setSelectedBeachId(id);  // 선택된 해변 ID를 설정
+    setClickedTags([id]);  // 기존 클릭된 태그
+    setSelectedBeachId(id);  // 선택된 해변
   };
 
   // 스포츠
@@ -89,10 +85,6 @@ const MatchingUpdate = () => {
     ['sports'],
     getSports
   );
-
-  useEffect(() => {
-    getMatchings();
-  }, []);
 
   const updateMatching = async (formData) => {
     const { data, error } = await client
@@ -114,10 +106,6 @@ const MatchingUpdate = () => {
       },
     ])
       .eq('id', id); // 매칭 ID로 업데이트
-    if (error) {
-      console.error(error);
-      return;
-    }
     getMatchings();
     window.location.reload();
   };

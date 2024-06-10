@@ -132,15 +132,11 @@ const MainContent = () => {
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
-      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId, joining_users, necessity_details, necessity, created_at`);
-    if (error) {
-      console.log(error.message);
-      setIsLoading(false);
-      return;
-    }
+      .select(`*`);
     
+    // 날짜 지난 매칭 필터링
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // 시간을 00:00:00으로 설정하여 날짜만 비교
+    today.setHours(0, 0, 0, 0);
     const filteredMatchings = data.filter((matching) => {
       const matchingDate = new Date(matching.matching_date);
       return matchingDate >= today;
@@ -148,40 +144,32 @@ const MainContent = () => {
 
     // 조회수 기준 정렬
     const sortMatchings = filteredMatchings.sort((a, b) => b.views - a.views).slice(0, 5);
-    
     setMatchings(sortMatchings);
     setIsLoading(false);
   }
 
+  // 클릭시 조회수 1 증가
   async function updateMatchingViews(matching) {
     const { data, error } = await client
     .from("MATCHING")
     .update({views : matching.views+1})
     .eq("id", matching.id)
     .select();
-    if (error) {
-      console.log(error.message);
-      return;
-    }
+
     setMatchings((currentMatchings) => 
       currentMatchings.map((m) => (m.id === matching.id ? data[0] : m))
     );
     
   }
 
-  
+  // 호스트 이름 불러오기
   const getHostProfile = async (hostUserId) => {
-    try {
-      const { data, error } = await client
-        .from('USER_PROFILE')
-        .select('avatar_url, user_nickname')
-        .eq('user_id', hostUserId);
-      if (error) throw error;
-      return data[0];
-    } catch (error) {
-      console.error('Error fetching host profile:', error.message);
-      return null;
-    }
+    const { data, error } = await client
+      .from('USER_PROFILE')
+      .select('user_nickname')
+      .eq('user_id', hostUserId);
+
+    return data[0];
   };
 
   async function getSports(sportId) {
@@ -189,11 +177,8 @@ const MainContent = () => {
       .from("SPORT")
       .select("id, title")
       .eq("id", sportId);
-    if (error) {
-      console.log(error.message);
-      return null;
-    }
-    return data[0]; // 데이터는 배열로 오므로 첫 번째 요소 반환
+
+    return data[0];
   }
 
   async function getBeach(beachId) {
@@ -201,14 +186,12 @@ const MainContent = () => {
       .from("BEACH")
       .select("beach_name")
       .eq("id", beachId);
-    if (error) {
-      console.log(error.message);
-      return null;
-    }
+
     return data[0];
   }
   
   const openModal = async (matching) => {
+    //비로그인으로 클릭할 경우 로그인창
     if (!loggedInUser) {
       window.location.href = "/login";
       return;
@@ -234,6 +217,7 @@ const MainContent = () => {
       setModalContent("MatchingWatch");
     }
 
+    //모달 제외 스크롤 X
     document.body.style.overflow = 'hidden';
   };
 
@@ -242,6 +226,7 @@ const MainContent = () => {
     setSelectedSport(null);
     setSelectedBeach(null);
     setHostProfile(null);
+    //스크롤 가능
     document.body.style.overflow = 'auto';
   };
 
