@@ -19,6 +19,7 @@ const Header = styled.header`
   box-shadow: 0px 5px 10px 0px lightgray;
   position: ${(props) => (props.$fixed ? "fixed" : "block")};
   width: ${(props) => (props.$fixed ? "100%" : "auto")};
+  z-index: 10;
 `;
 const Sign = styled.div`
   grid-row-start: 1;

@@ -9,6 +9,9 @@ const Wrapper = styled.div`
 const Background = styled.img`
   width: 100%;
   height: 100%;
+  background-image: url("/img/sports.jpeg");
+  background-position: center;
+  background-size: cover;
   background-color: var(--color-sand-main);
   position: relative;
   z-index: -100;

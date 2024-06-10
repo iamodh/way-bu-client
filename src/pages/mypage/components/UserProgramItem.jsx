@@ -6,7 +6,10 @@ import { loggedInUserState, loggedInUserProfileState } from "../../../atom";
 
 const Wrapper = styled.div`
   width: 100%;
-  background: white;
+  height: 100%;
+  @media screen and (max-width: 768px) {
+    height: 160px;
+  }
 `;
 const Item = styled.li`
   display: flex;
