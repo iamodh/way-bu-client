@@ -80,7 +80,7 @@ const UserPostList = styled.ul`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-content: center;
+  text-align: center;
   gap: var(--padding-5xs);
   padding-bottom: var(--padding-5xs);
   margin-bottom: var(--padding-xs);
@@ -167,7 +167,7 @@ export default function MypageCommunity() {
         />
         <Label htmlFor={"likedPosts"}>좋아요한 게시글</Label>
       </OptionList>
-      {filteredPosts != null ? (
+      {filteredPosts && filteredPosts.length ? (
         <UserPostList>
           {filteredPosts.map((post, i) => {
             return (
@@ -176,10 +176,10 @@ export default function MypageCommunity() {
                 key={"post" + post.post_id}
               >
                 <UserPostItem key={"post" + post.post_id} post={post} />
-                {selectedOption == "myComments" && filteredComments[i] ? (
+                {selectedOption === "myComments" && filteredComments[i] ? (
                   <UserCommentItem comment={filteredComments[i]} />
                 ) : (
-                  "댓글을 불러오지 못했습니다."
+                  ""
                 )}
               </Link>
             );

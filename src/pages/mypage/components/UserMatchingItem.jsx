@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 
 const Wrapper = styled(Link)`
   width: 100%;
-  background: white;
+  height: 100%;
+  @media screen and (max-width: 768px) {
+    height: 160px;
+  }
+  background-color: black;
 `;
 const Item = styled.li`
   display: flex;
