@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export const ComWrapper = styled.div`
   @media (max-width: 768px) {
@@ -12,7 +12,7 @@ export const ComWrapper = styled.div`
   min-width: 350px;
   max-width: 1000px;
   width: 80%;
-  margin: 0 auto;
+  margin: 1rem auto;
   flex-direction: column;
   & * {
     box-sizing: border-box;
@@ -20,6 +20,11 @@ export const ComWrapper = styled.div`
 `;
 
 export const TitleBox = styled.div`
+  @media (max-width: 768px) {
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    display: none;
+  }
   font-size: var(--font-size-xxl);
   font-weight: 700;
   color: var(--color-blue-main);
@@ -65,13 +70,13 @@ export const PostTitle = styled.div`
   }
 
   @media (max-width: 1000px) {
-    max-width: 22rem;
+    max-width: 23rem;
   }
   @media (max-width: 768px) {
-    max-width: 15rem;
+    max-width: 18rem;
   }
   @media (max-width: 480px) {
-    max-width: 10rem;
+    max-width: 15rem;
   }
 `;
 
@@ -86,10 +91,7 @@ export const PostDate = styled.div`
 
 export const PostTag = styled.div`
   @media (max-width: 768px) {
-    margin-right: 0.5rem;
-    width: 2rem;
-    height: 1.8rem;
-    line-height: 1.6rem;
+    display: none;
   }
   color: var(--color-tag-mint-front);
   background-color: var(--color-tag-mint-back);
@@ -98,7 +100,7 @@ export const PostTag = styled.div`
   margin-right: 1rem;
   height: 2rem;
   line-height: 2rem;
-  width: 3rem;
+  padding: 0 0.5rem;
   text-align: center;
   &:nth-child(2) {
     margin-right: 0.5rem;
@@ -107,21 +109,21 @@ export const PostTag = styled.div`
 
 export const PostView = styled.div`
   position: absolute;
-  right: 1rem;
+  right: 0.5rem;
 `;
 
 export const PostThumb = styled.div`
   @media (max-width: 768px) {
-    margin-right: 0.5rem;
     width: 1.8rem;
     height: 1.8rem;
+    line-height: 1.8rem;
   }
   border: 1px solid black;
-  width: 2rem;
   height: 2rem;
+  width: 2rem;
+  line-height: 2rem;
   border-radius: 0.3rem;
   text-align: center;
-  line-height: 2rem;
   margin-right: 1rem;
 `;
 
@@ -145,6 +147,9 @@ export const PostDesc = styled.div`
 `;
 
 export const TagWrapper = styled.div`
+  @media screen and (max-width: 1080px) {
+    display: none;
+  }
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -158,18 +163,15 @@ export const TagContainer = styled.div`
   min-width: 320px;
   display: flex;
   align-items: center;
-  width: 60%;
+  width: 80%;
 `;
 
 export const TagBox = styled.div`
-  @media screen and (max-width: 768px) {
-    width: 3rem;
-  }
   border-radius: 0.6rem;
-  padding: 0.3rem 0.5rem;
+  padding: 0.5rem;
   margin: 0.5rem;
   border: 1px solid rgba(0, 0, 0, 0.6);
-  width: 4rem;
+
   text-align: center;
   background-color: ${(props) =>
     props.selected ? "var(--color-skyblue-main)" : "white"};
@@ -251,3 +253,34 @@ export const SearchBtn = styled.button`
   right: 0;
   top: 0.2rem;
 `;
+
+const expand = keyframes`
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 15rem; /* 드롭다운의 최대 높이를 설정 */
+    opacity: 1;
+  }
+`;
+
+export const DropdownBox = styled.div`
+  position: absolute;
+  width: 5rem;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  overflow: hidden;
+  animation: ${expand} 0.3s ease-in-out;
+`;
+
+export const DropdownComponent = styled.div`
+  padding: 0.5rem;
+  &:hover {
+    cursor: pointer;
+    background-color: lightgray;
+  }
+`;
+
+export const TagTitle = styled.div``;

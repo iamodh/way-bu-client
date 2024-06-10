@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Link,
-  useNavigate,
-  useOutletContext,
-  useParams,
-} from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import { client } from "../../../libs/supabase";
 import StarAvgContainer from "./components/StarAvgContainer";
