@@ -158,7 +158,7 @@ export default function CommonLayout() {
         setLoggedInUser(user);
         const { data: userProfile, error: profileError } = await client
           .from("USER_PROFILE")
-          .select("*, SPORT(title, theme_color)")
+          .select("*")
           .eq("user_id", user.id);
 
         if (profileError) {

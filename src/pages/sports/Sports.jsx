@@ -1,53 +1,22 @@
-import styled from "styled-components";
-import { motion } from "framer-motion";
-import { useRef, useState } from "react";
-const Wrapper = styled.div`
-  position: relative;
-  height: 100vh;
-`;
-
-const Background = styled.img`
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-sand-main);
-  position: relative;
-  z-index: -100;
-`;
-
-const Slides = styled.div``;
-
-const Slide = styled.div`
-  width: 20%;
-  height: 40%;
-  background-color: var(--color-white);
-  position: absolute;
-  top: 10%;
-  right: 10%; /* 오른쪽에 배치 */
-  border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.3);
-
-  @media (max-width: 480px) {
-    border-radius: 12px;
-  }
-`;
-
-const SportObject = styled.div`
-  position: absolute;
-  top: ${(props) => props.$top};
-  left: ${(props) => props.$left};
-  transition: all 0.1s ease-in;
-  cursor: pointer;
-`;
-
-const Boogie = styled(motion.img)`
-  position: absolute;
-  top: 0;
-  left: 0%;
-  cursor: pointer;
-`;
+import { client } from "../../../libs/supabase";
+import { useRef, useState, useEffect } from "react";
+import {
+  Wrapper,
+  Background,
+  Slides,
+  Slide,
+  SportObject,
+  Boogie,
+  SportsWrapper,
+  SportsContainer,
+  SportsTitle,
+  InfoImage,
+  InfoBox,
+  InfoName,
+  InfoContent,
+  ModalCover,
+  SportsBtn,
+} from "./components/SportsInfoLayout";
 
 export default function Sports() {
   const wrapperRef = useRef();
@@ -55,6 +24,74 @@ export default function Sports() {
   const sportsRef = useRef([]);
 
   const [selectedSport, setSelectedSport] = useState("");
+
+  const SportsInfo = () => {
+    const [sportsInfo, setSportsInfo] = useState({
+      title: "",
+      image: "",
+      caution: "",
+      intro: "",
+      recommend_time: "",
+      required: "",
+      tip: "",
+    });
+
+    const getSports = async (sportsName) => {
+      const { data, error } = await client
+        .from("SPORT")
+        .select("*")
+        .eq("sport_name", sportsName)
+        .single();
+      if (error) {
+        console.error("Error fetching sports:", error);
+        return;
+      }
+      setSportsInfo(data);
+      console.log(data);
+    };
+
+    useEffect(() => {
+      getSports(selectedSport);
+    }, [selectedSport]);
+
+    return (
+      <SportsWrapper>
+        <SportsContainer>
+          <SportsBtn
+            onClick={() => {
+              setSelectedSport("");
+            }}
+          >
+            X
+          </SportsBtn>
+          <SportsTitle>
+            {sportsInfo.title ? sportsInfo.title : "제목"}
+          </SportsTitle>
+          <InfoImage src={sportsInfo.image} />
+          <InfoBox>
+            <InfoName>소개 💁🏻‍♂️</InfoName>
+            <InfoContent>{sportsInfo.intro}</InfoContent>
+          </InfoBox>
+          <InfoBox>
+            <InfoName>준비물 🛟</InfoName>
+            <InfoContent>{sportsInfo.required}</InfoContent>
+          </InfoBox>
+          <InfoBox>
+            <InfoName>추천시간 🕙 </InfoName>
+            <InfoContent>{sportsInfo.recommend_time}</InfoContent>
+          </InfoBox>
+          <InfoBox>
+            <InfoName>한줄팁 💡</InfoName>
+            <InfoContent>{sportsInfo.tip}</InfoContent>
+          </InfoBox>
+          <InfoBox>
+            <InfoName>유의사항 ⚠️</InfoName>
+            <InfoContent>{sportsInfo.caution}</InfoContent>
+          </InfoBox>
+        </SportsContainer>
+      </SportsWrapper>
+    );
+  };
 
   const onDragEnd = (event, info) => {
     boogieRef.current.src = "/img/sport_items/boogie.png";
@@ -88,10 +125,6 @@ export default function Sports() {
           </SportObject>
         );
       })}
-
-      <Slides>
-        <Slide>{selectedSport}</Slide>
-      </Slides>
       <Boogie
         ref={boogieRef}
         style={{ width: "100px", height: "150px" }}
@@ -106,6 +139,14 @@ export default function Sports() {
         }}
         onDragEnd={onDragEnd}
       ></Boogie>
+      <Slides>
+        <Slide>{selectedSport}</Slide>
+      </Slides>
+      {selectedSport && (
+        <>
+          <SportsInfo /> <ModalCover />
+        </>
+      )}
     </Wrapper>
   );
 }

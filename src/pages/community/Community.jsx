@@ -211,7 +211,7 @@ export default function Community() {
           {selectedItem === "전체" ? title : selectedItem}
         </TagTitle>
         {isVisible && (
-          <DropdownBox>
+          <DropdownBox ref={dropdownRef}>
             {items.map((item) => (
               <DropdownComponent
                 key={item}
