@@ -24,11 +24,13 @@ import FindId from "./root/FindId";
 import FindPwd from "./root/FindPwd";
 import ChangePwd from "./root/ChangePwd";
 import Matching from "./matching/Matching";
+import MatchingUpdate from "./matching/components/MatchingUpdate";
 import ProgramBooking from "./program/ProgramBooking";
 import PostWrite from "./community/PostWrite";
 import ComparePrograms from "./program/ComparePrograms";
 import Sports from "./sports/Sports";
 import PostEdit from "./community/PostEdit";
+import MatchingApply from "./matching/components/MatchingApply";
 import SportsInfo from "./sports/SportsInfo";
 
 export default function Router() {
@@ -66,6 +68,8 @@ export default function Router() {
 
         {/* Matching */}
         <Route path="matching" element={<Matching />} />
+        <Route path="matching/update/:id" element={<MatchingUpdate />} />
+        <Route path="matching/apply/:id" element={<MatchingApply />} />
 
         {/* My page */}
         <Route path="/mypage/:id" element={<MypageLayout />}>

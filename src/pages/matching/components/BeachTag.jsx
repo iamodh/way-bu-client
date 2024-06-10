@@ -60,7 +60,12 @@ const BeachTag = ({ beach, onClick, hasClicked }) => {
         bgcolor={bgcolor}
         name="beach"
       />
-      <Label htmlFor={beach.beach_name} color={color} bgcolor={bgcolor}>
+      <Label
+        htmlFor={beach.beach_name}
+        color={color}
+        bgcolor={bgcolor}
+        checked={hasClicked}
+      >
         {beachName}
       </Label>
     </>

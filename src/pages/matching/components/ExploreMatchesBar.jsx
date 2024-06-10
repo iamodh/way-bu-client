@@ -16,6 +16,7 @@ const ExploreMatchesBarRoot = styled.div`
 `;
 
 const H = styled.h3`
+  color: black;
   margin: 0px;
   margin-top: 20px;
   position: relative;

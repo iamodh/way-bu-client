@@ -2,6 +2,10 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { client } from "../../../../libs/supabase";
 import MatchingWatch from "./MatchingWatch";
+import MatchingApply from "./MatchingApply";
+import { useRecoilState } from "recoil";
+import { loggedInUserState } from "../../../atom";
+import { ModalWrapper, ModalContent, CloseButton } from "./MatchingLayout";
 
 const MatchingTop = styled.div`
   flex: 1; // 너비가 변할 때 동일한 비율 적용
@@ -45,6 +49,7 @@ const HotMatching = styled.div`
   flex-wrap: wrap;
 `;
 const HotMatchingBox = styled.div`
+  color: black;
   border: 1px solid var(--color-blue-vivid);
   background-color: var(--color-white);
   height: 200px;
@@ -57,9 +62,6 @@ const HotMatchingBox = styled.div`
     box-shadow: 0px 10px 10px var(--color-gray);
     background-color: var(--color-skyblue-light);
   }
-
-
-
   @media screen and (max-width: 376px) {
     width: 130px;
     height: 130px;
@@ -99,46 +101,14 @@ const P = styled.div`
   }
 `;
 
-const ModalWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+const Content = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;    
+  white-space: nowrap;
+  font-weight:bold;
+  padding-left: 5px;
 `;
 
-const ModalContent = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: var(--br-3xs);
-  height: 700px;
-  width: 600px;
-  text-align: center;
-  position: relative;
-  @media screen and (max-width: 376px) {
-    width: 350px;
-    height: 600px;
-  }
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: var(--color-dark);
-  &:hover {
-    color: var(--color-navy);
-  }
-`;
 
 const MainContent = () => {
   const [matchings, setMatchings] = useState([]);
@@ -146,6 +116,9 @@ const MainContent = () => {
   const [selectedMatching, setSelectedMatching] = useState(null);
   const [selectedBeach, setSelectedBeach] = useState(null);
   const [selectedSport, setSelectedSport] = useState(null);
+  const [modalContent, setModalContent] = useState("");
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
+  const [hostProfile, setHostProfile] = useState(null);
 
   useEffect(() => {
     getMatchings();
@@ -162,9 +135,7 @@ const MainContent = () => {
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
-      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId, state`);
-    setMatchings(data);
-    setIsLoading(false);
+      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId, joining_users, necessity_details, necessity, created_at`);
     if (error) {
       console.log(error.message);
       setIsLoading(false);
@@ -201,11 +172,25 @@ const MainContent = () => {
     
   }
 
+  
+  const getHostProfile = async (hostUserId) => {
+    try {
+      const { data, error } = await client
+        .from('USER_PROFILE')
+        .select('avatar_url, user_nickname')
+        .eq('user_id', hostUserId);
+      if (error) throw error;
+      return data[0];
+    } catch (error) {
+      console.error('Error fetching host profile:', error.message);
+      return null;
+    }
+  };
 
   async function getSports(sportId) {
     const { data, error } = await client
       .from("SPORT")
-      .select("title")
+      .select("id, title")
       .eq("id", sportId); // sport_id와 일치하는 스포츠 정보 가져오기
     if (error) {
       console.log(error.message);
@@ -223,10 +208,6 @@ const MainContent = () => {
       console.log(error.message);
       return null;
     }
-    if (data.length === 0) {
-      console.log("데이터없음");
-      return null;
-    }
     return data[0];
   }
   
@@ -235,18 +216,33 @@ const MainContent = () => {
   const openModal = async (matching) => {
     const sport = await getSports(matching.sport_id);
     setSelectedSport(sport);
-    
-    const beach = await getBeach(matching.beach_id); // matching.beach_id를 전달하여 해당하는 해변 정보 가져오기
+
+    const beach = await getBeach(matching.beach_id);
     setSelectedMatching(matching);
     setSelectedBeach(beach);
-  };  
-  
-  
+
+    const hostProfile = await getHostProfile(matching.host_userId);
+    setHostProfile(hostProfile);
+
+    const isHostUser = matching.host_userId === loggedInUser.id;
+
+    if (matching.joining_users && matching.joining_users.includes(loggedInUser.id)) {
+      setModalContent("MatchingApply");
+    } else if (isHostUser) {
+      setModalContent("MatchingApply")
+    } else {
+      setModalContent("MatchingWatch");
+    }
+
+    document.body.style.overflow = 'hidden';
+  };
 
   const closeModal = () => {
     setSelectedMatching(null);
-    setSelectedSport(null); // 추가: 선택된 스포츠 정보 초기화
+    setSelectedSport(null);
     setSelectedBeach(null);
+    setHostProfile(null);
+    document.body.style.overflow = 'auto';
   };
 
 
@@ -263,8 +259,8 @@ const MainContent = () => {
             matchings.map((m) => (
               <HotMatchingBox onClick={() => {openModal(m), updateMatchingViews(m)}} key={m.id}>
                 <H>{m.title}</H>
-                <P>위치: {m.location}</P>
-                <P>날짜: {m.matching_date}</P>
+                <P>위치: <Content>{m.location}</Content></P>
+                <P>날짜: <Content>{m.matching_date}</Content></P>
               </HotMatchingBox>
             ))
           )}
@@ -272,7 +268,12 @@ const MainContent = () => {
             <ModalWrapper onClick={closeModal}>
               <ModalContent onClick={(e) => e.stopPropagation()}>
                 <CloseButton onClick={closeModal}>&times;</CloseButton>
-                <MatchingWatch matching={selectedMatching} sport={selectedSport} beach={selectedBeach} />
+                {modalContent === "MatchingApply" && (
+                  <MatchingApply matching={selectedMatching} sport={selectedSport} beach={selectedBeach} hostProfile={hostProfile} />
+                )}
+                {modalContent !== "MatchingApply" && (
+                  <MatchingWatch matching={selectedMatching} sport={selectedSport} beach={selectedBeach} hostProfile={hostProfile} />
+                )}
               </ModalContent>
             </ModalWrapper>
           )}

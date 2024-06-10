@@ -50,7 +50,7 @@ const Matching = () => {
   return (
     <MatchingRoot>
       <MainContent />
-      <MatchingOptions />
+      {/* <MatchingOptions /> */}
       <Wrapper>
         <Calendar onSelectDate={handleDateSelect}/>
         <ExploreMatchesBar />

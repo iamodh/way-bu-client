@@ -10,6 +10,7 @@ const CalendarContainer = styled.div`
 `;
 
 const YearMonth = styled.div`
+  color: black;
   margin-bottom: 10px;
   display: flex;
   flex-direction: row;
@@ -108,7 +109,7 @@ const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
 const Calendar = ({ onSelectDate }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState('');
-  const [selectedDate, setSelectedDate] = useState(null); // 새로운 상태 변수 selectedDate 추가
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     setCurrentMonth((currentDate.getMonth() + 1) + '월');
@@ -149,7 +150,6 @@ const Calendar = ({ onSelectDate }) => {
   };
 
   useEffect(() => {
-    console.log("Selected Date:", selectedDate);
     onSelectDate(selectedDate);
   }, [selectedDate, onSelectDate]);
 
@@ -167,8 +167,8 @@ const Calendar = ({ onSelectDate }) => {
         {nextDays.map((date, index) => (
           <Day key={index}>
             <DateButton
-              isSelected={selectedDate && date.getTime() === selectedDate.getTime()} // isSelected를 통해 토글 상태 전달
-              onClick={() => handleDateButtonClick(date)} // 클릭 시 handleDateButtonClick 함수 호출
+              isSelected={selectedDate && date.getTime() === selectedDate.getTime()}
+              onClick={() => handleDateButtonClick(date)}
             >
               {date.getDate()}
               <DayLabel isSunday={date.getDay() === 0} isSaturday={date.getDay() === 6}>
