@@ -51,7 +51,7 @@ const MatchingUpdate = () => {
         console.error(error);
         return;
       }
-
+////////////////////////////////////////////////////////////////////////////////////////////////수정
       if (matching) {
         // setValue를 사용하여 폼 필드에 값 설정
         setValue('title', matching.title);
@@ -66,10 +66,7 @@ const MatchingUpdate = () => {
         setValue('required', matching.required);
         setSelectedBeachId(matching.beach_id);
         setClickedTags([matching.beach_id]); 
-        
       }
-      console.log('Beach ID:', matching.beach_id);
-
     };
 
     fetchMatching();
