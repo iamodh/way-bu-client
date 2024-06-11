@@ -8,6 +8,7 @@ import { getBeach } from "../../../../apis/beach"
 import { getSports } from '../../../../apis/sports';
 import { useRecoilState } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../../atom";
+import { useParams } from 'react-router-dom';
 import { FrameWrapperRoot, Div, Title, Location, SportTagWrapper, FrameGroup, Schedulebox, NumberInput, FrameDiv, FrameDiv2, FrameParent1, Divbox, Textbox, Button, DivRoot, Div2, FrameDiv1, Radio, RadioLabel, Dropdown, Necessity, BeachWrapper } from "./MatchingLayout";
 
 const MatchingWrite = ({ closeModal }) => {
@@ -16,20 +17,6 @@ const MatchingWrite = ({ closeModal }) => {
   const [allMatchings, setAllMatchings] = useState([]);
   const [selectedBeachId, setSelectedBeachId] = useState(null);
   const [clickedTags, setClickedTags] = useState([]);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
-  useEffect(() => {
-    getMatchings();
-  }, []);
-
-  useEffect(() => {
-    getMatchings();
-  }, [beachData]);
-
 
   //매칭테이블
   const getMatchings = async () => {
@@ -47,10 +34,14 @@ const MatchingWrite = ({ closeModal }) => {
     getBeach
   );
 
-  // 해수욕장 태그 기능
+  useEffect(() => {
+    getMatchings();
+  }, [beachData]);
+
+// 해수욕장 태그 기능
   const handleTagClicked = (id) => {
-    setClickedTags([id]);
-    setSelectedBeachId(id); 
+    setClickedTags([id]);  // 항상 클릭된 태그를 설정
+    setSelectedBeachId(id);  // 선택된 해변 ID를 설정
   };
 
 
@@ -59,7 +50,17 @@ const MatchingWrite = ({ closeModal }) => {
     ["sports"],
     getSports
   );
+
+  useEffect(() => {
+    getMatchings();
+  }, []);
   
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   //매칭추가
   const addMatching = async (formData) => {
     const { data, error } = await client
@@ -119,7 +120,7 @@ const MatchingWrite = ({ closeModal }) => {
           </FrameDiv>
           <FrameDiv>
             <Divbox>위치</Divbox>
-            <Location type="text" {...register("location", { required: "위치를 입력해 주세요." })} id='location'/>
+            <Location type="text" {...register("location", { required: "제목을 입력해 주세요." })} id='location'/>
           </FrameDiv>
           <FrameDiv1>
             <FrameDiv>
@@ -147,7 +148,7 @@ const MatchingWrite = ({ closeModal }) => {
                   name="level"
                   id="level1"
                   style={{ opacity: '0' }}
-                  {...register("difficulty", { required: "난이도를 입력해 주세요." })}
+                  {...register("difficulty", { required: "제목을 입력해 주세요." })}
                 />
                 <RadioLabel htmlFor="level1">상</RadioLabel>
                 <Radio
@@ -156,7 +157,7 @@ const MatchingWrite = ({ closeModal }) => {
                   name="level"
                   id="level2"
                   style={{ opacity: '0' }}
-                  {...register("difficulty", { required: "난이도를 입력해 주세요." })}
+                  {...register("difficulty", { required: "제목을 입력해 주세요." })}
                 />
                 <RadioLabel htmlFor="level2">중</RadioLabel>
                 <Radio
@@ -165,19 +166,19 @@ const MatchingWrite = ({ closeModal }) => {
                   name="level"
                   id="level3"
                   style={{ opacity: '0' }}
-                  {...register("difficulty", { required: "난이도를 입력해 주세요." })}
+                  {...register("difficulty", { required: "제목을 입력해 주세요." })}
                 />
                 <RadioLabel htmlFor="level3">하</RadioLabel>
             </FrameDiv2>
           </FrameDiv1>
           <FrameDiv>
             <Divbox>일정</Divbox>
-            <Schedulebox type="date" {...register("matching_date", { required: "일정을 입력해 주세요." })}/>
-            <Schedulebox type="time" {...register("matching_time", { required: "일정을 입력해 주세요." })}/>
+            <Schedulebox type="date" {...register("matching_date", { required: "제목을 입력해 주세요." })}/>
+            <Schedulebox type="time" {...register("matching_time", { required: "제목을 입력해 주세요." })}/>
           </FrameDiv>
           <FrameDiv>
             <Divbox>인원</Divbox>
-            <NumberInput type="number" min={1} max={10} {...register("total_people", { required: "인원을 입력해 주세요." })} />
+            <NumberInput type="number" min={1} max={10} {...register("total_people", { required: "제목을 입력해 주세요." })} />
             <Div>최대 10명까지 가능합니다.</Div>
           </FrameDiv>
           <FrameDiv2>
