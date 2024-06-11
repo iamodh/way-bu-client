@@ -6,8 +6,8 @@ import { useState, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import Slider from "react-slick";
-// import "slick-carousel/slick/slick.css";
-// import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const MypageReviewWrapper = styled.form`
   width: 90%;
@@ -36,11 +36,13 @@ const Title = styled.div`
   }
 `;
 const UserProgramArea = styled.div`
+  min-height: 100px;
   display: flex;
   position: relative;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  align-content: center;
   width: 100%;
 `;
 const UserProgramList = styled(Slider)`
@@ -51,6 +53,7 @@ const UserProgramList = styled(Slider)`
 const SlickButtonFix = ({ currentSlide, slideCount, children, ...props }) => (
   <span {...props}>{children}</span>
 );
+
 const NextArrow = styled.div`
   background-image: url("/icon/arrow-right-circle.svg");
   background-size: contain;
@@ -69,6 +72,7 @@ const UserReviewArea = styled(UserProgramArea)`
   margin-bottom: var(--padding-base);
 `;
 const UserReviewList = styled.ul`
+  width: 80%;
   display: flex;
   flex-direction: column;
   gap: var(--padding-5xs);
@@ -78,6 +82,7 @@ const Hr = styled.div`
   width: 100%;
   height: 0.5px;
   background-color: var(--color-gray);
+  margin-top: 20px;
 `;
 const PageIndex = styled.div`
   width: 100%;
@@ -89,6 +94,11 @@ const PageIndex = styled.div`
 const Page = styled.a`
   font-size: var(--font-size-m);
   padding: var(--padding-9xs);
+`;
+
+const Test = styled.div`
+  width: 100%;
+  background-color: skyblue;
 `;
 
 export default function MypageReview() {
@@ -133,32 +143,39 @@ export default function MypageReview() {
   return (
     <MypageReviewWrapper>
       <Title>후기 작성</Title>
-      <UserProgramArea>
-        <UserProgramList {...settings}>
-          {userPrograms.map((program) => {
-            return (
-              <UserProgramItem key={"program" + program.id} program={program} />
-            );
-          })}
-        </UserProgramList>
-      </UserProgramArea>
+      {userPrograms && userPrograms.length ? (
+        <UserProgramArea>
+          <UserProgramList {...settings}>
+            {userPrograms.map((program) => {
+              return (
+                <UserProgramItem
+                  key={"program" + program.id}
+                  program={program}
+                />
+              );
+            })}
+          </UserProgramList>
+        </UserProgramArea>
+      ) : (
+        <UserProgramArea>
+          후기를 작성할 수 있는 프로그램 목록이 없습니다.
+        </UserProgramArea>
+      )}
       <Hr />
       <Title>내가 작성한 후기</Title>
-      <UserReviewArea>
-        <UserReviewList>
-          {filteredReviews.map((review) => {
-            return (
-              <UserReviewItem key={"program" + review.id} review={review} />
-            );
-          })}
-        </UserReviewList>
-        <PageIndex>
-          <Page>1</Page>
-          <Page>2</Page>
-          <Page>3</Page>
-          <Page>4</Page>
-        </PageIndex>
-      </UserReviewArea>
+      {filteredReviews && filteredReviews.length ? (
+        <UserReviewArea>
+          <UserReviewList>
+            {filteredReviews.map((review) => {
+              return (
+                <UserReviewItem key={"program" + review.id} review={review} />
+              );
+            })}
+          </UserReviewList>
+        </UserReviewArea>
+      ) : (
+        <UserProgramArea>작성한 후기가 없습니다.</UserProgramArea>
+      )}
     </MypageReviewWrapper>
   );
 }

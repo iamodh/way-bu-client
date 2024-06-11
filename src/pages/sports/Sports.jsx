@@ -1,17 +1,25 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
+
 const Wrapper = styled.div`
   position: relative;
   height: 100vh;
 `;
 
-const Background = styled.img`
+const Background = styled.div`
   width: 100%;
   height: 100%;
-  background-color: var(--color-sand-main);
-  position: relative;
+  background-image: url("/img/sports1.jpeg");
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: -100;
+
+  @media (max-width: 480px) {
+  }
 `;
 
 const Slides = styled.div``;
@@ -22,7 +30,7 @@ const Slide = styled.div`
   background-color: var(--color-white);
   position: absolute;
   top: 10%;
-  right: 10%; /* 오른쪽에 배치 */
+  right: 10%;
   border-radius: 20px;
   display: flex;
   justify-content: center;
@@ -42,11 +50,42 @@ const SportObject = styled.div`
   cursor: pointer;
 `;
 
+const DivingMask = styled.img`
+  width: 80px;
+  padding-top: 150px;
+  transform: rotate(30deg);
+
+  @media (max-width: 480px) {
+    width: 30px;
+  }
+`;
+
+const SurfingBoard = styled.img`
+  width: 130px;
+  padding-top: 80px;
+
+  @media (max-width: 480px) {
+    width: 70px;
+  }
+`;
+
+const Yacht = styled.img`
+  width: 180px;
+
+  @media (max-width: 480px) {
+    width: 50px;
+  }
+`;
+
 const Boogie = styled(motion.img)`
   position: absolute;
   top: 0;
   left: 0%;
   cursor: pointer;
+
+  @media (max-width: 480px) {
+    width: 50px;
+  }
 `;
 
 export default function Sports() {
@@ -75,16 +114,26 @@ export default function Sports() {
   return (
     <Wrapper ref={wrapperRef}>
       <Background />
-      {["surfing_board", "yacht"].map((e, i) => {
+      {[
+        {
+          id: "diving_mask",
+          component: <DivingMask src="/img/min/snorkling.png" />,
+        },
+        {
+          id: "surfing_board",
+          component: <SurfingBoard src="/img/min/surfingboard.png" />,
+        },
+        { id: "yacht", component: <Yacht src="/img/min/yacht.png" /> },
+      ].map((item, i) => {
         return (
           <SportObject
-            id={e}
-            key={e}
-            $top={`${(i + 1) * 3}0%`}
-            $left={`${(i + 1) * 2}0%`}
+            id={item.id}
+            key={item.id}
+            $top="500px"
+            $left={`${i * 20 + 40}%`} // i + 사이 + 옆 이미지들을 가로로 나란히 배치
             ref={(el) => (sportsRef.current[i] = el)}
           >
-            <img src={`/img/sport_items/${e}.png`} />
+            {item.component}
           </SportObject>
         );
       })}
