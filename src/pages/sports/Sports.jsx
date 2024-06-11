@@ -10,13 +10,16 @@ const Wrapper = styled.div`
 const Background = styled.div`
   width: 100%;
   height: 100%;
-  background-image: url("/img/sports.jpeg");
+  background-image: url("/img/sports1.jpeg");
   background-size: cover;
   background-position: center;
   position: absolute;
   top: 0;
   left: 0;
   z-index: -100;
+
+  @media (max-width: 480px) {
+  }
 `;
 
 const Slides = styled.div``;
@@ -47,27 +50,27 @@ const SportObject = styled.div`
   cursor: pointer;
 `;
 
-const SurfingBoard = styled.img`
-  width: 150px;
-  height: auto;
-
-  @media (max-width: 480px) {
-    width: 70px;
-  }
-`;
-
 const DivingMask = styled.img`
-  width: 50px;
-  height: auto;
+  width: 80px;
+  padding-top: 150px;
+  transform: rotate(30deg);
 
   @media (max-width: 480px) {
     width: 30px;
   }
 `;
 
-const Kayak = styled.img`
-  width: 100px;
-  height: auto;
+const SurfingBoard = styled.img`
+  width: 130px;
+  padding-top: 80px;
+
+  @media (max-width: 480px) {
+    width: 70px;
+  }
+`;
+
+const Yacht = styled.img`
+  width: 180px;
 
   @media (max-width: 480px) {
     width: 50px;
@@ -113,21 +116,21 @@ export default function Sports() {
       <Background />
       {[
         {
-          id: "surfing_board",
-          component: <SurfingBoard src="/img/min/surfingboard.png" />,
-        },
-        {
           id: "diving_mask",
           component: <DivingMask src="/img/min/snorkling.png" />,
         },
-        { id: "yacht", component: <Kayak src="/img/min/yacht.png" /> },
+        {
+          id: "surfing_board",
+          component: <SurfingBoard src="/img/min/surfingboard.png" />,
+        },
+        { id: "yacht", component: <Yacht src="/img/min/yacht.png" /> },
       ].map((item, i) => {
         return (
           <SportObject
             id={item.id}
             key={item.id}
-            $top={`${(i + 1) * 3}0%`}
-            $left={`${(i + 1) * 2}0%`}
+            $top="500px"
+            $left={`${i * 20 + 40}%`} // i + 사이 + 옆 이미지들을 가로로 나란히 배치
             ref={(el) => (sportsRef.current[i] = el)}
           >
             {item.component}
