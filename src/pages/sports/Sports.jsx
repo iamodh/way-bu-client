@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 const Background = styled.div`
   width: 100%;
   height: 100%;
-  background-image: url("/img/sports.jpeg");
+  background-image: url("/img/sports1.jpeg");
   background-size: cover;
   background-position: center;
   position: absolute;
