@@ -96,12 +96,15 @@ const Yacht = styled.img`
 
 const Boogie = styled(motion.img)`
   position: absolute;
-  top: 0;
-  left: 0%;
+  width: 130px;
+  height: 180px;
+  bottom: 150px;
+  left: 3%;
   cursor: pointer;
 
   @media (max-width: 480px) {
-    width: 50px;
+    width: 80px;
+    height: 100px;
   }
 `;
 
@@ -164,7 +167,7 @@ export default function Sports() {
       </Slides>
       <Boogie
         ref={boogieRef}
-        style={{ width: "100px", height: "150px" }}
+        // style={{ width: "150px", height: "200px" }}
         src="/img/sport_items/boogie.png"
         drag
         dragConstraints={wrapperRef}
