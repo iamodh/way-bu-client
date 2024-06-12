@@ -269,9 +269,7 @@ const MatchingUpdate = () => {
             />
             <RadioLabel htmlFor="no">불필요</RadioLabel>
             <Necessity
-              {...register('necessity_details', {
-                required: '준비물을 입력해 주세요.',
-              })}
+              {...register('necessity_details')}
               type="text"
               placeholder="필요시 준비물 입력"
             />
