@@ -76,8 +76,11 @@ const Option = styled.input`
 
 const UserPostList = styled.ul`
   width: 100%;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  text-align: center;
   gap: var(--padding-5xs);
   padding-bottom: var(--padding-5xs);
   margin-bottom: var(--padding-xs);
@@ -131,6 +134,7 @@ export default function MypageCommunity() {
     }
     setFilteredComments(newFilteredComments);
     setFilteredPosts(newFilteredPosts);
+    setIsLoading(false);
   }, [selectedOption, userPosts, userComments]);
 
   return (
@@ -163,22 +167,27 @@ export default function MypageCommunity() {
         />
         <Label htmlFor={"likedPosts"}>좋아요한 게시글</Label>
       </OptionList>
-      <UserPostList>
-        {filteredPosts.map((post, i) => {
-          return (
-            <Link to={"/community/" + post.post_id} key={"post" + post.post_id}>
-              <UserPostItem key={"post" + post.post_id} post={post} />
-              {selectedOption === "myComments" && filteredComments ? (
-                <UserCommentItem
-                  comment={filteredComments[i]}
-                ></UserCommentItem>
-              ) : (
-                ""
-              )}
-            </Link>
-          );
-        })}
-      </UserPostList>
+      {filteredPosts && filteredPosts.length ? (
+        <UserPostList>
+          {filteredPosts.map((post, i) => {
+            return (
+              <Link
+                to={"/community/" + post.post_id}
+                key={"post" + post.post_id}
+              >
+                <UserPostItem key={"post" + post.post_id} post={post} />
+                {selectedOption === "myComments" && filteredComments[i] ? (
+                  <UserCommentItem comment={filteredComments[i]} />
+                ) : (
+                  ""
+                )}
+              </Link>
+            );
+          })}
+        </UserPostList>
+      ) : (
+        <UserPostList>작성된 게시글이 없습니다.</UserPostList>
+      )}
     </MypageCommunityWrapper>
   );
 }

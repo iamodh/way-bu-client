@@ -16,6 +16,7 @@ const ExploreMatchesBarRoot = styled.div`
 `;
 
 const H = styled.h3`
+  color: black;
   margin: 0px;
   margin-top: 20px;
   position: relative;
@@ -57,36 +58,6 @@ const MatchingContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-`;
-
-const Button = styled.button`
-  cursor: pointer;
-  border: none;
-  min-width: 170px;
-  padding: var(--padding-base) var(--padding-9xs);
-  background-color: var(--color-blue-main);
-  color: var(--color-white);
-  border-radius: var(--br-3xs);
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  &:hover {
-    background-color: var(--color-navy);
-    box-sizing: border-box;
-  }
-`;
-
-const Div = styled.div`
-  position: relative;
-  font-size: var(--font-size-ml);
-  line-height: 20px;
-  font-family: inherit;
-  color: inherit;
-  text-align: center;
-  display: inline-block;
-  white-space: nowrap;
 `;
 
 const ExploreMatchesBar = () => {

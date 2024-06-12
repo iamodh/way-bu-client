@@ -1,158 +1,18 @@
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { loggedInUserState } from "../../../atom";
+import { useState, useEffect } from "react";
+import { client } from "../../../../libs/supabase";
+import { Button, FrameWrapper, FrameParent, TitleBox, TitleText, TagGroup, Text, Group, GroupDiv,TextBox, Schedule, RequiredBox, ButtonText, GroupRoot, ButtonGroup, TextDifficulty, TextBeach, TextSport, TextHost, TextState } from "./MatchingLayout";
 
-const FrameWrapperRoot = styled.div`
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  max-width: 100%;
-  height: 100%;
-  gap: var(--gap-base);
-  margin: auto;
-  @media screen and (max-width: 376px) {
-    width: 310px;
-    height: 560px;
-  }
-`;
 
-const Div = styled.div`
-  width: 274px;
-  position: relative;
-  font-size: var(--m-size);
-  font-family: var(--l-bold);
-  color: var(--gray);
-  text-align: center;
-  display: inline-block;
-  font-weight: bold;
-`;
-
-const Title = styled.div`
-  margin: 10px;
-  box-sizing: border-box;
-  max-width: 100%;
+const ApplyBox = styled.textarea`
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  height: 50px;
-  width: 95%;
-  line-height: 50px;
-  text-align: center;
-  background-color: aliceblue;
-`;
-
-const FrameGroup = styled.nav`
-  margin: 0px;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: var(--gap-9xs);
-  white-space: nowrap;
-  margin-bottom: 10px;
-  @media screen and (max-width: 750px) {
-    flex-wrap: wrap;
-  }
-`;
-const FrameGroup1 = styled.nav`
-  margin: 0px;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: var(--gap-9xs);
-  white-space: nowrap;
-  margin-bottom: 10px;
-  @media screen and (max-width: 376px) {
-  
-  }
-`;
-
-const Schedulebox = styled.div`
-  font-weight: bold;
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
-  height: 40px;
-  line-height: 40px;
-  flex: 1;
-  border-radius: var(--br-8xs);
-  box-sizing: border-box;
-  overflow: hidden;
-  min-width: 374px;
-  max-width: 100%;
- @media screen and (max-width: 376px) {
-    min-width: 210px;
-    height: 30px;
-    line-height: 30px;
-    font-size: var(--font-size-s);
-  }
-`;
-
-const FrameDiv = styled.div`
-  width: 767px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--gap-3xs);
-  box-sizing: border-box;
-  max-width: 100%;
-  padding: 5px 10px;
-`;
-const FrameParent1 = styled.div`
-  margin-top: 10px;
-  margin-bottom: 0px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 100%;
-  height: 200px;
-`;
-const Divbox = styled.div`
-  padding: 5px;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
-  height: 40px;
-  line-height: 30px;
-  background-color: var(--color-blue-vivid);
-  width: 80px;
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
-  @media screen and (max-width: 376px) {
-    width: 70px;
-    height: 30px;
-    line-height: 20px;
-    font-size: var(--font-size-s);
-  }
-`
-const Textbox = styled.div`
-  font-weight: bold;
-  height: 256px;
-  width: 100%;
-  padding: 20px;
-  text-align: left;
-  box-sizing: border-box;
-  font-size: var(--font-size-m);
-  background-color: aliceblue;
-  border-radius: 15px;
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
-  @media screen and (max-width: 376px) {
-    width: 300px;
-    height: 130px;
-  }
-`;
-
-const Textbox1 = styled.textarea`
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  height: 100px;
+  width: 550px;
+  height: 130px;
   border-radius: 5px;
   border: none;
   box-sizing: border-box;
-  overflow: hidden;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -164,118 +24,125 @@ const Textbox1 = styled.textarea`
   resize: none;
   outline: none;
   @media screen and (max-width: 376px) {
-    width: 300px;
-    height: 70px;
+    width: 330px;
+    height: 100px;
     font-size: var(--font-size-s);
   }
 `;
 
-const Button = styled.button`
-  border: none;
-  width: 150px;
-  padding: var(--padding-base) var(--padding-base);
-  background-color: var(--color-blue-main);
-  color: var(--color-white);
-  border-radius: var(--br-3xs);
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  &:hover {
-    background-color: ${({ disabled }) => (disabled ? 'gray' : 'var(--color-navy)')};
-    box-sizing: border-box;
-  }
-`;
-const DivRoot = styled.div`
-  margin: 0px;
-  margin-top: 10px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  box-sizing: border-box;
-  gap: var(--gap-base);
-  @media screen and (max-width: 675px) {
-    gap: var(--gap-base);
-    box-sizing: border-box;
-  }
-`;
-const Div2 = styled.div`
-  position: relative;
-  font-size: var(--font-size-m);
-  color: inherit;
-  text-align: center;
-  display: inline-block;
-  white-space: nowrap;
-  
-`;
-const Divbox1 = styled.div`
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
-  height: 40px;
-  line-height: 20px;
-  width: 90px;
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
-  @media screen and (max-width: 376px) {
-    width: 70px;
-    height: 30px;
-    line-height: 10px;
-    font-size: var(--font-size-s);
-  }
-`
-
-const MatchingWatch = ({ matching, sport, beach }) => {
+const MatchingWatch = ({ matching, sport, beach, hostProfile }) => {
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
-  const isHostUser = matching.host_userId === loggedInUser.id;
+  const [isHostUser, setIsHostUser] = useState(matching.host_userId === loggedInUser.id);
+  const [isUserJoined, setIsUserJoined] = useState(false);
+  const [isMatchingFull, setIsMatchingFull] = useState(false);
 
-  const handleButtonClick = () => {
+  useEffect(() => {
+    setIsUserJoined(matching.joining_users && matching.joining_users.includes(loggedInUser.id));
+  }, [matching, loggedInUser.id]);
+
+  useEffect(() => {
+    setIsHostUser(matching.host_userId === loggedInUser.id);
+  }, [matching.host_userId, loggedInUser.id]);
+
+  useEffect(() => {
+    const currentParticipants = matching.joining_users ? matching.joining_users.length : 0;
+    if (currentParticipants >= matching.total_people) {
+      matching.state = "모집완료";
+      setIsMatchingFull(true);
+    } else {
+      matching.state = "모집중";
+      setIsMatchingFull(false);
+    }
+  }, [matching]);
+  
+
+  const formatTime = (timeString) => {
+    const [hour, minute] = timeString.split(':');
+    return `${hour}시 ${minute}분`;
+  };
+
+  const handleButtonClick = async () => {
     if (isHostUser) {
       return;
+    } else {
+      if (isUserJoined) {
+        const cancel = window.confirm('매칭을 취소하시겠습니까?');
+        if (cancel) {
+          setIsUserJoined(false);
+          //취소 시 배열 삭제
+          const updatedJoiningUsers = Array.isArray(matching.joining_users) ? matching.joining_users.filter(userId => userId !== loggedInUser.id) : [];
+          await client
+            .from('MATCHING')
+            .update({
+              joining_users: updatedJoiningUsers
+            })
+            .eq('id', matching.id);
+          window.location.reload();
+        }
+      } else {
+        const apply = window.confirm('매칭을 신청하시겠습니까?');
+        if (apply) {
+          setIsUserJoined(true);
+          //신청 시 배열 추가
+          const updatedJoiningUsers = Array.isArray(matching.joining_users) ? [...matching.joining_users, loggedInUser.id] : [loggedInUser.id];
+          await client
+            .from('MATCHING')
+            .update({
+              joining_users: updatedJoiningUsers,
+            })
+            .eq('id', matching.id);
+          window.location.reload();
+        }
+      }
     }
   };
-  
 
   return (
-    <FrameWrapperRoot>
-      <FrameParent1 key={matching.id}>
-        <Title>
-          <Div>{matching.title}</Div>
-        </Title>
-        <FrameGroup>
-          <Divbox1 style={{width:"110px"}}>#{sport.title}</Divbox1>
-          <Divbox1>#{matching.difficulty}</Divbox1>
-          <Divbox1 style={{width:"150px"}}>#{beach.beach_name}</Divbox1>
-        </FrameGroup>
-        <FrameGroup1>
-          <FrameDiv>
-            <Divbox>참가인원</Divbox>
-            <Divbox1>{matching.total_people}명</Divbox1>
-          </FrameDiv>
-          <FrameDiv>
-            <Divbox>모집상태</Divbox>
-            <Divbox1>{matching.state}</Divbox1>
-          </FrameDiv>
-        </FrameGroup1>
-        <FrameDiv style={{paddingTop:"0px"}}>
-          <Divbox>일정</Divbox>
-          <Schedulebox>{matching.matching_date} {matching.matching_time}</Schedulebox>
-        </FrameDiv>
-        <DivRoot>
-          <Textbox>{matching.required}</Textbox>
-          <Textbox1 placeholder="신청 메세지를 입력해주세요." />
-          <Button disabled={isHostUser} onClick={handleButtonClick}>
-            <Div2>{isHostUser ? '직접 게시한 글입니다.' : '신청하기'}</Div2>
+    <FrameWrapper>
+      <FrameParent key={matching.id}>
+        <TitleBox>
+          <TitleText>{matching.title}</TitleText>
+        </TitleBox>
+        <TagGroup>
+          <TextSport>#{sport.title}</TextSport>
+          <TextDifficulty>#{matching.difficulty}</TextDifficulty>
+          <TextBeach>#{beach.beach_name}</TextBeach>
+        </TagGroup>
+        <Group>
+          <GroupDiv>
+            <TextBox>참가인원</TextBox>
+            <TextState>{matching.joining_users ? matching.joining_users.length : 0}/{matching.total_people}명</TextState>
+          </GroupDiv>
+          <GroupDiv style={{paddingLeft:"0px"}}>
+            <TextBox>모집상태</TextBox>
+            <Text>{matching.state}</Text>
+          </GroupDiv>
+        </Group>
+        <Group style={{marginTop:"0px"}}>
+          <GroupDiv style={{paddingTop:"0px"}}>
+            <TextBox>일정</TextBox>
+            <Schedule>{matching.matching_date} {formatTime(matching.matching_time)}</Schedule>
+          </GroupDiv>
+          <GroupDiv style={{paddingTop:"0px", paddingLeft:"0px"}}>
+            <TextBox>호스트</TextBox>
+            <TextHost>{hostProfile ? hostProfile.user_nickname : "host_nickname"}</TextHost>
+          </GroupDiv>
+        </Group>
+        <GroupRoot>
+          <RequiredBox>
+            상세위치: {matching.location}<br/><br/>
+            {matching.necessity_details ? `준비물 : ${matching.necessity_details}` : '준비물이 없습니다.'}<br/><br/>
+            [공지사항]<br />
+            {matching.required}
+          </RequiredBox>
+          <ApplyBox placeholder="신청 메세지를 입력해주세요." />
+          <Button onClick={handleButtonClick} disabled={isMatchingFull}>
+            <ButtonText>{isMatchingFull ? '매칭 마감' : isUserJoined ? '매칭 취소하기' : '매칭하기'}</ButtonText>
           </Button>
-        </DivRoot>
-      </FrameParent1>
-    </FrameWrapperRoot>
+        </GroupRoot>
+      </FrameParent>
+    </FrameWrapper>
   );
 };
 
 export default MatchingWatch;
-

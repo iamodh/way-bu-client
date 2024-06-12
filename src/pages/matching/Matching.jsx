@@ -1,6 +1,4 @@
-import Sports from "./components/Sports";
 import MainContent from "./components/MainContent";
-import MatchingOptions from "./components/MatchingOptions";
 import ExploreMatchesBar from "./components/ExploreMatchesBar";
 import Calendar from "./components/Calendar";
 import styled from "styled-components";
@@ -50,7 +48,6 @@ const Matching = () => {
   return (
     <MatchingRoot>
       <MainContent />
-      <MatchingOptions />
       <Wrapper>
         <Calendar onSelectDate={handleDateSelect}/>
         <ExploreMatchesBar />
