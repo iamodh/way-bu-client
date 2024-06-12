@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 const Background = styled.div`
   width: 100%;
   height: 100%;
-  background-image: url("/img/sports1.jpeg");
+  background-image: url("/img/sports2.jpeg");
   background-size: cover;
   background-position: center;
   position: absolute;
@@ -22,23 +22,30 @@ const Background = styled.div`
   }
 `;
 
-const Slides = styled.div``;
+const Slides = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`;
 
 const Slide = styled.div`
-  width: 20%;
-  height: 40%;
+  width: 250px;
+  height: 350px;
   background-color: var(--color-white);
-  position: absolute;
-  top: 10%;
-  right: 10%;
   border-radius: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.3);
+  margin-top: -500px;
 
   @media (max-width: 480px) {
+    width: 50%;
+    height: 30%;
     border-radius: 12px;
+    margin-top: -100%; /* Adjust this value for mobile view */
   }
 `;
 
@@ -66,6 +73,16 @@ const SurfingBoard = styled.img`
 
   @media (max-width: 480px) {
     width: 70px;
+  }
+`;
+
+const Kayak = styled.img`
+  width: 160px;
+  padding-top: 30px;
+
+  @media (max-width: 480px) {
+    width: 50px;
+    /* padding-top: 10px; */
   }
 `;
 
@@ -123,14 +140,18 @@ export default function Sports() {
           id: "surfing_board",
           component: <SurfingBoard src="/img/min/surfingboard.png" />,
         },
+        {
+          id: "kayak",
+          component: <Kayak src="/img/min/kayak.png" />,
+        },
         { id: "yacht", component: <Yacht src="/img/min/yacht.png" /> },
       ].map((item, i) => {
         return (
           <SportObject
             id={item.id}
             key={item.id}
-            $top="500px"
-            $left={`${i * 20 + 40}%`} // i + 사이 + 옆 이미지들을 가로로 나란히 배치
+            $top="450px"
+            $left={`${i * 20 + 20}%`} // i + 사이 + 옆 이미지들을 가로로 나란히 배치
             ref={(el) => (sportsRef.current[i] = el)}
           >
             {item.component}
