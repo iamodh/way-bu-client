@@ -25,12 +25,12 @@ import FindPwd from "./root/FindPwd";
 import ChangePwd from "./root/ChangePwd";
 import Matching from "./matching/Matching";
 import MatchingUpdate from "./matching/components/MatchingUpdate";
+import MatchingApply from "./matching/components/MatchingApply";
 import ProgramBooking from "./program/ProgramBooking";
 import PostWrite from "./community/PostWrite";
 import ComparePrograms from "./program/ComparePrograms";
 import Sports from "./sports/Sports";
 import PostEdit from "./community/PostEdit";
-import MatchingApply from "./matching/components/MatchingApply";
 import SportsInfo from "./sports/SportsInfo";
 import Animation from "../components/layout/Animation";
 
@@ -82,9 +82,7 @@ export default function Router() {
           <Route path="setting" element={<MypageSetting />} />
         </Route>
       </Route>
-      <Route path="/matching">
-        <Route index element={<Matching />} />
-      </Route>
+      
       <Route path="/animation">
         <Route index element={<Animation />} />
       </Route>
