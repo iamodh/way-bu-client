@@ -1,4 +1,10 @@
-import { Link, Outlet, useLocation, useMatch } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useMatch,
+  useNavigate,
+} from "react-router-dom";
 import { styled } from "styled-components";
 import { client } from "../../../libs/supabase";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -178,6 +184,8 @@ export default function CommonLayout() {
     checkLogin();
   }, []);
 
+  const navigate = useNavigate();
+
   /* logout */
   const handleLogout = async () => {
     const { error } = await client.auth.signOut();
@@ -187,6 +195,7 @@ export default function CommonLayout() {
     }
     setLoggedInUser(null);
     setLoggedInUserProfile(null);
+    navigate("/");
     console.log("로그아웃 되었습니다.");
   };
 
