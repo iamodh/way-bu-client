@@ -45,48 +45,6 @@ const Avatar = styled.img`
 //   font-size: 8px;
 // `;
 
-
-const Textbox1 = styled.div`
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  height: 100px;
-  border-radius: 5px;
-  border: none;
-  box-sizing: border-box;
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start;
-  text-align: left;
-  font-size: var(--font-size-m);
-  color: var(--color-navy);
-  padding: 10px;
-  resize: none;
-  outline: none;
-  @media screen and (max-width: 376px) {
-    width: 300px;
-    height: 70px;
-    font-size: var(--font-size-s);
-  }
-`;
-
-const DivRoot = styled.div`
-  margin: 0px;
-  margin-top: 10px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  box-sizing: border-box;
-  gap: var(--gap-base);
-  @media screen and (max-width: 675px) {
-    gap: var(--gap-base);
-    box-sizing: border-box;
-  }
-`;
-
 const CommentWrapper = styled.div`
   width: 550px;
   height: auto;
@@ -274,19 +232,30 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
     fetchComments();
   }, [matching.id]);
 
+  const formatScheduleTime = (timeString) => {
+    const [hour, minute] = timeString.split(':');
+    return `${hour}시${minute}분`;
+  };
+
+  //매칭 참가자 프로필
   const getUserProfiles = async (userIds) => {
-    try {
-      const { data, error } = await client
+    const { data, error } = await client
         .from('USER_PROFILE')
         .select('id, avatar_url, user_nickname')
         .in('user_id', userIds);
       if (error) throw error;
       return data;
-    } catch (error) {
-      console.error('Error fetching user profiles:', error.message);
-      return [];
-    }
   };
+
+  useEffect(() => {
+    const fetchUserProfiles = async () => {
+      if (matching.joining_users) {
+        const profiles = await getUserProfiles(matching.joining_users);
+        setUserProfiles(profiles);
+      }
+    };
+    fetchUserProfiles();
+  }, [matching.joining_users]);
 
   const formatTime = (time) => {
     const date = new Date(time);
@@ -304,41 +273,29 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
   };
 
   const getComments = async (matchingId) => {
-    try {
-      const { data, error } = await client
-        .from('MATCHING_COMMENT')
-        .select('*')
-        .eq('matching_id', matchingId);
-      if (error) {
-        throw error;
-      }
-      return data;
-    } catch (error) {
-      console.error('Error fetching comments:', error.message);
-      return [];
-    }
+    const { data, error } = await client
+      .from('MATCHING_COMMENT')
+      .select('*')
+      .eq('matching_id', matchingId);
+    if (error) throw error;
+    return data;
   };
 
   const onCommentSubmit = async (formData) => {
     const { content } = formData;
-    try {
-      const { data, error } = await client
-        .from('MATCHING_COMMENT')
-        .insert([{
-          matching_id: matching.id,
-          user_id: loggedInUser.id,
-          content: content,
-          user_nickname: loggedInUserProfile.user_nickname,
-        }]);
-      if (error) {
-        throw error;
-      }
-      const updatedComments = await getComments(matching.id);
-      setComments(updatedComments);
-      reset();  // Reset the form fields after submission
-    } catch (error) {
-      console.error('Error adding comment:', error.message);
-    }
+    const { data, error } = await client
+      .from('MATCHING_COMMENT')
+      .insert([{
+        matching_id: matching.id,
+        user_id: loggedInUser.id,
+        content: content,
+        user_nickname: loggedInUserProfile.user_nickname,
+      }]);
+
+    const updatedComments = await getComments(matching.id);
+    setComments(updatedComments);
+    reset();  // Reset the form fields after submission
+  
   };
 
   const startEditComment = (comment) => {
@@ -347,47 +304,35 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
   };
 
   const saveEditComment = async (commentId) => {
-    try {
-      const confirmEdit = window.confirm("댓글을 수정하시겠습니까?");
-      if (!confirmEdit) {
-        return;
-      }
-      const { data, error } = await client
-        .from("MATCHING_COMMENT")
-        .update({ content: editContent, updated_at: new Date() })
-        .eq("id", commentId);
-      if (error) {
-        console.error(error.message);
-        return;
-      }
-      setEditingCommentId(null);
-      setEditContent("");
-      const updatedComments = await getComments(matching.id);
-      setComments(updatedComments);
-    } catch (error) {
-      console.error('Error updating comment:', error.message);
+    const confirmEdit = window.confirm("댓글을 수정하시겠습니까?");
+    if (!confirmEdit) {
+      return;
     }
+    const { data, error } = await client
+      .from("MATCHING_COMMENT")
+      .update({ content: editContent, updated_at: new Date() })
+      .eq("id", commentId);
+
+    setEditingCommentId(null);
+    setEditContent("");
+    const updatedComments = await getComments(matching.id);
+    setComments(updatedComments);
   };
 
   const deleteComment = async (commentId) => {
-    try {
-      const confirmDelete = window.confirm("댓글을 삭제하시겠습니까?");
-      if (!confirmDelete) {
-        return;
-      }
-      const { data, deleteError } = await client
-        .from("MATCHING_COMMENT")
-        .delete()
-        .eq("id", commentId);
-      if (deleteError) {
-        throw new Error(deleteError.message);
-      }
-      const updatedComments = await getComments(matching.id);
-      setComments(updatedComments);
-    } catch (error) {
-      console.error(error.message);
+    const confirmDelete = window.confirm("댓글을 삭제하시겠습니까?");
+    if (!confirmDelete) {
       return;
     }
+    const { data, deleteError } = await client
+      .from("MATCHING_COMMENT")
+      .delete()
+      .eq("id", commentId);
+    if (deleteError) {
+      throw new Error(deleteError.message);
+    }
+    const updatedComments = await getComments(matching.id);
+    setComments(updatedComments);
   };
 
   const commentList = () => {
@@ -427,28 +372,16 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
     return list;
   };
 
-  useEffect(() => {
-    const fetchUserProfiles = async () => {
-      if (matching.joining_users) {
-        const profiles = await getUserProfiles(matching.joining_users);
-        setUserProfiles(profiles);
-      }
-    };
-    fetchUserProfiles();
-  }, [matching.joining_users]);
-
+  // 매칭 삭제
   const handleDeleteMatching = async () => {
     const confirmDelete = window.confirm('매칭을 삭제하시겠습니까?');
     if (confirmDelete) {
-      try {
-        await client.from('MATCHING').delete().eq('id', matching.id);
-        window.location.reload();
-      } catch (error) {
-        console.error('Error deleting matching:', error.message);
-      }
+      await client.from('MATCHING').delete().eq('id', matching.id);
+      window.location.reload();
     }
   };
 
+  // 매칭 취소
   const handleButtonClick = async () => {
     if (isHostUser) {
       return;
@@ -457,19 +390,15 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
         const cancel = window.confirm('매칭을 취소하시겠습니까?');
         if (cancel) {
           setIsUserJoined(false);
-          try {
-            const updatedJoiningUsers = Array.isArray(matching.joining_users) ? matching.joining_users.filter(userId => userId !== loggedInUser.id) : [];
-            await client
-              .from('MATCHING')
-              .update({ joining_users: updatedJoiningUsers })
-              .eq('id', matching.id);
-            window.location.reload();
-          } catch (error) {
-            console.error('Error cancelling application for matching:', error.message);
-            setIsUserJoined(true);
-          }
+          //취소시 배열에서 제외
+          const updatedJoiningUsers = Array.isArray(matching.joining_users) ? matching.joining_users.filter(userId => userId !== loggedInUser.id) : [];
+          await client
+            .from('MATCHING')
+            .update({ joining_users: updatedJoiningUsers })
+            .eq('id', matching.id);
+          window.location.reload();
         }
-      } 
+      }
     }
   };
 
@@ -477,10 +406,7 @@ const MatchingApply = ({ matching, sport, beach, hostProfile }) => {
     document.body.style.overflow = 'auto';
   };
 
-  const formatScheduleTime = (timeString) => {
-    const [hour, minute] = timeString.split(':');
-    return `${hour}시${minute}분`;
-  };
+
   
   return (
     <FrameWrapper>

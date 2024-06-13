@@ -179,7 +179,7 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
   const [postPage, setPostPage] = useState(1);
   const [pageSection, setPageSection] = useState(1);
   const [hostProfile, setHostProfile] = useState(null);
-  const [sportsData, setSportsData] = useState({}); // 추가된 상태
+  const [sportsData, setSportsData] = useState({});
 
   useEffect(() => {
     setPageSection(Math.ceil(postPage / postPerPage));
@@ -187,42 +187,33 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
 
   useEffect(() => {
     getMatchings();
-  }, []);
-
-  useEffect(() => {
-    getAllSports(); // 모든 스포츠 데이터를 미리 가져옴
-  }, []);
-
-  useEffect(() => {
+    getSports();
     getBeach();
   }, []);
 
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
-      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId, joining_users, necessity_details, necessity, created_at`);
-    if (error) {
-      console.log(error.message);
-      setIsLoading(false);
-      return;
-    }
+      .select(`*`);
+
+    // 생성시간 기준 정렬
     const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     setMatchings(sortedData);
     setIsLoading(false);
   }
 
+  const formatTime = (timeString) => {
+    const [hour, minute] = timeString.split(':');
+    return `${hour}시 ${minute}분`;
+  };
+
   const getHostProfile = async (hostUserId) => {
-    try {
-      const { data, error } = await client
-        .from('USER_PROFILE')
-        .select('avatar_url, user_nickname')
-        .eq('user_id', hostUserId);
-      if (error) throw error;
-      return data[0];
-    } catch (error) {
-      console.error('Error fetching host profile:', error.message);
-      return null;
-    }
+    const { data, error } = await client
+      .from('USER_PROFILE')
+      .select('user_nickname')
+      .eq('user_id', hostUserId);
+    if (error) throw error;
+    return data[0];
   };
 
   const filteredMatchings = matchings.filter((matching) => {
@@ -236,36 +227,24 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
     ));
   });
 
-  useEffect(() => {
-    setMaxPage(Math.ceil(filteredMatchings.length / postPerPage));
-  }, [filteredMatchings]);
-
-  const currentMatchings = filteredMatchings.slice((postPage - 1) * postPerPage, postPage * postPerPage);
-
   async function updateMatchingViews(matching) {
     const { data, error } = await client
       .from("MATCHING")
       .update({ views: matching.views + 1 })
       .eq("id", matching.id)
       .select();
-    if (error) {
-      console.log(error.message);
-    }
   }
 
-  async function getAllSports() {
+  async function getSports() {
     const { data, error } = await client
       .from("SPORT")
       .select("id, title, icon_url");
-    if (error) {
-      console.log(error.message);
-      return null;
-    }
-    const sportsDataMap = data.reduce((acc, sport) => {
-      acc[sport.id] = sport;
-      return acc;
+
+    const sportsData = data.reduce((data, sport) => {
+      data[sport.id] = sport;
+      return data;
     }, {});
-    setSportsData(sportsDataMap); // 모든 스포츠 데이터를 상태로 설정
+    setSportsData(sportsData);
   }
 
   async function getBeach(beachId) {
@@ -273,15 +252,16 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
       .from("BEACH")
       .select("beach_name")
       .eq("id", beachId);
-    if (error) {
-      console.log(error.message);
-      return null;
-    }
     return data[0];
   }
 
   const openModal = async (matching) => {
-    const sport = sportsData[matching.sport_id]; // 이미 가져온 스포츠 데이터 사용
+    if (!loggedInUser) {
+      window.location.href = "/login";
+      return;
+    }
+  
+    const sport = sportsData[matching.sport_id]; 
     setSelectedSport(sport);
 
     const beach = await getBeach(matching.beach_id);
@@ -325,11 +305,12 @@ const MatchingGroup = ({ selectedDate, selectedTags }) => {
     }
     return pages;
   };
-  
-  const formatTime = (timeString) => {
-    const [hour, minute] = timeString.split(':');
-    return `${hour}시 ${minute}분`;
-  };
+
+  useEffect(() => {
+    setMaxPage(Math.ceil(filteredMatchings.length / postPerPage));
+  }, [filteredMatchings]);
+
+  const currentMatchings = filteredMatchings.slice((postPage - 1) * postPerPage, postPage * postPerPage);
 
   return (
     <Wrapper>
