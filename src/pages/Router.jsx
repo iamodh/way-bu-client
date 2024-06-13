@@ -31,7 +31,6 @@ import PostWrite from "./community/PostWrite";
 import ComparePrograms from "./program/ComparePrograms";
 import Sports from "./sports/Sports";
 import PostEdit from "./community/PostEdit";
-import SportsInfo from "./sports/SportsInfo";
 import Animation from "../components/layout/Animation";
 
 export default function Router() {

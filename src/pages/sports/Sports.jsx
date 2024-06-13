@@ -18,113 +18,11 @@ import {
   InfoContent,
   ModalCover,
   SportsBtn,
-} from "./components/SportsInfoLayout";
-
-const Wrapper = styled.div`
-  position: relative;
-  height: 100vh;
-`;
-
-const Background = styled.div`
-  width: 100%;
-  height: 100%;
-  background-image: url("/img/sports2.jpeg");
-  background-size: cover;
-  background-position: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -100;
-
-  @media (max-width: 480px) {
-  }
-`;
-
-const Slides = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-`;
-
-const Slide = styled.div`
-  width: 250px;
-  height: 350px;
-  background-color: var(--color-white);
-  border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.3);
-  margin-top: -500px;
-
-  @media (max-width: 480px) {
-    width: 50%;
-    height: 30%;
-    border-radius: 12px;
-    margin-top: -100%; /* Adjust this value for mobile view */
-  }
-`;
-
-const SportObject = styled.div`
-  position: absolute;
-  top: ${(props) => props.$top};
-  left: ${(props) => props.$left};
-  transition: all 0.1s ease-in;
-  cursor: pointer;
-`;
-
-const DivingMask = styled.img`
-  width: 80px;
-  padding-top: 150px;
-  transform: rotate(30deg);
-
-  @media (max-width: 480px) {
-    width: 30px;
-  }
-`;
-
-const SurfingBoard = styled.img`
-  width: 130px;
-  padding-top: 80px;
-
-  @media (max-width: 480px) {
-    width: 70px;
-  }
-`;
-
-const Kayak = styled.img`
-  width: 160px;
-  padding-top: 30px;
-
-  @media (max-width: 480px) {
-    width: 50px;
-    /* padding-top: 10px; */
-  }
-`;
-
-const Yacht = styled.img`
-  width: 180px;
-
-  @media (max-width: 480px) {
-    width: 50px;
-  }
-`;
-
-const Boogie = styled(motion.img)`
-  position: absolute;
-  width: 130px;
-  height: 180px;
-  bottom: 150px;
-  left: 3%;
-  cursor: pointer;
-
-  @media (max-width: 480px) {
-    width: 80px;
-    height: 100px;
-  }
-`;
+  DivingMask,
+  SurfingBoard,
+  Kayak,
+  Yacht,
+} from "./components/SportsLayout";
 
 export default function Sports() {
   const wrapperRef = useRef();
