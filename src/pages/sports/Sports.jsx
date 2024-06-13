@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 const Wrapper = styled.div`
   position: relative;
@@ -30,7 +30,7 @@ const Slide = styled.div`
   background-color: var(--color-white);
   position: absolute;
   top: 10%;
-  right: 10%;
+  left: 40px;
   border-radius: 20px;
   display: flex;
   justify-content: center;
@@ -42,36 +42,37 @@ const Slide = styled.div`
   }
 `;
 
-const SportObject = styled.div`
-  position: absolute;
-  top: ${(props) => props.$top};
-  left: ${(props) => props.$left};
+const SportObject = styled.img`
   transition: all 0.1s ease-in;
   cursor: pointer;
+  position: absolute;
+  src: ${(props) => props.imageUrl};
 `;
 
-const DivingMask = styled.img`
-  width: 80px;
-  padding-top: 150px;
+const DivingMask = styled(SportObject)`
+  width: 150px;
   transform: rotate(30deg);
-
+  bottom: 10%;
+  left: 30%;
   @media (max-width: 480px) {
     width: 30px;
   }
 `;
 
-const SurfingBoard = styled.img`
-  width: 130px;
-  padding-top: 80px;
+const SurfingBoard = styled(SportObject)`
+  width: 200px;
 
+  bottom: 30%;
+  right: 20%;
   @media (max-width: 480px) {
     width: 70px;
   }
 `;
 
-const Yacht = styled.img`
-  width: 180px;
-
+const Yacht = styled(SportObject)`
+  width: 200px;
+  top: 30%;
+  left: 30%;
   @media (max-width: 480px) {
     width: 50px;
   }
@@ -79,8 +80,8 @@ const Yacht = styled.img`
 
 const Boogie = styled(motion.img)`
   position: absolute;
-  top: 0;
-  left: 0%;
+  bottom: 20%;
+  left: 50%;
   cursor: pointer;
 
   @media (max-width: 480px) {
@@ -98,10 +99,12 @@ export default function Sports() {
   const onDragEnd = (event, info) => {
     boogieRef.current.src = "/img/sport_items/boogie.png";
     sportsRef.current.forEach((element) => {
+      console.log(element);
       const xDiff =
         element.parentElement.offsetLeft + element.offsetLeft - info.point.x;
       const yDiff =
         element.parentElement.offsetTop + element.offsetTop - info.point.y;
+      console.log(xDiff, yDiff);
       if (xDiff < 0 && xDiff > -160 && yDiff < 0 && yDiff > -160) {
         element.style.scale = 1.2;
         setSelectedSport(element.id);
@@ -116,7 +119,7 @@ export default function Sports() {
       <Background />
       {[
         {
-          id: "diving_mask",
+          id: "snorkling",
           component: <DivingMask src="/img/min/snorkling.png" />,
         },
         {
@@ -125,17 +128,11 @@ export default function Sports() {
         },
         { id: "yacht", component: <Yacht src="/img/min/yacht.png" /> },
       ].map((item, i) => {
-        return (
-          <SportObject
-            id={item.id}
-            key={item.id}
-            $top="500px"
-            $left={`${i * 20 + 40}%`} // i + 사이 + 옆 이미지들을 가로로 나란히 배치
-            ref={(el) => (sportsRef.current[i] = el)}
-          >
-            {item.component}
-          </SportObject>
-        );
+        return React.cloneElement(item.component, {
+          id: item.id,
+          key: item.id,
+          ref: (el) => (sportsRef.current[i] = el),
+        });
       })}
 
       <Slides>
