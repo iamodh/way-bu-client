@@ -6,33 +6,23 @@ const Wrapper = styled.div`
   position: relative;
   height: 100vh;
 `;
-
 const Background = styled.div`
   width: 100%;
   height: 100%;
-  background-image: url("/img/sports2.jpeg");
+  background-image: url("/img/sports1.jpeg");
   background-size: cover;
   background-position: center;
   position: absolute;
   top: 0;
   left: 0;
   z-index: -100;
-
   @media (max-width: 480px) {
   }
 `;
-
-const Slides = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-`;
-
+const Slides = styled.div``;
 const Slide = styled.div`
-  width: 250px;
-  height: 350px;
+  width: 20%;
+  height: 40%;
   background-color: var(--color-white);
   position: absolute;
   top: 10%;
@@ -42,13 +32,8 @@ const Slide = styled.div`
   justify-content: center;
   align-items: center;
   box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.3);
-  margin-top: -500px;
-
   @media (max-width: 480px) {
-    width: 50%;
-    height: 30%;
     border-radius: 12px;
-    margin-top: -100%; /* Adjust this value for mobile view */
   }
 `;
 
@@ -57,35 +42,32 @@ const SportObject = styled.img`
   cursor: pointer;
   position: absolute;
   src: ${(props) => props.imageUrl};
-`;
 
-const DivingMask = styled(SportObject)`
-  width: 150px;
-  transform: rotate(30deg);
-  bottom: 10%;
-  left: 30%;
-  @media (max-width: 480px) {
-    width: 30px;
-  }
-`;
-
-const SurfingBoard = styled(SportObject)`
   width: 200px;
-
-  bottom: 30%;
-  right: 20%;
-  @media (max-width: 480px) {
-    width: 70px;
-  }
-`;
-
-const Yacht = styled(SportObject)`
-  width: 200px;
-  top: 30%;
-  left: 30%;
   @media (max-width: 480px) {
     width: 50px;
   }
+`;
+
+const DivingMask = styled(SportObject)`
+  transform: rotate(30deg);
+  bottom: 10%;
+  left: 30%;
+`;
+
+const SurfingBoard = styled(SportObject)`
+  bottom: 30%;
+  right: 30%;
+`;
+
+const Yacht = styled(SportObject)`
+  top: 30%;
+  left: 30%;
+`;
+
+const Kayak = styled(SportObject)`
+  top: 35%;
+  right: 15%;
 `;
 
 const Boogie = styled(motion.img)`
@@ -93,20 +75,15 @@ const Boogie = styled(motion.img)`
   bottom: 20%;
   left: 50%;
   cursor: pointer;
-
   @media (max-width: 480px) {
-    width: 80px;
-    height: 100px;
+    width: 50px;
   }
 `;
-
 export default function Sports() {
   const wrapperRef = useRef();
   const boogieRef = useRef();
   const sportsRef = useRef([]);
-
   const [selectedSport, setSelectedSport] = useState("");
-
   const onDragEnd = (event, info) => {
     boogieRef.current.src = "/img/sport_items/boogie.png";
     sportsRef.current.forEach((element) => {
@@ -124,7 +101,6 @@ export default function Sports() {
       }
     });
   };
-
   return (
     <Wrapper ref={wrapperRef}>
       <Background />
@@ -137,11 +113,8 @@ export default function Sports() {
           id: "surfing_board",
           component: <SurfingBoard src="/img/min/surfingboard.png" />,
         },
-        {
-          id: "kayak",
-          component: <Kayak src="/img/min/kayak.png" />,
-        },
         { id: "yacht", component: <Yacht src="/img/min/yacht.png" /> },
+        { id: "kayak", component: <Kayak src="/img/min/kayak.png" /> },
       ].map((item, i) => {
         return React.cloneElement(item.component, {
           id: item.id,
@@ -155,7 +128,7 @@ export default function Sports() {
       </Slides>
       <Boogie
         ref={boogieRef}
-        // style={{ width: "150px", height: "200px" }}
+        style={{ width: "100px", height: "150px" }}
         src="/img/sport_items/boogie.png"
         drag
         dragConstraints={wrapperRef}
