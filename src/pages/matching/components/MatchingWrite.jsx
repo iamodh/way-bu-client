@@ -82,10 +82,6 @@ const MatchingWrite = ({ closeModal }) => {
         },
       ])
       .select();
-    if (error) {
-      console.error(error);
-      return;
-    }
     getMatchings();
     closeModal();
     window.location.reload();

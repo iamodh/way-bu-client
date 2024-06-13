@@ -1,39 +1,51 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
+
 const Wrapper = styled.div`
   position: relative;
   height: 100vh;
 `;
 
-const Background = styled.img`
+const Background = styled.div`
   width: 100%;
   height: 100%;
-  background-image: url("/img/sports.jpeg");
-  background-position: center;
+  background-image: url("/img/sports2.jpeg");
   background-size: cover;
-  background-color: var(--color-sand-main);
-  position: relative;
+  background-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: -100;
+
+  @media (max-width: 480px) {
+  }
 `;
 
-const Slides = styled.div``;
+const Slides = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`;
 
 const Slide = styled.div`
-  width: 20%;
-  height: 40%;
+  width: 250px;
+  height: 350px;
   background-color: var(--color-white);
-  position: absolute;
-  top: 10%;
-  right: 10%; /* 오른쪽에 배치 */
   border-radius: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.3);
+  margin-top: -500px;
 
   @media (max-width: 480px) {
+    width: 50%;
+    height: 30%;
     border-radius: 12px;
+    margin-top: -100%; /* Adjust this value for mobile view */
   }
 `;
 
@@ -45,11 +57,55 @@ const SportObject = styled.div`
   cursor: pointer;
 `;
 
+const DivingMask = styled.img`
+  width: 80px;
+  padding-top: 150px;
+  transform: rotate(30deg);
+
+  @media (max-width: 480px) {
+    width: 30px;
+  }
+`;
+
+const SurfingBoard = styled.img`
+  width: 130px;
+  padding-top: 80px;
+
+  @media (max-width: 480px) {
+    width: 70px;
+  }
+`;
+
+const Kayak = styled.img`
+  width: 160px;
+  padding-top: 30px;
+
+  @media (max-width: 480px) {
+    width: 50px;
+    /* padding-top: 10px; */
+  }
+`;
+
+const Yacht = styled.img`
+  width: 180px;
+
+  @media (max-width: 480px) {
+    width: 50px;
+  }
+`;
+
 const Boogie = styled(motion.img)`
   position: absolute;
-  top: 0;
-  left: 0%;
+  width: 130px;
+  height: 180px;
+  bottom: 150px;
+  left: 3%;
   cursor: pointer;
+
+  @media (max-width: 480px) {
+    width: 80px;
+    height: 100px;
+  }
 `;
 
 export default function Sports() {
@@ -78,16 +134,30 @@ export default function Sports() {
   return (
     <Wrapper ref={wrapperRef}>
       <Background />
-      {["surfing_board", "yacht"].map((e, i) => {
+      {[
+        {
+          id: "diving_mask",
+          component: <DivingMask src="/img/min/snorkling.png" />,
+        },
+        {
+          id: "surfing_board",
+          component: <SurfingBoard src="/img/min/surfingboard.png" />,
+        },
+        {
+          id: "kayak",
+          component: <Kayak src="/img/min/kayak.png" />,
+        },
+        { id: "yacht", component: <Yacht src="/img/min/yacht.png" /> },
+      ].map((item, i) => {
         return (
           <SportObject
-            id={e}
-            key={e}
-            $top={`${(i + 1) * 3}0%`}
-            $left={`${(i + 1) * 2}0%`}
+            id={item.id}
+            key={item.id}
+            $top="450px"
+            $left={`${i * 20 + 20}%`} // i + 사이 + 옆 이미지들을 가로로 나란히 배치
             ref={(el) => (sportsRef.current[i] = el)}
           >
-            <img src={`/img/sport_items/${e}.png`} />
+            {item.component}
           </SportObject>
         );
       })}
@@ -97,7 +167,7 @@ export default function Sports() {
       </Slides>
       <Boogie
         ref={boogieRef}
-        style={{ width: "100px", height: "150px" }}
+        // style={{ width: "150px", height: "200px" }}
         src="/img/sport_items/boogie.png"
         drag
         dragConstraints={wrapperRef}
