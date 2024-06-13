@@ -96,9 +96,9 @@ const Yacht = styled.img`
 
 const Boogie = styled(motion.img)`
   position: absolute;
-  width: 130px;
-  height: 180px;
-  bottom: 150px;
+  width: 200px;
+  height: 270px;
+  bottom: 220px;
   left: 3%;
   cursor: pointer;
 
