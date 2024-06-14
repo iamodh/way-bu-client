@@ -53,8 +53,8 @@ const SearchInput = styled.input`
 `;
 
 const SearchButton = styled.button`
-  width: var(--font-size-m);
-  height: var(--font-size-m);
+  width: var(--font-size-l);
+  height: var(--font-size-l);
   background-image: url("/icon/search.svg");
   background-repeat: no-repeat;
   background-size: contain;
@@ -62,14 +62,16 @@ const SearchButton = styled.button`
   border: none;
 `;
 const Alarm = styled.button`
-  width: var(--font-size-m);
-  height: var(--font-size-m);
+  width: var(--font-size-l);
+  height: var(--font-size-l);
   background-image: url("/icon/alarm.svg");
   background-repeat: no-repeat;
   background-size: contain;
   background-color: transparent;
   border: none;
   margin: 0 var(--padding-5xs);
+  cursor: pointer;
+  position: relative;
 `;
 const ProfileImage = styled.img`
   width: 64px;
@@ -134,6 +136,50 @@ const FooterDiv = styled.div`
   border: 1px solid var(--color-white);
 `;
 
+const NotificationBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: absolute;
+  left: -100px;
+  top: 20px;
+  width: 250px;
+  height: 300px;
+  overflow-y: auto;
+  z-index: 1;
+  background-color: white;
+  border: 1px solid black;
+  @media screen and (max-width: 768px) {
+    width: 200px;
+    left: -120px;
+  }
+`;
+
+const NotificationCount = styled.div`
+  position: absolute;
+  left: 10px;
+  top: -10px;
+  background-color: red;
+  color: white;
+  width: 15px;
+  height: 15px
+  text-align: center;
+  line-height: 15px;
+  font-size:10px;
+  border-radius: 50%;
+`;
+
+const NotificationUnread = styled.span``;
+
+const NotificationRead = styled.span`
+  opacity: 0.5;
+`;
+
+const NotificationObj = styled.div`
+  padding: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+`;
+
 export default function CommonLayout() {
   /* 새로고침 마다 getSession 해서 로그인 체크 */
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -141,6 +187,9 @@ export default function CommonLayout() {
   const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
     loggedInUserProfileState
   );
+  const [notifications, setNotifications] = useState([]);
+  const [notificationError, setNotificationError] = useState(null);
+  const [showNotificationBox, setShowNotificationBox] = useState(false);
 
   async function checkLogin() {
     // 세션 정보를 가져옵니다.
@@ -178,6 +227,23 @@ export default function CommonLayout() {
     checkLogin();
   }, []);
 
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      if (loggedInUser) {
+        const { data, error } = await client
+          .from("NOTIFICATION")
+          .select("*")
+          .eq("user_id", loggedInUser.id);
+        if (error) {
+          setNotificationError("알림을 가져오는 중 오류가 발생했습니다.");
+        } else {
+          setNotifications(data);
+        }
+      }
+    };
+    fetchNotifications();
+  }, [loggedInUser]);
+
   /* logout */
   const handleLogout = async () => {
     const { error } = await client.auth.signOut();
@@ -188,6 +254,82 @@ export default function CommonLayout() {
     setLoggedInUser(null);
     setLoggedInUserProfile(null);
     console.log("로그아웃 되었습니다.");
+  };
+
+  const Notification = () => {
+    if (!showNotificationBox) return null;
+    if (notificationError) {
+      return (
+        <NotificationBox>
+          <NotificationObj>{notificationError}</NotificationObj>
+        </NotificationBox>
+      );
+    }
+    if (notifications.length > 0) {
+      const unRead = notifications.filter((n) => !n.is_read);
+      const read = notifications.filter((n) => n.is_read);
+      return (
+        <NotificationBox>
+          <NotificationUnread>안 읽음</NotificationUnread>
+          {unRead.map((notification) => (
+            <NotificationObj key={notification.id}>
+              <StyledLink
+                to={
+                  notification.post_id
+                    ? `/community/${notification.post_id}`
+                    : `/matching/${notification.matching_id}`
+                }
+                onClick={async () => {
+                  const { error } = await client
+                    .from("NOTIFICATION")
+                    .update({ is_read: true })
+                    .eq("id", notification.id);
+                  if (error) {
+                    console.error("Error updating notification:", error);
+                  }
+                }}
+              >
+                <NotificationUnread>{notification.content}</NotificationUnread>
+              </StyledLink>
+            </NotificationObj>
+          ))}
+          <NotificationRead>읽음</NotificationRead>
+          {read.map((notification) => (
+            <NotificationObj key={notification.id}>
+              <StyledLink
+                to={
+                  notification.post_id
+                    ? `/community/${notification.post_id}`
+                    : `/matching/${notification.matching_id}`
+                }
+              >
+                <NotificationRead>{notification.content}</NotificationRead>
+              </StyledLink>
+            </NotificationObj>
+          ))}
+        </NotificationBox>
+      );
+    } else {
+      return (
+        <NotificationBox>
+          <NotificationObj>알림이 없습니다.</NotificationObj>
+        </NotificationBox>
+      );
+    }
+  };
+
+  const NotificationCounter = () => {
+    if (
+      notificationError ||
+      notifications.filter((n) => !n.is_read).length === 0
+    )
+      return null;
+
+    return (
+      <NotificationCount>
+        {notifications.filter((n) => !n.is_read).length}
+      </NotificationCount>
+    );
   };
 
   /* index나 sorts 페이지일때 fixed */
@@ -213,7 +355,10 @@ export default function CommonLayout() {
             <SearchInput type="text" />
             <SearchButton />
           </Search>
-          <Alarm />
+          <Alarm onClick={() => setShowNotificationBox(!showNotificationBox)}>
+            <NotificationCounter />
+            <Notification />
+          </Alarm>
           {loggedInUser && loggedInUserProfile ? (
             <StyledLink to={"/mypage/" + loggedInUserProfile.id}>
               <ProfileImage src="/img/ellipse-13@2x.png" />
