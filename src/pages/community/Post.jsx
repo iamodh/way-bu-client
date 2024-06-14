@@ -135,8 +135,9 @@ export default function Post() {
           .insert([
             {
               user_id: post.user_id,
-              content: `${loggedInUserProfile.user_nickname}님이 ${post.title}에 댓글을 남겼습니다.`,
+              content: "회원님의 게시물에 새로운 댓글이 달렸습니다.",
               post_id: postId,
+              title: post.title,
             },
           ]);
         if (notificationError) {
@@ -287,7 +288,7 @@ export default function Post() {
 
   useEffect(() => {
     getPost();
-  }, []);
+  }, postId);
 
   if (isLoading) return <>Loading...</>;
 

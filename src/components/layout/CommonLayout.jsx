@@ -141,14 +141,15 @@ const NotificationBox = styled.div`
   flex-direction: column;
   align-items: flex-start;
   position: absolute;
-  left: -100px;
-  top: 20px;
-  width: 250px;
-  height: 300px;
+  left: -125px;
+  top: 30px;
+  width: 280px;
+  height: 400px;
   overflow-y: auto;
   z-index: 1;
   background-color: white;
   border: 1px solid black;
+  cursor: auto;
   @media screen and (max-width: 768px) {
     width: 200px;
     left: -120px;
@@ -172,12 +173,28 @@ const NotificationCount = styled.div`
 const NotificationUnread = styled.span``;
 
 const NotificationRead = styled.span`
-  opacity: 0.5;
+  opacity: 0.4;
+`;
+
+const NotificationTime = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px;
+  font-weight: 700;
+  width: 100%;
 `;
 
 const NotificationObj = styled.div`
   padding: 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  width: 100%;
+`;
+
+const NotificationTitle = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 `;
 
 export default function CommonLayout() {
@@ -257,6 +274,66 @@ export default function CommonLayout() {
   };
 
   const Notification = () => {
+    const monthsAgo = notifications.filter(
+      (n) =>
+        new Date() - new Date(n.created_at) > 1000 * 60 * 60 * 24 * 30 &&
+        new Date() - new Date(n.created_at) < 1000 * 60 * 60 * 24 * 365
+    );
+
+    const weeksAgo = notifications.filter(
+      (n) =>
+        new Date() - new Date(n.created_at) > 1000 * 60 * 60 * 24 * 7 &&
+        new Date() - new Date(n.created_at) < 1000 * 60 * 60 * 24 * 30
+    );
+
+    const daysAgo = notifications.filter(
+      (n) =>
+        new Date() - new Date(n.created_at) > 1000 * 60 * 60 * 24 &&
+        new Date() - new Date(n.created_at) < 1000 * 60 * 60 * 24 * 7
+    );
+
+    const today = notifications.filter(
+      (n) => new Date() - new Date(n.created_at) < 1000 * 60 * 60 * 24
+    );
+
+    const notificationMapping = (notification) => {
+      return (
+        <NotificationObj key={notification.id}>
+          <StyledLink
+            to={
+              notification.post_id
+                ? `/community/${notification.post_id}`
+                : `/matching/${notification.matching_id}`
+            }
+            onClick={async () => {
+              if (notification.is_read) return;
+              const { error } = await client
+                .from("NOTIFICATION")
+                .update({ is_read: true })
+                .eq("id", notification.id);
+              if (error) {
+                console.error("Error updating notification:", error);
+              }
+              notification.is_read = true;
+              setNotifications([...notifications]);
+            }}
+          >
+            {notification.is_read ? (
+              <NotificationRead>
+                {notification.content}
+                <NotificationTitle>{notification.title}</NotificationTitle>
+              </NotificationRead>
+            ) : (
+              <NotificationUnread>
+                {notification.content}
+                <NotificationTitle>{notification.title}</NotificationTitle>
+              </NotificationUnread>
+            )}
+          </StyledLink>
+        </NotificationObj>
+      );
+    };
+
     if (!showNotificationBox) return null;
     if (notificationError) {
       return (
@@ -266,47 +343,36 @@ export default function CommonLayout() {
       );
     }
     if (notifications.length > 0) {
-      const unRead = notifications.filter((n) => !n.is_read);
-      const read = notifications.filter((n) => n.is_read);
       return (
         <NotificationBox>
-          <NotificationUnread>안 읽음</NotificationUnread>
-          {unRead.map((notification) => (
-            <NotificationObj key={notification.id}>
-              <StyledLink
-                to={
-                  notification.post_id
-                    ? `/community/${notification.post_id}`
-                    : `/matching/${notification.matching_id}`
-                }
-                onClick={async () => {
-                  const { error } = await client
-                    .from("NOTIFICATION")
-                    .update({ is_read: true })
-                    .eq("id", notification.id);
-                  if (error) {
-                    console.error("Error updating notification:", error);
-                  }
-                }}
-              >
-                <NotificationUnread>{notification.content}</NotificationUnread>
-              </StyledLink>
-            </NotificationObj>
-          ))}
-          <NotificationRead>읽음</NotificationRead>
-          {read.map((notification) => (
-            <NotificationObj key={notification.id}>
-              <StyledLink
-                to={
-                  notification.post_id
-                    ? `/community/${notification.post_id}`
-                    : `/matching/${notification.matching_id}`
-                }
-              >
-                <NotificationRead>{notification.content}</NotificationRead>
-              </StyledLink>
-            </NotificationObj>
-          ))}
+          {today.length > 0 && (
+            <>
+              <NotificationTime>오늘</NotificationTime>
+              {today.map((notification) => notificationMapping(notification))}
+            </>
+          )}
+          {daysAgo.length > 0 && (
+            <>
+              <NotificationTime>이번 주</NotificationTime>
+              {daysAgo.map((notification) => notificationMapping(notification))}
+            </>
+          )}
+          {weeksAgo.length > 0 && (
+            <>
+              <NotificationTime>이번 달</NotificationTime>
+              {weeksAgo.map((notification) =>
+                notificationMapping(notification)
+              )}
+            </>
+          )}
+          {monthsAgo.length > 0 && (
+            <>
+              <NotificationTime>올해</NotificationTime>
+              {monthsAgo.map((notification) =>
+                notificationMapping(notification)
+              )}
+            </>
+          )}
         </NotificationBox>
       );
     } else {
