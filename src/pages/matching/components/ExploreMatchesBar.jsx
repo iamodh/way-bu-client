@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Modal from "./Modal";
-import React from 'react';
+import React from "react";
 
 const ExploreMatchesBarRoot = styled.div`
   display: flex;
@@ -21,9 +21,11 @@ const H = styled.h3`
   margin-top: 20px;
   position: relative;
   font-size: var(--font-size-xl);
+  background-color: var(--color-skyblue-background);
+  border-radius: var(--br-3xs);
+  padding: var(--padding-xs);
   font-weight: bold;
   font-family: inherit;
-  background-color: aliceblue;
   @media screen and (max-width: 450px) {
     font-size: var(--font-size-xl);
   }
@@ -61,7 +63,6 @@ const MatchingContainer = styled.div`
 `;
 
 const ExploreMatchesBar = () => {
-
   return (
     <ExploreMatchesBarRoot>
       <H>매칭 둘러보기</H>
@@ -72,7 +73,6 @@ const ExploreMatchesBar = () => {
       </MatchingActionsWrapper>
       <MatchingContainer />
     </ExploreMatchesBarRoot>
-    
   );
 };
 
