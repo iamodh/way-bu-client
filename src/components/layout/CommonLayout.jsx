@@ -427,7 +427,7 @@ export default function CommonLayout() {
           </Alarm>
           {loggedInUser && loggedInUserProfile ? (
             <StyledLink to={"/mypage/" + loggedInUserProfile.id}>
-              <ProfileImage src="/img/ellipse-13@2x.png" />
+              <ProfileImage src={loggedInUserProfile.avatar_url} />
             </StyledLink>
           ) : null}
         </Sign>
