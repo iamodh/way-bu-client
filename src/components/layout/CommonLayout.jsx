@@ -65,8 +65,8 @@ const SearchInput = styled.input`
 `;
 
 const SearchButton = styled.button`
-  width: var(--font-size-m);
-  height: var(--font-size-m);
+  width: var(--font-size-l);
+  height: var(--font-size-l);
   background-image: url("/icon/search.svg");
   background-repeat: no-repeat;
   background-size: contain;
@@ -74,14 +74,16 @@ const SearchButton = styled.button`
   border: none;
 `;
 const Alarm = styled.button`
-  width: var(--font-size-m);
-  height: var(--font-size-m);
+  width: var(--font-size-l);
+  height: var(--font-size-l);
   background-image: url("/icon/alarm.svg");
   background-repeat: no-repeat;
   background-size: contain;
   background-color: transparent;
   border: none;
   margin: 0 var(--padding-5xs);
+  cursor: pointer;
+  position: relative;
 `;
 const ProfileImage = styled.img`
   width: 64px;
@@ -146,6 +148,67 @@ const FooterDiv = styled.div`
   border: 1px solid var(--color-white);
 `;
 
+const NotificationBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: absolute;
+  left: -125px;
+  top: 30px;
+  width: 280px;
+  height: 400px;
+  overflow-y: auto;
+  z-index: 1;
+  background-color: white;
+  border: 1px solid black;
+  cursor: auto;
+  @media screen and (max-width: 768px) {
+    width: 200px;
+    left: -120px;
+  }
+`;
+
+const NotificationCount = styled.div`
+  position: absolute;
+  left: 10px;
+  top: -10px;
+  background-color: red;
+  color: white;
+  width: 15px;
+  height: 15px
+  text-align: center;
+  line-height: 15px;
+  font-size:10px;
+  border-radius: 50%;
+`;
+
+const NotificationUnread = styled.span``;
+
+const NotificationRead = styled.span`
+  opacity: 0.4;
+`;
+
+const NotificationTime = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px;
+  font-weight: 700;
+  width: 100%;
+`;
+
+const NotificationObj = styled.div`
+  padding: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  width: 100%;
+`;
+
+const NotificationTitle = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+`;
+
 export default function CommonLayout() {
   /* 새로고침 마다 getSession 해서 로그인 체크 */
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -153,6 +216,9 @@ export default function CommonLayout() {
   const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
     loggedInUserProfileState
   );
+  const [notifications, setNotifications] = useState([]);
+  const [notificationError, setNotificationError] = useState(null);
+  const [showNotificationBox, setShowNotificationBox] = useState(false);
 
   async function checkLogin() {
     // 세션 정보를 가져옵니다.
@@ -171,7 +237,7 @@ export default function CommonLayout() {
         setLoggedInUser(user);
         const { data: userProfile, error: profileError } = await client
           .from("USER_PROFILE")
-          .select("*, SPORT(title, theme_color)")
+          .select("*")
           .eq("user_id", user.id);
 
         if (profileError) {
@@ -190,6 +256,23 @@ export default function CommonLayout() {
     checkLogin();
   }, []);
 
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      if (loggedInUser) {
+        const { data, error } = await client
+          .from("NOTIFICATION")
+          .select("*")
+          .eq("user_id", loggedInUser.id);
+        if (error) {
+          setNotificationError("알림을 가져오는 중 오류가 발생했습니다.");
+        } else {
+          setNotifications(data);
+        }
+      }
+    };
+    fetchNotifications();
+  }, [loggedInUser]);
+
   const navigate = useNavigate();
 
   /* logout */
@@ -204,6 +287,131 @@ export default function CommonLayout() {
     navigate("/");
     console.log("로그아웃 되었습니다.");
     navigate("/");
+  };
+
+  const Notification = () => {
+    const monthsAgo = notifications.filter(
+      (n) =>
+        new Date() - new Date(n.created_at) > 1000 * 60 * 60 * 24 * 30 &&
+        new Date() - new Date(n.created_at) < 1000 * 60 * 60 * 24 * 365
+    );
+
+    const weeksAgo = notifications.filter(
+      (n) =>
+        new Date() - new Date(n.created_at) > 1000 * 60 * 60 * 24 * 7 &&
+        new Date() - new Date(n.created_at) < 1000 * 60 * 60 * 24 * 30
+    );
+
+    const daysAgo = notifications.filter(
+      (n) =>
+        new Date() - new Date(n.created_at) > 1000 * 60 * 60 * 24 &&
+        new Date() - new Date(n.created_at) < 1000 * 60 * 60 * 24 * 7
+    );
+
+    const today = notifications.filter(
+      (n) => new Date() - new Date(n.created_at) < 1000 * 60 * 60 * 24
+    );
+
+    const notificationMapping = (notification) => {
+      return (
+        <NotificationObj key={notification.id}>
+          <StyledLink
+            to={
+              notification.post_id
+                ? `/community/${notification.post_id}`
+                : `/matching/${notification.matching_id}`
+            }
+            onClick={async () => {
+              if (notification.is_read) return;
+              const { error } = await client
+                .from("NOTIFICATION")
+                .update({ is_read: true })
+                .eq("id", notification.id);
+              if (error) {
+                console.error("Error updating notification:", error);
+              }
+              notification.is_read = true;
+              setNotifications([...notifications]);
+            }}
+          >
+            {notification.is_read ? (
+              <NotificationRead>
+                {notification.content}
+                <NotificationTitle>{notification.title}</NotificationTitle>
+              </NotificationRead>
+            ) : (
+              <NotificationUnread>
+                {notification.content}
+                <NotificationTitle>{notification.title}</NotificationTitle>
+              </NotificationUnread>
+            )}
+          </StyledLink>
+        </NotificationObj>
+      );
+    };
+
+    if (!showNotificationBox) return null;
+    if (notificationError) {
+      return (
+        <NotificationBox>
+          <NotificationObj>{notificationError}</NotificationObj>
+        </NotificationBox>
+      );
+    }
+    if (notifications.length > 0) {
+      return (
+        <NotificationBox>
+          {today.length > 0 && (
+            <>
+              <NotificationTime>오늘</NotificationTime>
+              {today.map((notification) => notificationMapping(notification))}
+            </>
+          )}
+          {daysAgo.length > 0 && (
+            <>
+              <NotificationTime>이번 주</NotificationTime>
+              {daysAgo.map((notification) => notificationMapping(notification))}
+            </>
+          )}
+          {weeksAgo.length > 0 && (
+            <>
+              <NotificationTime>이번 달</NotificationTime>
+              {weeksAgo.map((notification) =>
+                notificationMapping(notification)
+              )}
+            </>
+          )}
+          {monthsAgo.length > 0 && (
+            <>
+              <NotificationTime>올해</NotificationTime>
+              {monthsAgo.map((notification) =>
+                notificationMapping(notification)
+              )}
+            </>
+          )}
+        </NotificationBox>
+      );
+    } else {
+      return (
+        <NotificationBox>
+          <NotificationObj>알림이 없습니다.</NotificationObj>
+        </NotificationBox>
+      );
+    }
+  };
+
+  const NotificationCounter = () => {
+    if (
+      notificationError ||
+      notifications.filter((n) => !n.is_read).length === 0
+    )
+      return null;
+
+    return (
+      <NotificationCount>
+        {notifications.filter((n) => !n.is_read).length}
+      </NotificationCount>
+    );
   };
 
   /* index나 sorts 페이지일때 fixed */
@@ -229,10 +437,13 @@ export default function CommonLayout() {
             <SearchInput type="text" />
             <SearchButton />
           </Search>
-          <Alarm />
+          <Alarm onClick={() => setShowNotificationBox(!showNotificationBox)}>
+            <NotificationCounter />
+            <Notification />
+          </Alarm>
           {loggedInUser && loggedInUserProfile ? (
             <StyledLink to={"/mypage/" + loggedInUserProfile.id}>
-              <ProfileImage src="/img/ellipse-13@2x.png" />
+              <ProfileImage src={loggedInUserProfile.avatar_url} />
             </StyledLink>
           ) : null}
         </Sign>
