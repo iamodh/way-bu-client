@@ -8,15 +8,15 @@ import { loggedInUserState } from "../../../atom";
 import { ModalWrapper, ModalContent, CloseButton } from "./MatchingLayout";
 
 const MatchingTop = styled.div`
-  flex: 1; // 너비가 변할 때 동일한 비율 적용
+  margin-top: 7px;
+  flex: 1;
   background-color: var(--color-skyblue-background);
   display: flex;
   justify-content: center;
   flex-direction: column;
   padding: var(--padding-45xl);
   padding-top: var(--padding-xs);
-  box-sizing: border-box; // border까지 포함
-
+  box-sizing: border-box;
   @media screen and (max-width: 750px) {
     padding-left: var(--padding-13xl);
     padding-right: var(--padding-13xl);
@@ -91,7 +91,7 @@ const P = styled.div`
   flex-direction: row;
   font-size: var(--font-size-m);
   font-weight: bold;
-  background-color: var(--color-skyblue-main);
+  /* background-color: var(--color-skyblue-main); */
   overflow: hidden;
   text-overflow: ellipsis;	
   white-space: nowrap;
@@ -122,28 +122,18 @@ const MainContent = () => {
 
   useEffect(() => {
     getMatchings();
-  }, []);
-
-  useEffect(() => {
     getSports();
-  }, []);
-
-  useEffect(() => {
     getBeach();
   }, []);
 
   async function getMatchings() {
     const { data, error } = await client
       .from("MATCHING")
-      .select(`id, title, matching_time, difficulty, location, required, total_people, matching_date, views, sport_id, beach_id, host_userId, joining_users, necessity_details, necessity, created_at`);
-    if (error) {
-      console.log(error.message);
-      setIsLoading(false);
-      return;
-    }
+      .select(`*`);
     
+    // 날짜 지난 매칭 필터링
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // 시간을 00:00:00으로 설정하여 날짜만 비교
+    today.setHours(0, 0, 0, 0);
     const filteredMatchings = data.filter((matching) => {
       const matchingDate = new Date(matching.matching_date);
       return matchingDate >= today;
@@ -151,52 +141,41 @@ const MainContent = () => {
 
     // 조회수 기준 정렬
     const sortMatchings = filteredMatchings.sort((a, b) => b.views - a.views).slice(0, 5);
-    
     setMatchings(sortMatchings);
     setIsLoading(false);
   }
 
+  // 클릭시 조회수 1 증가
   async function updateMatchingViews(matching) {
     const { data, error } = await client
     .from("MATCHING")
     .update({views : matching.views+1})
     .eq("id", matching.id)
     .select();
-    if (error) {
-      console.log(error.message);
-      return;
-    }
+
     setMatchings((currentMatchings) => 
       currentMatchings.map((m) => (m.id === matching.id ? data[0] : m))
     );
     
   }
 
-  
+  // 호스트 이름 불러오기
   const getHostProfile = async (hostUserId) => {
-    try {
-      const { data, error } = await client
-        .from('USER_PROFILE')
-        .select('avatar_url, user_nickname')
-        .eq('user_id', hostUserId);
-      if (error) throw error;
-      return data[0];
-    } catch (error) {
-      console.error('Error fetching host profile:', error.message);
-      return null;
-    }
+    const { data, error } = await client
+      .from('USER_PROFILE')
+      .select('user_nickname')
+      .eq('user_id', hostUserId);
+
+    return data[0];
   };
 
   async function getSports(sportId) {
     const { data, error } = await client
       .from("SPORT")
       .select("id, title")
-      .eq("id", sportId); // sport_id와 일치하는 스포츠 정보 가져오기
-    if (error) {
-      console.log(error.message);
-      return null;
-    }
-    return data[0]; // 데이터는 배열로 오므로 첫 번째 요소 반환
+      .eq("id", sportId);
+
+    return data[0];
   }
 
   async function getBeach(beachId) {
@@ -204,16 +183,17 @@ const MainContent = () => {
       .from("BEACH")
       .select("beach_name")
       .eq("id", beachId);
-    if (error) {
-      console.log(error.message);
-      return null;
-    }
+
     return data[0];
   }
   
-  
-
   const openModal = async (matching) => {
+    //비로그인으로 클릭할 경우 로그인창
+    if (!loggedInUser) {
+      window.location.href = "/login";
+      return;
+    }
+
     const sport = await getSports(matching.sport_id);
     setSelectedSport(sport);
 
@@ -234,6 +214,7 @@ const MainContent = () => {
       setModalContent("MatchingWatch");
     }
 
+    //모달 제외 스크롤 X
     document.body.style.overflow = 'hidden';
   };
 
@@ -242,6 +223,7 @@ const MainContent = () => {
     setSelectedSport(null);
     setSelectedBeach(null);
     setHostProfile(null);
+    //스크롤 가능
     document.body.style.overflow = 'auto';
   };
 
@@ -258,7 +240,7 @@ const MainContent = () => {
           ) : (
             matchings.map((m) => (
               <HotMatchingBox onClick={() => {openModal(m), updateMatchingViews(m)}} key={m.id}>
-                <H>{m.title}</H>
+                <H>{m.title}</H><hr />
                 <P>위치: <Content>{m.location}</Content></P>
                 <P>날짜: <Content>{m.matching_date}</Content></P>
               </HotMatchingBox>

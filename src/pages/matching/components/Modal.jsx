@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import MatchingWrite from './MatchingWrite';
 import { ModalWrapper, ModalContent, CloseButton } from "./MatchingLayout";
+import { useRecoilState } from "recoil";
+import { loggedInUserState } from "../../../atom";
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -55,9 +57,16 @@ const StyledLink = styled(Link)`
 
 
 const Modal = () => {
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const [isOpen, setIsOpen] = useState(false);
 
-  const openModal = () => setIsOpen(true);
+  const openModal = () => {
+    if (!loggedInUser) {
+      window.location.href = "/login";
+      return;
+    }
+    setIsOpen(true);
+  }
   const closeModal = () => setIsOpen(false);
 
   if (isOpen) {
