@@ -2,12 +2,12 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 const Wrapper = styled(Link)`
+  max-width: 300px;
   width: 100%;
   height: 100%;
   @media screen and (max-width: 768px) {
     height: 160px;
   }
-  background-color: black;
 `;
 const Item = styled.li`
   display: flex;
@@ -16,12 +16,13 @@ const Item = styled.li`
   flex-direction: column;
   flex-wrap: wrap;
   padding: var(--padding-13xl) var(--padding-5xs);
+  min-width: 200px;
   height: 100%;
   margin: 0 var(--padding-9xs);
-
   background: var(--color-skyblue-background, #edf4f7);
   border-radius: var(--br-mini);
   @media screen and (max-width: 768px) {
+    min-width: 160px;
     border-radius: var(--br-8xs);
     padding: var(--padding-base) var(--padding-5xs);
   }
@@ -58,7 +59,6 @@ const Date = styled.div`
 export default function UserMatchingItem({ matching }) {
   let color = `var(--color-tag-${matching.SPORT.theme_color}-front)`;
   let bgcolor = `var(--color-tag-${matching.SPORT.theme_color}-back)`;
-
   return (
     <Wrapper to={"/matching/" + matching.id}>
       <Item>

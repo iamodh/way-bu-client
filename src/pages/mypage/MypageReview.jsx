@@ -111,23 +111,12 @@ export default function MypageReview() {
   /* 필요한 데이터 불러오기 */
   const { userPrograms, userReviews } = useOutletContext();
   const [filteredReviews, setFilteredReviews] = useState(userReviews);
-
-  /* 사용자가 작성한 리뷰만 필터링하기 */
-  useEffect(() => {
-    let newUserReviews = userReviews.filter(
-      (r) => loggedInUserProfile.id === r.writter
-    );
-    setFilteredReviews(newUserReviews);
-  }, [userReviews]);
-
-  /* Slider 커스텀 */
-  const settings = {
+  const [settings, setSettings] = useState({
     dots: true,
-    infinite: true,
+    infinite: 3 < userPrograms,
+    slidesToShow: Math.min(3, userPrograms.length),
+    slidesToScroll: Math.min(3, userPrograms.length),
     speed: 300,
-    slidesToShow: 3,
-    slidesToScroll: 3,
-    // 이때 SlickButtonFix로 화살표 이미지를 감싸지 않으면 경고가 발생
     nextArrow: (
       <SlickButtonFix>
         <NextArrow />
@@ -138,7 +127,15 @@ export default function MypageReview() {
         <PrevArrow />
       </SlickButtonFix>
     ),
-  };
+  });
+
+  /* 사용자가 작성한 리뷰만 필터링하기 */
+  useEffect(() => {
+    let newUserReviews = userReviews.filter(
+      (r) => loggedInUserProfile.id === r.writter
+    );
+    setFilteredReviews(newUserReviews);
+  }, [userReviews]);
 
   return (
     <MypageReviewWrapper>

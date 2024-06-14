@@ -197,6 +197,7 @@ export default function CommonLayout() {
     setLoggedInUserProfile(null);
     navigate("/");
     console.log("로그아웃 되었습니다.");
+    navigate("/");
   };
 
   /* index나 sorts 페이지일때 fixed */
