@@ -17,7 +17,9 @@ const YearMonth = styled.div`
   align-items: center;
   justify-content: center;
   text-align: center;
-  background-color: aliceblue;
+  background-color: var(--color-skyblue-background);
+  border-radius: var(--br-3xs);
+  padding: var(--padding-xs);
   margin: 0 20%;
   gap: var(--gap-3xs);
 `;
@@ -54,10 +56,13 @@ const DateButton = styled.button`
   padding: 15px 50px;
   width: 150px;
   height: 70px;
-  color: ${props => props.isSelected ? 'white' : 'var(--color-blue-main)'};
+  color: ${(props) => (props.isSelected ? "white" : "var(--color-blue-main)")};
   border-radius: 15px;
-  border: 1px ${props => props.isSelected ? 'transparent' : 'var(--color-blue-main)'} solid;
-  background-color: ${props => props.isSelected ? 'var(--color-blue-main)' : 'transparent'};
+  border: 1px
+    ${(props) => (props.isSelected ? "transparent" : "var(--color-blue-main)")}
+    solid;
+  background-color: ${(props) =>
+    props.isSelected ? "var(--color-blue-main)" : "transparent"};
   cursor: pointer;
   &:hover {
     background-color: var(--color-blue-light);
@@ -73,7 +78,8 @@ const DateButton = styled.button`
 
 const DayLabel = styled.div`
   font-size: var(--font-size-s);
-  color: ${props => props.isSunday ? 'red' : (props.isSaturday ? 'blue' : 'var(--color-navy)')};
+  color: ${(props) =>
+    props.isSunday ? "red" : props.isSaturday ? "blue" : "var(--color-navy)"};
   @media screen and (max-width: 376px) {
     margin-bottom: 10px;
   }
@@ -108,11 +114,11 @@ const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
 
 const Calendar = ({ onSelectDate }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [currentMonth, setCurrentMonth] = useState('');
+  const [currentMonth, setCurrentMonth] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
-    setCurrentMonth((currentDate.getMonth() + 1) + '월');
+    setCurrentMonth(currentDate.getMonth() + 1 + "월");
   }, [currentDate]);
 
   // 주단위로 날짜 설정
@@ -157,8 +163,10 @@ const Calendar = ({ onSelectDate }) => {
 
   // 날짜 선택
   const handleDateButtonClick = (date) => {
-    setSelectedDate(prevDate => prevDate && prevDate.getTime() === date.getTime() ? null : date);
-  };  
+    setSelectedDate((prevDate) =>
+      prevDate && prevDate.getTime() === date.getTime() ? null : date
+    );
+  };
 
   return (
     <CalendarContainer>
@@ -170,11 +178,16 @@ const Calendar = ({ onSelectDate }) => {
         {nextDays.map((date, index) => (
           <Day key={index}>
             <DateButton
-              isSelected={selectedDate && date.getTime() === selectedDate.getTime()}
+              isSelected={
+                selectedDate && date.getTime() === selectedDate.getTime()
+              }
               onClick={() => handleDateButtonClick(date)}
             >
               {date.getDate()}
-              <DayLabel isSunday={date.getDay() === 0} isSaturday={date.getDay() === 6}>
+              <DayLabel
+                isSunday={date.getDay() === 0}
+                isSaturday={date.getDay() === 6}
+              >
                 {daysOfWeek[date.getDay()]}
               </DayLabel>
             </DateButton>
@@ -182,8 +195,15 @@ const Calendar = ({ onSelectDate }) => {
         ))}
       </DayContainer>
       <ButtonContainer>
-        <button onClick={() => changeWeek(-1)} disabled={previousWeekDisabled()}>이전</button>
-        <button onClick={() => changeWeek(1)} disabled={nextWeekDisabled()}>다음</button>
+        <button
+          onClick={() => changeWeek(-1)}
+          disabled={previousWeekDisabled()}
+        >
+          이전
+        </button>
+        <button onClick={() => changeWeek(1)} disabled={nextWeekDisabled()}>
+          다음
+        </button>
       </ButtonContainer>
     </CalendarContainer>
   );

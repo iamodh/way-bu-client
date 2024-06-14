@@ -50,7 +50,7 @@ const WaveBack = styled.svg`
 `;
 
 const AnimatedWaveBack = styled.path`
-  fill: #6fcbf4;
+  fill: #a1dbf1;
 `;
 
 const waveFrontAnimation = keyframes`
@@ -68,11 +68,12 @@ const WaveFront = styled.svg`
 `;
 
 const AnimatedWaveFront = styled.path`
-  fill: #a1dbf1;
+  fill: #6fcbf4;
 `;
 
 const Wrapper = styled.div`
   overflow-y: hidden;
+  font-family: "Pretendard-regular";
 `;
 
 const Header = styled.svg`
@@ -116,6 +117,7 @@ const Outer = styled.div`
 `;
 
 const Inner = styled(motion.div)`
+  position: relative;
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -127,7 +129,7 @@ const Inner = styled(motion.div)`
     background-image: url("/img/index/beach.png");
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: bottom;
+    background-position: top;
     /* background-color: var(--color-blue-main); */
     display: flex;
     flex-direction: column;
@@ -190,11 +192,22 @@ const Dots = styled.div`
 const IntroTitle = styled.h3`
   font-size: var(--font-size-xxl);
   font-weight: 700;
+  margin-to: 20px;
 `;
 
 const IntroBox = styled(motion.div)`
   display: flex;
   gap: 32px;
+`;
+
+const WeatherBox = styled(motion.div)`
+  width: 240px;
+  height: 120px;
+  position: absolute;
+  right: 5%;
+  bottom: 10%;
+  background-image: url("/img/index/weather.png");
+  background-size: cover;
 `;
 
 const IntroItem = styled(motion.div)`
@@ -206,6 +219,8 @@ const IntroItem = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: var(--font-size-xl);
+  font-family: "Pretendard-regular";
 `;
 
 /* Beaches */
@@ -404,6 +419,7 @@ export default function Home() {
               <IntroItem variants={introVariants}>비교하기</IntroItem>
             </Link>
           </IntroBox>
+          <WeatherBox />
         </Inner>
         <Divider className="second" />
         <Inner
@@ -417,7 +433,7 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "30%", left: "5%" }}
             >
-              <img src="img/beaches/songjung.png" />
+              <img src="img/beaches/songjung.png" width={"120px"} />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=일광해수욕장"}>
@@ -425,7 +441,7 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "50%", left: "20%" }}
             >
-              <img src="img/beaches/ilgwang.png" />
+              <img src="img/beaches/ilgwang.png" width={"120px"} />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=임랑해수욕장"}>
@@ -433,7 +449,7 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "20%", left: "35%" }}
             >
-              <img src="img/beaches/imrang.png" />
+              <img src="img/beaches/imrang.png" width={"120px"} />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=다대포해수욕장"}>
@@ -441,7 +457,7 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "70%", left: "45%" }}
             >
-              <img src="img/beaches/dadaepo.png" />
+              <img src="img/beaches/dadaepo.png" width={"120px"} />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=송도해수욕장"}>
@@ -449,7 +465,7 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "40%", left: "60%" }}
             >
-              <img src="img/beaches/songdo.png" />
+              <img src="img/beaches/songdo.png" width={"120px"} />
             </BeachIcon>
           </Link>
 
@@ -458,7 +474,7 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "30%", left: "85%" }}
             >
-              <img src="img/beaches/haeundae.png" />
+              <img src="img/beaches/haeundae.png" width={"120px"} />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=광안리해수욕장"}>
@@ -466,7 +482,7 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "60%", left: "75%" }}
             >
-              <img src="img/beaches/gwanganli.png" />
+              <img src="img/beaches/gwanganli.png" width={"120px"} />
             </BeachIcon>
           </Link>
         </Inner>

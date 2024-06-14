@@ -8,15 +8,16 @@ import { loggedInUserState } from "../../../atom";
 import { ModalWrapper, ModalContent, CloseButton } from "./MatchingLayout";
 
 const MatchingTop = styled.div`
-  margin-top: 7px;
   flex: 1;
-  background-color: var(--color-skyblue-background);
+  background: url("/img/index/sand.png") no-repeat;
+  background-size: cover;
   display: flex;
   justify-content: center;
   flex-direction: column;
   padding: var(--padding-45xl);
   padding-top: var(--padding-xs);
   box-sizing: border-box;
+  z-index: -1;
   @media screen and (max-width: 750px) {
     padding-left: var(--padding-13xl);
     padding-right: var(--padding-13xl);
@@ -74,10 +75,11 @@ const MainContentRoot = styled.section`
 `;
 const H = styled.div`
   padding: 30px;
-  font-size: var(--font-size-xxl);
+  font-size: var(--font-size-xl);
+  color: var(--color-blue-main);
   font-weight: bold;
-  overflow: hidden; 
-  text-overflow: ellipsis; 
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
   @media screen and (max-width: 376px) {
     font-size: var(--font-size-xl);
@@ -86,14 +88,14 @@ const H = styled.div`
 `;
 
 const P = styled.div`
-  padding: 5px 30px ;
+  padding: 5px 30px;
   display: flex;
   flex-direction: row;
   font-size: var(--font-size-m);
   font-weight: bold;
   /* background-color: var(--color-skyblue-main); */
   overflow: hidden;
-  text-overflow: ellipsis;	
+  text-overflow: ellipsis;
   white-space: nowrap;
   @media screen and (max-width: 376px) {
     font-size: var(--font-size-s);
@@ -103,12 +105,11 @@ const P = styled.div`
 
 const Content = styled.div`
   overflow: hidden;
-  text-overflow: ellipsis;    
+  text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight:bold;
+  font-weight: bold;
   padding-left: 5px;
 `;
-
 
 const MainContent = () => {
   const [matchings, setMatchings] = useState([]);
@@ -127,10 +128,8 @@ const MainContent = () => {
   }, []);
 
   async function getMatchings() {
-    const { data, error } = await client
-      .from("MATCHING")
-      .select(`*`);
-    
+    const { data, error } = await client.from("MATCHING").select(`*`);
+
     // 날짜 지난 매칭 필터링
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -140,7 +139,9 @@ const MainContent = () => {
     });
 
     // 조회수 기준 정렬
-    const sortMatchings = filteredMatchings.sort((a, b) => b.views - a.views).slice(0, 5);
+    const sortMatchings = filteredMatchings
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 5);
     setMatchings(sortMatchings);
     setIsLoading(false);
   }
@@ -148,23 +149,22 @@ const MainContent = () => {
   // 클릭시 조회수 1 증가
   async function updateMatchingViews(matching) {
     const { data, error } = await client
-    .from("MATCHING")
-    .update({views : matching.views+1})
-    .eq("id", matching.id)
-    .select();
+      .from("MATCHING")
+      .update({ views: matching.views + 1 })
+      .eq("id", matching.id)
+      .select();
 
-    setMatchings((currentMatchings) => 
+    setMatchings((currentMatchings) =>
       currentMatchings.map((m) => (m.id === matching.id ? data[0] : m))
     );
-    
   }
 
   // 호스트 이름 불러오기
   const getHostProfile = async (hostUserId) => {
     const { data, error } = await client
-      .from('USER_PROFILE')
-      .select('user_nickname')
-      .eq('user_id', hostUserId);
+      .from("USER_PROFILE")
+      .select("user_nickname")
+      .eq("user_id", hostUserId);
 
     return data[0];
   };
@@ -186,7 +186,7 @@ const MainContent = () => {
 
     return data[0];
   }
-  
+
   const openModal = async (matching) => {
     //비로그인으로 클릭할 경우 로그인창
     if (!loggedInUser) {
@@ -206,16 +206,19 @@ const MainContent = () => {
 
     const isHostUser = matching.host_userId === loggedInUser.id;
 
-    if (matching.joining_users && matching.joining_users.includes(loggedInUser.id)) {
+    if (
+      matching.joining_users &&
+      matching.joining_users.includes(loggedInUser.id)
+    ) {
       setModalContent("MatchingApply");
     } else if (isHostUser) {
-      setModalContent("MatchingApply")
+      setModalContent("MatchingApply");
     } else {
       setModalContent("MatchingWatch");
     }
 
     //모달 제외 스크롤 X
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
   };
 
   const closeModal = () => {
@@ -224,37 +227,52 @@ const MainContent = () => {
     setSelectedBeach(null);
     setHostProfile(null);
     //스크롤 가능
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = "auto";
   };
-
 
   return (
     <MainContentRoot>
       <MatchingTop>
-        <HotMatchingText>
-          🔥 핫한 매칭 TOP 5 🔥
-        </HotMatchingText>
+        <HotMatchingText>🔥 핫한 매칭 TOP 5 🔥</HotMatchingText>
         <HotMatching>
-          {isLoading ? (
-            "Loading..."
-          ) : (
-            matchings.map((m) => (
-              <HotMatchingBox onClick={() => {openModal(m), updateMatchingViews(m)}} key={m.id}>
-                <H>{m.title}</H><hr />
-                <P>위치: <Content>{m.location}</Content></P>
-                <P>날짜: <Content>{m.matching_date}</Content></P>
-              </HotMatchingBox>
-            ))
-          )}
+          {isLoading
+            ? "Loading..."
+            : matchings.map((m) => (
+                <HotMatchingBox
+                  onClick={() => {
+                    openModal(m), updateMatchingViews(m);
+                  }}
+                  key={m.id}
+                >
+                  <H>{m.title}</H>
+                  <hr />
+                  <P>
+                    위치: <Content>{m.location}</Content>
+                  </P>
+                  <P>
+                    날짜: <Content>{m.matching_date}</Content>
+                  </P>
+                </HotMatchingBox>
+              ))}
           {selectedMatching && (
             <ModalWrapper onClick={closeModal}>
               <ModalContent onClick={(e) => e.stopPropagation()}>
                 <CloseButton onClick={closeModal}>&times;</CloseButton>
                 {modalContent === "MatchingApply" && (
-                  <MatchingApply matching={selectedMatching} sport={selectedSport} beach={selectedBeach} hostProfile={hostProfile} />
+                  <MatchingApply
+                    matching={selectedMatching}
+                    sport={selectedSport}
+                    beach={selectedBeach}
+                    hostProfile={hostProfile}
+                  />
                 )}
                 {modalContent !== "MatchingApply" && (
-                  <MatchingWatch matching={selectedMatching} sport={selectedSport} beach={selectedBeach} hostProfile={hostProfile} />
+                  <MatchingWatch
+                    matching={selectedMatching}
+                    sport={selectedSport}
+                    beach={selectedBeach}
+                    hostProfile={hostProfile}
+                  />
                 )}
               </ModalContent>
             </ModalWrapper>
