@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import SportsTag from "./components/SportsTag";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  margin-bottom: 100px;
+`;
 
 const Main = styled.div`
   max-width: 720px;

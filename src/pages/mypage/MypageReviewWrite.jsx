@@ -44,13 +44,14 @@ const ProgramBox = styled.div`
   border-radius: var(--br-mini);
   background-color: var(--color-skyblue-background);
 `;
-const BlueText = styled.div`
+const BlueText = styled.span`
   color: var(--color-blue-main);
-  font-size: var(--font-size-m);
+  font-size: var(--font-size-l);
   font-weight: bold;
+  margin: var(--padding-5xs) 0;
 `;
-const ProgramName = styled.div`
-  /* font-size: var(--font-size-m); */
+const ProgramName = styled.span`
+  font-size: var(--font-size-l);
   font-weight: bold;
 `;
 const InputBox = styled.div`
@@ -83,7 +84,7 @@ const Textarea = styled.textarea`
   border-radius: var(--br-8xs);
   margin: 0;
 `;
-const Button = styled.div`
+const Button = styled.button`
   cursor: pointer;
   border: none;
   width: 160px;
@@ -123,7 +124,6 @@ export default function MypageReviewWrite() {
   const handleRating = (rate) => {
     setRating(rate);
   };
-  const onPointerEnter = () => {};
 
   /* 후기 작성하기 */
   const {
@@ -134,6 +134,7 @@ export default function MypageReviewWrite() {
   } = useForm();
 
   const addReview = async (formData) => {
+    console.log(formData);
     const { data, error } = await client
       .from("PROGRAM_REVIEW")
       .insert([
@@ -160,7 +161,6 @@ export default function MypageReviewWrite() {
     <Wrapper onSubmit={handleSubmit(addReview)}>
       <Title>후기 작성하기</Title>
       <ProgramBox>
-        <BlueText>프로그램 정보</BlueText>
         <ProgramName>{program.program_name}</ProgramName>
         <Div>업체 : {program.BUSINESS.business_name}</Div>
         <Div>가격 : {program.price}원</Div>
@@ -184,6 +184,7 @@ export default function MypageReviewWrite() {
               required: "내용을 입력해 주세요.",
             })}
             id="content"
+            placeholder="내용을 입력해 주세요."
           ></Textarea>
         </TextBox>
       </InputBox>
