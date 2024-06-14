@@ -11,15 +11,21 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useEffect, useState } from "react";
 
+const Wrapper = styled.div`
+  font-family: "Pretendard-regular";
+`;
+
 const Header = styled.header`
   display: flex;
   flex-direction: column;
   font-family: "Pretendard-regular";
   background-color: var(--color-white);
-  box-shadow: 0px 5px 10px 0px lightgray;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.1);
   position: ${(props) => (props.$fixed ? "fixed" : "block")};
   width: ${(props) => (props.$fixed ? "100%" : "auto")};
   z-index: 10;
+  font-size: var(--font-size-l);
+  padding-bottom: var(--padding-xs);
 `;
 const Sign = styled.div`
   grid-row-start: 1;
@@ -197,6 +203,7 @@ export default function CommonLayout() {
     setLoggedInUserProfile(null);
     navigate("/");
     console.log("로그아웃 되었습니다.");
+    navigate("/");
   };
 
   /* index나 sorts 페이지일때 fixed */
@@ -204,7 +211,7 @@ export default function CommonLayout() {
   const fixed = location.pathname === "/";
   console.log(fixed);
   return (
-    <>
+    <Wrapper>
       <Header $fixed={fixed}>
         <Sign>
           <StyledLink to={"/"}>
@@ -260,6 +267,6 @@ export default function CommonLayout() {
           <span style={{ fontWeight: 700 }}>제휴·광고 문의</span>
         </FooterText>
       </Footer>
-    </>
+    </Wrapper>
   );
 }
