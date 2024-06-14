@@ -48,6 +48,8 @@ const UserMatchingArea = styled.div`
 const UserMatchingList = styled(Slider)`
   width: 80%;
   display: flex;
+  flex-direction: row;
+  justify-content: center;
 `;
 const SlickButtonFix = ({ currentSlide, slideCount, children, ...props }) => (
   <span {...props}>{children}</span>
@@ -135,6 +137,23 @@ export default function MypageMatching() {
   const { userMatchings, userProfiles } = useOutletContext();
   const [filteredMatchings, setFilteredMatchings] = useState();
   const [filteredDoneMatchings, setFilteredDoneMatchings] = useState();
+  const [settings, setSettings] = useState({
+    dots: true,
+    infinite: true,
+    slidesToShow: 3,
+    slidesToScroll: 3,
+    speed: 300,
+    nextArrow: (
+      <SlickButtonFix>
+        <NextArrow />
+      </SlickButtonFix>
+    ),
+    prevArrow: (
+      <SlickButtonFix>
+        <PrevArrow />
+      </SlickButtonFix>
+    ),
+  });
 
   /* 사용자가 참여한 매칭만 필터링하기 */
   useEffect(() => {
@@ -153,36 +172,25 @@ export default function MypageMatching() {
       );
       setFilteredMatchings(newUserMatchings);
       setFilteredDoneMatchings(newUserDoneMatchings);
+
+      // settings 객체 업데이트
+      setSettings((prevSettings) => ({
+        ...prevSettings,
+        infinite: 3 < newUserMatchings.length,
+        slidesToShow: Math.min(3, newUserMatchings.length),
+        slidesToScroll: Math.min(3, newUserMatchings.length),
+      }));
     }
   }, [userMatchings]);
 
-  /* Slider 커스텀 */
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 300,
-    slidesToShow: 3,
-    slidesToScroll: 3,
-    // 이때 SlickButtonFix로 화살표 이미지를 감싸지 않으면 경고가 발생
-    nextArrow: (
-      <SlickButtonFix>
-        <NextArrow />
-      </SlickButtonFix>
-    ),
-    prevArrow: (
-      <SlickButtonFix>
-        <PrevArrow />
-      </SlickButtonFix>
-    ),
-  };
   return (
     <MypageMatchingWrapper>
       <Title>진행 중인 매칭</Title>
-
       {filteredMatchings && filteredMatchings.length ? (
         <UserMatchingArea>
           <UserMatchingList {...settings}>
             {filteredMatchings.map((matching) => {
+              console.log("num", settings.slidesToShow);
               return (
                 <UserMatchingItem
                   key={"matching" + matching.id}

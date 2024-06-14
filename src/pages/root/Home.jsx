@@ -93,8 +93,9 @@ const headerAnimation = keyframes`
 0%{
   fill: none;
 }
-  50% { stroke-dashoffset: 0;
-    fill: none;}
+  50% { stroke-dashoffset: 0;}
+  80% {
+    fill: var(--color-blue-main);}
   100% {
     fill: var(--color-blue-main);}
 `;
