@@ -60,7 +60,7 @@ export default function UserMatchingItem({ matching }) {
   let color = `var(--color-tag-${matching.SPORT.theme_color}-front)`;
   let bgcolor = `var(--color-tag-${matching.SPORT.theme_color}-back)`;
   return (
-    <Wrapper to={"/matching/" + matching.id}>
+    <Wrapper to={"/matching"}>
       <Item>
         <Tag color={color} bgcolor={bgcolor}>
           {matching.SPORT.title}
