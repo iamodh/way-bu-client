@@ -1,6 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { client } from "../../../libs/supabase";
 import {
   SportsWrapper,
@@ -166,13 +166,15 @@ export default function Sports() {
   const [isBalloonVisible, setIsBalloonVisible] = useState(true);
   const [balloonPosition, setBalloonPosition] = useState({ top: 0, left: 0 });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsBalloonVisible((prev) => !prev);
-    }, 10000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setIsBalloonVisible((prev) => !prev);
+  //   }, 10000);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
+
+  // 벌룬이 뭔지 모르겠는데 자꾸 마우스가 움직일 때 마다 벌룬 포지션을 조정하면서 페이지 렌더링이 자꾸 일어나서 일단 주석 처리 해놨어요 - 정환
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -180,10 +182,10 @@ export default function Sports() {
         const boogieRect = boogieRef.current.getBoundingClientRect();
         const offsetX = boogieRect.width / 2;
         const offsetY = boogieRect.height / 2;
-        setBalloonPosition({
-          top: boogieRect.top + window.scrollY - offsetY,
-          left: boogieRect.left + window.scrollX - offsetX,
-        });
+        // setBalloonPosition({
+        //   top: boogieRect.top + window.scrollY - offsetY,
+        //   left: boogieRect.left + window.scrollX - offsetX,
+        // });
       }
     };
 
@@ -317,14 +319,7 @@ export default function Sports() {
           ref: (el) => (sportsRef.current[i] = el),
         });
       })}
-<<<<<<< HEAD
-=======
-
-      <Slides>
-        <Slide>{selectedSport}</Slide>
-      </Slides>
       <Seashade src="public/img/sport_items/seashade.png" />
->>>>>>> origin/main
       <Boogie
         ref={boogieRef}
         style={{ width: "180px", height: "210px" }}
@@ -336,17 +331,6 @@ export default function Sports() {
         whileDrag={{ scale: 1.2 }}
         onDragStart={handleDragStart}
         onDragEnd={onDragEnd}
-<<<<<<< HEAD
-      ></Boogie>
-      <Slides>
-        <Slide>{selectedSport}</Slide>
-      </Slides>
-      {selectedSport && (
-        <>
-          <SportsInfo /> <ModalCover />
-        </>
-      )}
-=======
         onClick={handleBoogieClick} // boogie 클릭 시 이벤트 핸들러 추가
       />
       <Balloon
@@ -359,7 +343,14 @@ export default function Sports() {
         <span>Drag me!</span>
       </Balloon>
       {isHandVisible && <Hand src="/img/sport_items/hand.png" />}
->>>>>>> origin/main
+      {/* <Slides>
+        <Slide>{selectedSport}</Slide>
+      </Slides> */}
+      {selectedSport && (
+        <>
+          <SportsInfo /> <ModalCover />
+        </>
+      )}
     </Wrapper>
   );
 }
