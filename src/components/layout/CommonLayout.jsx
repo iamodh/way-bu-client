@@ -195,6 +195,7 @@ export default function CommonLayout() {
     }
     setLoggedInUser(null);
     setLoggedInUserProfile(null);
+    navigate("/");
     console.log("로그아웃 되었습니다.");
     navigate("/");
   };

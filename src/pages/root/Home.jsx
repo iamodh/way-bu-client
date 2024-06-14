@@ -124,14 +124,23 @@ const Inner = styled(motion.div)`
     background-color: var(--color-white);
   }
   &.second {
-    background-color: var(--color-blue-main);
+    background-image: url("/img/index/beach.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: bottom;
+    /* background-color: var(--color-blue-main); */
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 32px;
   }
   &.third {
-    background-color: var(--color-sand-main);
+    /* background-color: var(--color-sand-main); */
+    background-image: url("/img/index/sand.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: bottom;
+    position: relative;
   }
 `;
 
@@ -140,7 +149,7 @@ const Divider = styled.div`
   height: 5px;
 
   &.first {
-    background-color: var(--color-blue-main);
+    background-color: var(--color-blue-bright);
   }
   &.second {
     background-color: var(--color-sand-main);
@@ -201,7 +210,9 @@ const IntroItem = styled(motion.div)`
 
 /* Beaches */
 
-const BeachIcon = styled(motion.div)``;
+const BeachIcon = styled(motion.div)`
+  position: absolute;
+`;
 
 export default function Home() {
   // useRef를 사용해 Outer의 DOM (current)에 접근
@@ -402,38 +413,59 @@ export default function Home() {
           animate={currentPage === 3 ? "visible" : "hidden"}
         >
           <Link to={"program?beach=송정해수욕장"}>
-            <BeachIcon variants={beachVariants}>
+            <BeachIcon
+              variants={beachVariants}
+              style={{ top: "30%", left: "5%" }}
+            >
               <img src="img/beaches/songjung.png" />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=일광해수욕장"}>
-            <BeachIcon variants={beachVariants}>
+            <BeachIcon
+              variants={beachVariants}
+              style={{ top: "50%", left: "20%" }}
+            >
               <img src="img/beaches/ilgwang.png" />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=임랑해수욕장"}>
-            <BeachIcon variants={beachVariants}>
+            <BeachIcon
+              variants={beachVariants}
+              style={{ top: "20%", left: "35%" }}
+            >
               <img src="img/beaches/imrang.png" />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=다대포해수욕장"}>
-            <BeachIcon variants={beachVariants}>
+            <BeachIcon
+              variants={beachVariants}
+              style={{ top: "70%", left: "45%" }}
+            >
               <img src="img/beaches/dadaepo.png" />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=송도해수욕장"}>
-            <BeachIcon variants={beachVariants}>
+            <BeachIcon
+              variants={beachVariants}
+              style={{ top: "40%", left: "60%" }}
+            >
               <img src="img/beaches/songdo.png" />
             </BeachIcon>
           </Link>
 
           <Link to={"program?beach=해운대해수욕장"}>
-            <BeachIcon variants={beachVariants}>
+            <BeachIcon
+              variants={beachVariants}
+              style={{ top: "30%", left: "85%" }}
+            >
               <img src="img/beaches/haeundae.png" />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=광안리해수욕장"}>
-            <BeachIcon variants={beachVariants}>
+            <BeachIcon
+              variants={beachVariants}
+              style={{ top: "60%", left: "75%" }}
+            >
               <img src="img/beaches/gwanganli.png" />
             </BeachIcon>
           </Link>
