@@ -244,7 +244,6 @@ export default function CommonLayout() {
           console.error("Error fetching user profile:", profileError);
         } else {
           setLoggedInUserProfile(userProfile[0]);
-          console.log("User profile:", userProfile[0]);
         }
       }
     } else {
@@ -279,13 +278,11 @@ export default function CommonLayout() {
   const handleLogout = async () => {
     const { error } = await client.auth.signOut();
     if (error) {
-      console.log(error.message);
+      console.error(error);
       return;
     }
     setLoggedInUser(null);
     setLoggedInUserProfile(null);
-    navigate("/");
-    console.log("로그아웃 되었습니다.");
     navigate("/");
   };
 
@@ -417,7 +414,6 @@ export default function CommonLayout() {
   /* index나 sorts 페이지일때 fixed */
   const location = useLocation();
   const fixed = location.pathname === "/";
-  console.log(fixed);
   return (
     <Wrapper>
       <Header $fixed={fixed}>

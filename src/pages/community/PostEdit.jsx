@@ -52,7 +52,6 @@ export default function PostEdit() {
     }
     setPostInfo(data);
     setFormValues(data);
-    console.log(data);
   };
 
   useEffect(() => {
@@ -77,7 +76,6 @@ export default function PostEdit() {
       console.error(error);
       return;
     }
-    console.log("작성완료", data);
     navigate(`/community/${data[0].post_id}`);
   };
 

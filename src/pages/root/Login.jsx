@@ -177,7 +177,6 @@ export default function Login() {
     }
     setLoggedInUser(data.session.user);
     checkLogin();
-    console.log("로그인 정보", data.session.user);
 
     const rememberMe = () => formData.rememberMe;
 
@@ -193,7 +192,7 @@ export default function Login() {
         redirectTo: "http://localhost:5173/login",
       },
     });
-    if (error) console.log(error);
+    if (error) console.error(error);
   }
 
   async function kakaoLogin() {
@@ -230,7 +229,6 @@ export default function Login() {
           console.error("Error fetching user profile:", profileError);
         } else {
           setLoggedInUserProfile(userProfile[0]);
-          console.log("User profile:", userProfile[0]);
         }
       }
     } else {
@@ -248,7 +246,6 @@ export default function Login() {
   const uploadFile = async () => {
     // db에 avatar 이미지 파일을 저장
     if (!avatarFile) {
-      console.log("no file exist");
       return;
     }
     const filePath = `${loggedInUser.id}-${new Date().getTime()}`;
@@ -268,7 +265,6 @@ export default function Login() {
         console.error("Error deleting file:", deleteError);
         return;
       }
-      console.log("File deleted successfully:", deleteData);
     }
 
     const { data, error } = await client.storage
@@ -283,10 +279,7 @@ export default function Login() {
 
     updateUserAvatar(publicUrl);
     if (error) {
-      console.log(error);
-    } else {
-      console.log(data);
-      console.log("file uploaded");
+      console.error(error);
     }
   };
 
@@ -300,16 +293,12 @@ export default function Login() {
     if (error) {
       console.log(error);
     } else {
-      console.log(data);
-      console.log("avatar url is changed");
-
       setLoggedInUserProfile(data);
     }
   };
 
   const handleImage = (e) => {
     //선택한 파일 정보를 저장
-    console.log(e.target.files[0]);
     setAvatarFile(e.target.files[0]);
   };
 
@@ -323,8 +312,6 @@ export default function Login() {
         .insert([{ email, password }]);
       if (error) {
         console.error("Error saving credentials:", error.message);
-      } else {
-        console.log("Credentials saved successfully:", data);
       }
     } catch (error) {
       console.error("Error saving credentials:", error.message);

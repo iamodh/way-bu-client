@@ -100,7 +100,6 @@ export default function Post() {
   };
 
   const onCommentSubmit = async (formData) => {
-    console.log(loggedInUserProfile);
     const { comment } = formData;
     try {
       const { data, commentError } = await client.from("COMMENT").insert([
@@ -205,7 +204,6 @@ export default function Post() {
       console.error(error.message);
       return;
     }
-    console.log(data, "게시글 삭제 완료");
     window.history.back();
   };
 

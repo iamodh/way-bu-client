@@ -315,7 +315,6 @@ export default function Sports() {
         return;
       }
       setSportsInfo(data);
-      console.log(data);
     };
 
     useEffect(() => {

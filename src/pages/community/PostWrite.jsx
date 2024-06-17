@@ -47,7 +47,6 @@ export default function PostWrite() {
       console.error(error);
       return;
     }
-    console.log("작성완료", data);
     navigate(`/community/${data[0].post_id}`);
   };
 
