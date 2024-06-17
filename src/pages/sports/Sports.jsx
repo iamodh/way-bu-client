@@ -2,17 +2,6 @@ import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { client } from "../../../libs/supabase";
-import {
-  SportsWrapper,
-  SportsContainer,
-  SportsTitle,
-  InfoImage,
-  InfoBox,
-  InfoName,
-  InfoContent,
-  ModalCover,
-  SportsBtn,
-} from "./components/SportsLayout";
 
 const Wrapper = styled.div`
   position: relative;
@@ -31,25 +20,25 @@ const Background = styled.div`
   z-index: -100;
 `;
 
-const Slides = styled.div``;
+// const Slides = styled.div``;
 
-const Slide = styled.div`
-  width: 300px;
-  height: 400px;
-  background-color: var(--color-white);
-  position: absolute;
-  top: 30%;
-  left: 80%;
-  transform: translate(-50%, -50%);
-  border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.3);
-  @media (max-width: 480px) {
-    border-radius: 12px;
-  }
-`;
+// const Slide = styled.div`
+//   width: 300px;
+//   height: 400px;
+//   background-color: var(--color-white);
+//   position: absolute;
+//   top: 30%;
+//   left: 80%;
+//   transform: translate(-50%, -50%);
+//   border-radius: 20px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.3);
+//   @media (max-width: 480px) {
+//     border-radius: 12px;
+//   }
+// `;
 
 const SportObject = styled.img`
   transition: all 0.1s ease-in;
@@ -66,23 +55,39 @@ const DivingMask = styled(SportObject)`
   width: 100px;
   bottom: 15%;
   left: 40%;
+  @media (max-width: 480px) {
+    width: 70px;
+    left: 30%;
+    bottom: 10%;
+  }
 `;
 
 const SurfingBoard = styled(SportObject)`
   width: 180px;
   bottom: 30%;
   right: 30%;
+  @media (max-width: 480px) {
+    width: 80px;
+    bottom: 36%;
+  }
 `;
 
 const Yacht = styled(SportObject)`
   top: 20%;
   left: 40%;
+  @media (max-width: 480px) {
+    width: 100px;
+    top: 30%;
+  }
 `;
 
 const Kayak = styled(SportObject)`
   width: 180px;
   top: 65%;
-  left: 80%;
+  left: 75%;
+  @media (max-width: 480px) {
+    width: 80px;
+  }
 `;
 
 const Seashade = styled(SportObject)`
@@ -90,15 +95,22 @@ const Seashade = styled(SportObject)`
   width: 450px;
   top: 38%;
   left: 0px;
+  @media (max-width: 480px) {
+    width: 150px;
+    top: 45%;
+  }
 `;
 
 const Boogie = styled(motion.img)`
+  width: 180px;
   position: absolute;
   bottom: 15%;
   left: 14%;
   cursor: pointer;
   @media (max-width: 480px) {
-    width: 50px;
+    width: 100px;
+    left: 10%;
+    bottom: 25%;
   }
 `;
 
@@ -155,6 +167,91 @@ const Balloon = styled.div`
     margin-top: -62px;
     margin-left: 20px;
   }
+`;
+
+const expand = keyframes`
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 100rem; /* 드롭다운의 최대 높이를 설정 */
+    opacity: 1;
+  }
+`;
+
+const SportsContainer = styled.div`
+  position: relative;
+  top: -5rem;
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 800px;
+  padding: 3rem 5%;
+  background-color: var(--color-skyblue-background);
+  animation: ${expand} 0.5s ease-in-out;
+  margin: 0 auto;
+
+  border-radius: 1rem;
+  box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.1);
+`;
+
+const SportsTitle = styled.div`
+  font-size: var(--font-size-l);
+  font-weight: 700;
+  margin-bottom: 2rem;
+`;
+
+const InfoBox = styled.div`
+  width: 100%;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1rem;
+  background-color: rgba(0, 0, 0, 0.03);
+  padding: 1rem;
+  border-radius: 1rem;
+  @media (min-width: 768px) {
+    font-size: var(--font-size-m);
+    margin-bottom: 2rem;
+  }
+`;
+
+const InfoName = styled.div`
+  font-weight: 600;
+  margin-bottom: 1rem;
+`;
+
+const InfoImage = styled.img`
+  width: 50%;
+  margin-bottom: 2rem;
+  border-radius: 0.5rem;
+`;
+
+const InfoContent = styled.div`
+  margin-left: 1rem;
+`;
+
+const SportsBtn = styled.button`
+  position: absolute;
+  top: 3rem;
+  right: 3rem;
+  background-color: rgba(0, 0, 0, 0);
+  font-size: var(--font-size-l);
+  border: none;
+  cursor: pointer;
+`;
+
+const ModalCover = styled.div`
+  z-index: 3;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
 `;
 
 export default function Sports() {
@@ -226,45 +323,45 @@ export default function Sports() {
     }, [selectedSport]);
 
     return (
-      <SportsWrapper>
-        <SportsContainer>
-          <SportsBtn
-            onClick={() => {
-              setSelectedSport("");
-            }}
-          >
-            X
-          </SportsBtn>
-          <SportsTitle>
-            {sportsInfo.title ? sportsInfo.title : "제목"}
-          </SportsTitle>
-          <InfoImage src={sportsInfo.image} />
-          <InfoBox>
-            <InfoName>소개 💁🏻‍♂️</InfoName>
-            <InfoContent>{sportsInfo.intro}</InfoContent>
-          </InfoBox>
-          <InfoBox>
-            <InfoName>준비물 🛟</InfoName>
-            {sportsInfo.required.map((e, i) => {
-              return <InfoContent key={i}>• {e}</InfoContent>;
-            })}
-          </InfoBox>
-          <InfoBox>
-            <InfoName>추천시간 🕙 </InfoName>
-            <InfoContent>{sportsInfo.recommend_time}</InfoContent>
-          </InfoBox>
-          <InfoBox>
-            <InfoName>한줄팁 💡</InfoName>
-            <InfoContent>{sportsInfo.tip}</InfoContent>
-          </InfoBox>
-          <InfoBox>
-            <InfoName>유의사항 ⚠️</InfoName>
-            {sportsInfo.caution.map((e, i) => {
-              return <InfoContent key={i}>• {e}</InfoContent>;
-            })}
-          </InfoBox>
-        </SportsContainer>
-      </SportsWrapper>
+      // <SportsWrapper>
+      <SportsContainer>
+        <SportsBtn
+          onClick={() => {
+            setSelectedSport("");
+          }}
+        >
+          X
+        </SportsBtn>
+        <SportsTitle>
+          {sportsInfo.title ? sportsInfo.title : "제목"}
+        </SportsTitle>
+        <InfoImage src={sportsInfo.image} />
+        <InfoBox>
+          <InfoName>소개 💁🏻‍♂️</InfoName>
+          <InfoContent>{sportsInfo.intro}</InfoContent>
+        </InfoBox>
+        <InfoBox>
+          <InfoName>준비물 🛟</InfoName>
+          {sportsInfo.required.map((e, i) => {
+            return <InfoContent key={i}>• {e}</InfoContent>;
+          })}
+        </InfoBox>
+        <InfoBox>
+          <InfoName>추천시간 🕙 </InfoName>
+          <InfoContent>{sportsInfo.recommend_time}</InfoContent>
+        </InfoBox>
+        <InfoBox>
+          <InfoName>한줄팁 💡</InfoName>
+          <InfoContent>{sportsInfo.tip}</InfoContent>
+        </InfoBox>
+        <InfoBox>
+          <InfoName>유의사항 ⚠️</InfoName>
+          {sportsInfo.caution.map((e, i) => {
+            return <InfoContent key={i}>• {e}</InfoContent>;
+          })}
+        </InfoBox>
+      </SportsContainer>
+      // </SportsWrapper>
     );
   };
 
@@ -303,7 +400,7 @@ export default function Sports() {
       <Background />
       {[
         {
-          id: "snorkling",
+          id: "snorkel",
           component: <DivingMask src="/img/min/snorkling.png" />,
         },
         {
@@ -322,7 +419,6 @@ export default function Sports() {
       <Seashade src="public/img/sport_items/seashade.png" />
       <Boogie
         ref={boogieRef}
-        style={{ width: "180px", height: "210px" }}
         src="/img/sport_items/boogie.png"
         drag
         dragConstraints={wrapperRef}
@@ -348,7 +444,8 @@ export default function Sports() {
       </Slides> */}
       {selectedSport && (
         <>
-          <SportsInfo /> <ModalCover />
+          <SportsInfo />
+          <ModalCover />
         </>
       )}
     </Wrapper>

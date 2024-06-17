@@ -175,10 +175,10 @@ const NotificationCount = styled.div`
   background-color: red;
   color: white;
   width: 15px;
-  height: 15px
+  height: 15px;
   text-align: center;
   line-height: 15px;
-  font-size:10px;
+  font-size: 10px;
   border-radius: 50%;
 `;
 
