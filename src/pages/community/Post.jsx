@@ -35,6 +35,7 @@ export default function Post() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
   const { id: postId } = useParams();
@@ -147,6 +148,7 @@ export default function Post() {
       console.error(error);
       return;
     }
+    reset({ comment: "" });
     getPost();
   };
   const startEditComment = (comment) => {
