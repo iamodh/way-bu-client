@@ -4,7 +4,7 @@ import { client } from "../../../libs/supabase";
 import { useRecoilState } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import kakaoLogo from "/img/kakao.png";
 import googleLogo from "/img/google.png";
 import {
@@ -149,6 +149,7 @@ const GoogleButton = styled(StyledButton)`
 `;
 
 export default function Login() {
+  const navigate = useNavigate();
   /* Form */
   // 로그인 폼을 이용한 로그인
   const {
@@ -177,13 +178,13 @@ export default function Login() {
     }
     setLoggedInUser(data.session.user);
     checkLogin();
-    console.log("로그인 정보", data.session.user);
 
     const rememberMe = () => formData.rememberMe;
 
     if (rememberMe) {
       await saveCredentials(formData.email, formData.password);
     }
+    navigate("/");
   }
 
   async function googleLogin() {
@@ -193,7 +194,7 @@ export default function Login() {
         redirectTo: "http://localhost:5173/login",
       },
     });
-    if (error) console.log(error);
+    if (error) console.error(error);
   }
 
   async function kakaoLogin() {
@@ -230,7 +231,6 @@ export default function Login() {
           console.error("Error fetching user profile:", profileError);
         } else {
           setLoggedInUserProfile(userProfile[0]);
-          console.log("User profile:", userProfile[0]);
         }
       }
     } else {
@@ -239,79 +239,9 @@ export default function Login() {
     setIsLoading(false);
   }
 
-  // useEffect(() => {
-  //   checkLogin();
-  // }, []);
-
-  const [avatarFile, setAvatarFile] = useState(null);
-
-  const uploadFile = async () => {
-    // db에 avatar 이미지 파일을 저장
-    if (!avatarFile) {
-      console.log("no file exist");
-      return;
-    }
-    const filePath = `${loggedInUser.id}-${new Date().getTime()}`;
-    // 저장하는 파일명을 user_id로 해서 주인을 구분하고
-    // 동일한 파일명을 사용시 변경을 인지하지 못해 page가 rendering되지 않는 문제를 해결하기 위해 뒤에 시간 값을 추가
-
-    if (loggedInUserProfile.avatar_url) {
-      // 기존의 avatar가 존재할 경우 삭제
-      const oldPath = loggedInUserProfile.avatar_url.replace(
-        import.meta.env.VITE_STORE_URL + "avatar/",
-        ""
-      );
-      const { data: deleteData, error: deleteError } = await client.storage
-        .from("avatar")
-        .remove([oldPath]);
-      if (deleteError) {
-        console.error("Error deleting file:", deleteError);
-        return;
-      }
-      console.log("File deleted successfully:", deleteData);
-    }
-
-    const { data, error } = await client.storage
-      .from("avatar")
-      .upload(filePath, avatarFile, {
-        cacheControl: "no-cache, no-store, must-revalidate",
-        upsert: true,
-      });
-    const {
-      data: { publicUrl },
-    } = await client.storage.from("avatar").getPublicUrl(filePath);
-
-    updateUserAvatar(publicUrl);
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(data);
-      console.log("file uploaded");
-    }
-  };
-
-  const updateUserAvatar = async (url) => {
-    // user_profile의 avatar_url을 변경된 url로 업데이트
-    const { data, error } = await client
-      .from("USER_PROFILE")
-      .update({ avatar_url: url })
-      .eq("user_id", loggedInUser.id)
-      .select();
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(data);
-      console.log("avatar url is changed");
-
-      setLoggedInUserProfile(data);
-    }
-  };
-
-  const handleImage = (e) => {
-    //선택한 파일 정보를 저장
-    console.log(e.target.files[0]);
-    setAvatarFile(e.target.files[0]);
-  };
+  useEffect(() => {
+    if (loggedInUser) navigate("/");
+  }, [loggedInUser]);
 
   /* Login Error 처리 */
   const [alert, setAlert] = useState({ cnt: 0, err: null });
@@ -323,16 +253,14 @@ export default function Login() {
         .insert([{ email, password }]);
       if (error) {
         console.error("Error saving credentials:", error.message);
-      } else {
-        console.log("Credentials saved successfully:", data);
       }
     } catch (error) {
       console.error("Error saving credentials:", error.message);
     }
   };
 
-  const UnLoggedPage = () => {
-    return (
+  return (
+    !loggedInUser && (
       <Wrapper>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Title>로그인</Title>
@@ -401,41 +329,39 @@ export default function Login() {
           </LogoLoginContainer>
         </Form>
       </Wrapper>
-    );
-  };
-
-  const LoggedPage = () => {
-    if (isLoading) return <>Loading...</>;
-
-    const user = loggedInUserProfile ? loggedInUserProfile : null;
-    const userName = user
-      ? user.user_nickname
-      : loggedInUser.user_metadata.name;
-    const avatarUrl = user
-      ? user.avatar_url
-      : loggedInUser.user_metadata.avatar_url;
-    const birthDate = user ? user.birth_date : null;
-    const joinPath = user ? user.join_path : null;
-
-    return (
-      <Wrapper>
-        <p>{loggedInUser.email}</p>
-        <p>{userName}</p>
-        <img width={"150px"} height={"200px"} src={avatarUrl} alt="프사" />
-        <p>{birthDate}</p>
-        <p>{joinPath}</p>
-        <form action="/">
-          <input
-            type="file"
-            accept="image/jpeg, image/png"
-            name="input_avatar"
-            onChange={handleImage}
-          />
-        </form>
-        <button onClick={uploadFile}>변경</button>
-      </Wrapper>
-    );
-  };
-
-  return <>{loggedInUser ? <LoggedPage /> : <UnLoggedPage />}</>;
+    )
+  );
 }
+
+// const LoggedPage = () => {
+//   if (isLoading) return <>Loading...</>;
+
+//   const user = loggedInUserProfile ? loggedInUserProfile : null;
+//   const userName = user
+//     ? user.user_nickname
+//     : loggedInUser.user_metadata.name;
+//   const avatarUrl = user
+//     ? user.avatar_url
+//     : loggedInUser.user_metadata.avatar_url;
+//   const birthDate = user ? user.birth_date : null;
+//   const joinPath = user ? user.join_path : null;
+
+//   return (
+//     <Wrapper>
+//       <p>{loggedInUser.email}</p>
+//       <p>{userName}</p>
+//       <img width={"150px"} height={"200px"} src={avatarUrl} alt="프사" />
+//       <p>{birthDate}</p>
+//       <p>{joinPath}</p>
+//       <form action="/">
+//         <input
+//           type="file"
+//           accept="image/jpeg, image/png"
+//           name="input_avatar"
+//           onChange={handleImage}
+//         />
+//       </form>
+//       <button onClick={uploadFile}>변경</button>
+//     </Wrapper>
+//   );
+// };
