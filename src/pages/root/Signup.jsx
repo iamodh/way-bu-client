@@ -2,7 +2,7 @@ import { styled, keyframes } from "styled-components";
 import { useForm } from "react-hook-form";
 import { client } from "../../../libs/supabase";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ButtonContainer,
   Button,
@@ -88,6 +88,7 @@ const Alert = styled.span`
 `;
 
 export default function Signup() {
+  const navigate = useNavigate();
   /* Form */
   const {
     register,
@@ -104,7 +105,6 @@ export default function Signup() {
       email: formData.email,
       password: formData.password,
     });
-    console.log(data.user.id);
     addUserProfile(data.user.id, formData);
     if (error) {
       setAlert((prev) => {
@@ -112,7 +112,7 @@ export default function Signup() {
       });
       return;
     }
-    console.log(data);
+    navigate("/login");
   };
 
   const addUserProfile = async (id, formData) => {

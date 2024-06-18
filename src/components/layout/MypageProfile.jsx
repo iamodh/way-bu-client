@@ -154,15 +154,15 @@ export default function MypageProfile() {
     loggedInUserProfileState
   );
 
-  useEffect(() => {
-    if (
-      !loggedInUser ||
-      !loggedInUserProfile ||
-      loggedInUserProfile.id != url_id
-    ) {
-      navigate("/login");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (
+  //     !loggedInUser ||
+  //     !loggedInUserProfile ||
+  //     loggedInUserProfile.id != url_id
+  //   ) {
+  //     navigate("/login");
+  //   }
+  // }, []);
 
   // console.log("user", loggedInUserProfile);
   return (
