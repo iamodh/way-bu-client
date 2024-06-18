@@ -4,7 +4,7 @@ import { client } from "../../../libs/supabase";
 import { useRecoilState } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import kakaoLogo from "/img/kakao.png";
 import googleLogo from "/img/google.png";
 import {
@@ -149,6 +149,7 @@ const GoogleButton = styled(StyledButton)`
 `;
 
 export default function Login() {
+  const navigate = useNavigate();
   /* Form */
   // 로그인 폼을 이용한 로그인
   const {
@@ -237,9 +238,9 @@ export default function Login() {
     setIsLoading(false);
   }
 
-  // useEffect(() => {
-  //   checkLogin();
-  // }, []);
+  useEffect(() => {
+    if (loggedInUser) navigate("/");
+  }, []);
 
   const [avatarFile, setAvatarFile] = useState(null);
 
@@ -318,111 +319,103 @@ export default function Login() {
     }
   };
 
-  const UnLoggedPage = () => {
-    return (
-      <Wrapper>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <Title>로그인</Title>
-          <GreyHR />
-          <InputBox>
-            <Label htmlFor="email">이메일</Label>
-            <Input
-              {...register("email")}
-              id="email"
-              type="email"
-              placeholder="이메일을 입력하세요"
-              required
-            />
-            {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
-          </InputBox>
-          <InputBox>
-            <Label htmlFor="password">비밀번호</Label>
-            <Input
-              {...register("password", {
-                minLength: {
-                  value: 6,
-                  message: "비밀번호는 최소 6자리 입니다.",
-                },
-              })}
-              id="password"
-              type="password"
-              required
-              placeholder="비밀번호를 입력하세요"
-            />
-            {errors?.password && <ErrorMsg>{errors.password.message}</ErrorMsg>}
-          </InputBox>
-          <Check>
-            <Remember>
-              <input
-                type="checkbox"
-                id="remember"
-                {...register("rememberMe")}
-              />
-              <Label htmlFor="remember" style={{ fontSize: "0.7rem" }}>
-                기억하기
-              </Label>
-            </Remember>
-            <Find>
-              <Link to="/find-id" style={{ fontSize: "0.7rem" }}>
-                이메일 찾기
-              </Link>{" "}
-              |{" "}
-              <Link to="/find-pwd" style={{ fontSize: "0.7rem" }}>
-                비밀번호 찾기
-              </Link>
-            </Find>
-          </Check>
-          <ButtonContainer>
-            <Button type="submit">로그인</Button>
-            <Link to="/signup" style={{ fontSize: "0.7rem" }}>
-              회원가입
-            </Link>
-          </ButtonContainer>
-          <LogoLoginContainer>
-            <KakaoButton onClick={kakaoLogin}>
-              <img src={kakaoLogo} alt="카카오 로그인" />
-            </KakaoButton>
-            <GoogleButton onClick={googleLogin}>
-              <img src={googleLogo} alt="구글 로그인" />
-            </GoogleButton>
-          </LogoLoginContainer>
-        </Form>
-      </Wrapper>
-    );
-  };
-
-  const LoggedPage = () => {
-    if (isLoading) return <>Loading...</>;
-
-    const user = loggedInUserProfile ? loggedInUserProfile : null;
-    const userName = user
-      ? user.user_nickname
-      : loggedInUser.user_metadata.name;
-    const avatarUrl = user
-      ? user.avatar_url
-      : loggedInUser.user_metadata.avatar_url;
-    const birthDate = user ? user.birth_date : null;
-    const joinPath = user ? user.join_path : null;
-
-    return (
-      <Wrapper>
-        <p>{loggedInUser.email}</p>
-        <p>{userName}</p>
-        <img width={"150px"} height={"200px"} src={avatarUrl} alt="프사" />
-        <p>{birthDate}</p>
-        <p>{joinPath}</p>
-        <form action="/">
-          <input
-            type="file"
-            accept="image/jpeg, image/png"
-            name="input_avatar"
-            onChange={handleImage}
+  return (
+    <Wrapper>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Title>로그인</Title>
+        <GreyHR />
+        <InputBox>
+          <Label htmlFor="email">이메일</Label>
+          <Input
+            {...register("email")}
+            id="email"
+            type="email"
+            placeholder="이메일을 입력하세요"
+            required
           />
-        </form>
-        <button onClick={uploadFile}>변경</button>
-      </Wrapper>
-    );
-  };
-
-  return <>{loggedInUser ? <LoggedPage /> : <UnLoggedPage />}</>;
+          {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
+        </InputBox>
+        <InputBox>
+          <Label htmlFor="password">비밀번호</Label>
+          <Input
+            {...register("password", {
+              minLength: {
+                value: 6,
+                message: "비밀번호는 최소 6자리 입니다.",
+              },
+            })}
+            id="password"
+            type="password"
+            required
+            placeholder="비밀번호를 입력하세요"
+          />
+          {errors?.password && <ErrorMsg>{errors.password.message}</ErrorMsg>}
+        </InputBox>
+        <Check>
+          <Remember>
+            <input type="checkbox" id="remember" {...register("rememberMe")} />
+            <Label htmlFor="remember" style={{ fontSize: "0.7rem" }}>
+              기억하기
+            </Label>
+          </Remember>
+          <Find>
+            <Link to="/find-id" style={{ fontSize: "0.7rem" }}>
+              이메일 찾기
+            </Link>{" "}
+            |{" "}
+            <Link to="/find-pwd" style={{ fontSize: "0.7rem" }}>
+              비밀번호 찾기
+            </Link>
+          </Find>
+        </Check>
+        <ButtonContainer>
+          <Button type="submit">로그인</Button>
+          <Link to="/signup" style={{ fontSize: "0.7rem" }}>
+            회원가입
+          </Link>
+        </ButtonContainer>
+        <LogoLoginContainer>
+          <KakaoButton onClick={kakaoLogin}>
+            <img src={kakaoLogo} alt="카카오 로그인" />
+          </KakaoButton>
+          <GoogleButton onClick={googleLogin}>
+            <img src={googleLogo} alt="구글 로그인" />
+          </GoogleButton>
+        </LogoLoginContainer>
+      </Form>
+    </Wrapper>
+  );
 }
+
+// const LoggedPage = () => {
+//   if (isLoading) return <>Loading...</>;
+
+//   const user = loggedInUserProfile ? loggedInUserProfile : null;
+//   const userName = user
+//     ? user.user_nickname
+//     : loggedInUser.user_metadata.name;
+//   const avatarUrl = user
+//     ? user.avatar_url
+//     : loggedInUser.user_metadata.avatar_url;
+//   const birthDate = user ? user.birth_date : null;
+//   const joinPath = user ? user.join_path : null;
+
+//   return (
+//     <Wrapper>
+//       <p>{loggedInUser.email}</p>
+//       <p>{userName}</p>
+//       <img width={"150px"} height={"200px"} src={avatarUrl} alt="프사" />
+//       <p>{birthDate}</p>
+//       <p>{joinPath}</p>
+//       <form action="/">
+//         <input
+//           type="file"
+//           accept="image/jpeg, image/png"
+//           name="input_avatar"
+//           onChange={handleImage}
+//         />
+//       </form>
+//       <button onClick={uploadFile}>변경</button>
+//     </Wrapper>
+//   );
+// };

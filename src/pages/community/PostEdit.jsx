@@ -34,6 +34,14 @@ export default function PostEdit() {
 
   const { id: postId } = useParams();
 
+  useEffect(() => {
+    if (!loggedInUser || !loggedInUserProfile) {
+      navigate("/login");
+    } else if (loggedInUser.id != postInfo.user_id) {
+      navigate("/community");
+    }
+  }, []);
+
   const setFormValues = (data) => {
     setValue("title", data.title);
     setValue("content", data.contents);

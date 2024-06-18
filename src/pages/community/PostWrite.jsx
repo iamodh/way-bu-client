@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { client } from "../../../libs/supabase";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
@@ -28,6 +28,12 @@ export default function PostWrite() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    if (!loggedInUser || !loggedInUserProfile) {
+      navigate("/login");
+    }
+  }, []);
 
   const addComPost = async (formData) => {
     const { data, error } = await client
