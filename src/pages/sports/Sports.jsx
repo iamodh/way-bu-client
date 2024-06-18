@@ -16,8 +16,31 @@ const Background = styled.div`
   background-image: url("/img/sports1.jpeg");
   background-size: cover;
   background-position: center;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -10;
 `;
+
+// const Slides = styled.div``;
+
+// const Slide = styled.div`
+//   width: 300px;
+//   height: 400px;
+//   background-color: var(--color-white);
+//   position: absolute;
+//   top: 30%;
+//   left: 80%;
+//   transform: translate(-50%, -50%);
+//   border-radius: 20px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.3);
+//   @media (max-width: 480px) {
+//     border-radius: 12px;
+//   }
+// `;
 
 const SportObject = styled.img`
   transition: all 0.1s ease-in;
@@ -407,7 +430,7 @@ export default function Sports() {
         onDragEnd={onDragEnd}
         onClick={handleBoogieClick} // boogie 클릭 시 이벤트 핸들러 추가
       />
-      <Balloon
+      {/* <Balloon
         isVisible={isBalloonVisible}
         top={balloonPosition.top}
         left={balloonPosition.left}
@@ -415,7 +438,7 @@ export default function Sports() {
       >
         <img src="/img/sport_items/balloon1.png" alt="Balloon" />
         <span>Drag me!</span>
-      </Balloon>
+      </Balloon> */}
       {isHandVisible && <Hand src="/img/sport_items/hand.png" />}
       {selectedSport && (
         <>
