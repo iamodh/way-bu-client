@@ -17,6 +17,7 @@ const Background = styled.div`
   position: absolute;
   top: 0;
   left: 0;
+  z-index: -10;
 `;
 
 // const Slides = styled.div``;
@@ -427,7 +428,7 @@ export default function Sports() {
         onDragEnd={onDragEnd}
         onClick={handleBoogieClick} // boogie 클릭 시 이벤트 핸들러 추가
       />
-      <Balloon
+      {/* <Balloon
         isVisible={isBalloonVisible}
         top={balloonPosition.top}
         left={balloonPosition.left}
@@ -435,7 +436,7 @@ export default function Sports() {
       >
         <img src="/img/sport_items/balloon1.png" alt="Balloon" />
         <span>Drag me!</span>
-      </Balloon>
+      </Balloon> */}
       {isHandVisible && <Hand src="/img/sport_items/hand.png" />}
       {/* <Slides>
         <Slide>{selectedSport}</Slide>
