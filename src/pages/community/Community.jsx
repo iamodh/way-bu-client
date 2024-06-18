@@ -54,6 +54,7 @@ export default function Community() {
   const [order, setOrder] = useState(true);
   const [postTag, setPostTag] = useState("전체");
   const [postSport, setPostSport] = useState("전체");
+  const [sportsList, setSportsList] = useState([]);
 
   const getPosts = async () => {
     let { data: posts, error } = await client
@@ -67,6 +68,18 @@ export default function Community() {
     });
     setOriginalPosts(posts);
     setPosts(posts);
+  };
+
+  const getSports = async () => {
+    let { data: sports, error } = await client
+      .from("SPORT")
+      .select("title, theme_color, id");
+    if (error) {
+      console.error("Error fetching sports:", error);
+      return;
+    }
+    sports.sort((a, b) => a.id - b.id);
+    setSportsList(sports);
   };
 
   const handleSort = (way) => {
@@ -104,15 +117,36 @@ export default function Community() {
     return formattedDate;
   };
 
-  const postList = () => {
+  const themeFrontColors = {
+    red: "var(--color-tag-red-front)",
+    orange: "var(--color-tag-orange-front)",
+    mint: "var(--color-tag-mint-front)",
+    green: "var(--color-tag-green-front)",
+  };
+
+  // const themeBackColors = {
+  //   red: "var(--color-tag-red-back)",
+  //   orange: "var(--color-tag-orange-back)",
+  //   mint: "var(--color-tag-mint-back)",
+  //   green: "var(--color-tag-green-back)",
+  // };
+
+  const PostList = () => {
     return posts
       .slice((postPage - 1) * postPerPage, postPage * postPerPage - 1)
       .map((post) => {
+        const sport = sportsList.find((sport) => sport.title === post.sport);
+        // const backgroundColor = sport
+        //   ? themeBackColors[sport.theme_color]
+        //   : "#FFFFFF";
+        const color = sport ? themeFrontColors[sport.theme_color] : "#000000";
         return (
-          <PostBox>
+          <PostBox key={post.post_id}>
             <PostThumb>{post.thumbs}</PostThumb>
             <PostTag>{post.post_type}</PostTag>
-            <PostTag>{post.sport}</PostTag>
+            <PostTag style={{ color, borderColor: color }}>
+              {post.sport}
+            </PostTag>
             <PostLeft>
               <PostLeftTop>
                 <PostTitle>
@@ -211,7 +245,7 @@ export default function Community() {
           {selectedItem === "전체" ? title : selectedItem}
         </TagTitle>
         {isVisible && (
-          <DropdownBox>
+          <DropdownBox ref={dropdownRef}>
             {items.map((item) => (
               <DropdownComponent
                 key={item}
@@ -240,7 +274,10 @@ export default function Community() {
   };
 
   const DropDownSportsList = () => {
-    const sports = ["전체", "서핑", "카약", "패들보드", "낚시", "기타"];
+    const sports = sportsList.map((sport) => {
+      return sport.title;
+    });
+
     return (
       <DropdownList
         title="종목"
@@ -253,7 +290,9 @@ export default function Community() {
 
   const TagList = () => {
     const tags = ["전체", "자유", "질문", "후기", "꿀팁"];
-    const sports = ["전체", "서핑", "카약", "패들보드", "낚시", "기타"];
+    const sports = sportsList.map((sport) => {
+      return sport.title;
+    });
 
     return (
       <TagWrapper>
@@ -273,6 +312,12 @@ export default function Community() {
         </TagContainer>
         <TagContainer>
           <TagName>종목</TagName>
+          <TagBox
+            selected={postSport === "전체"}
+            onClick={() => setPostSport("전체")}
+          >
+            전체
+          </TagBox>
           {sports.map((sport) => {
             return (
               <TagBox
@@ -299,6 +344,7 @@ export default function Community() {
 
   useEffect(() => {
     getPosts();
+    getSports();
   }, []);
 
   useEffect(() => {
@@ -328,7 +374,7 @@ export default function Community() {
             <PostDesc onClick={() => handleSort("created_at")}>작성일</PostDesc>
             <PostDesc onClick={() => handleSort("views")}>조회수</PostDesc>
           </PostBox>
-          {postList()}
+          {PostList()}
         </PostWrapper>
         <WriteBox>
           <WriteButton>

@@ -1,6 +1,18 @@
 import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import { client } from "../../../libs/supabase";
+import {
+  SportsWrapper,
+  SportsContainer,
+  SportsTitle,
+  InfoImage,
+  InfoBox,
+  InfoName,
+  InfoContent,
+  ModalCover,
+  SportsBtn,
+} from "./components/SportsLayout";
 
 const Wrapper = styled.div`
   position: relative;
@@ -153,13 +165,15 @@ export default function Sports() {
   const [isBalloonVisible, setIsBalloonVisible] = useState(true);
   const [balloonPosition, setBalloonPosition] = useState({ top: 0, left: 0 });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsBalloonVisible((prev) => !prev);
-    }, 10000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setIsBalloonVisible((prev) => !prev);
+  //   }, 10000);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
+
+  // 벌룬이 뭔지 모르겠는데 자꾸 마우스가 움직일 때 마다 벌룬 포지션을 조정하면서 페이지 렌더링이 자꾸 일어나서 일단 주석 처리 해놨어요 - 정환
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -167,10 +181,10 @@ export default function Sports() {
         const boogieRect = boogieRef.current.getBoundingClientRect();
         const offsetX = boogieRect.width / 2;
         const offsetY = boogieRect.height / 2;
-        setBalloonPosition({
-          top: boogieRect.top + window.scrollY - offsetY,
-          left: boogieRect.left + window.scrollX - offsetX,
-        });
+        // setBalloonPosition({
+        //   top: boogieRect.top + window.scrollY - offsetY,
+        //   left: boogieRect.left + window.scrollX - offsetX,
+        // });
       }
     };
 
@@ -180,6 +194,78 @@ export default function Sports() {
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
+
+  const SportsInfo = () => {
+    const [sportsInfo, setSportsInfo] = useState({
+      title: "",
+      image: "",
+      caution: [],
+      intro: "",
+      recommend_time: "",
+      required: [],
+      tip: "",
+    });
+
+    const getSports = async (sportsName) => {
+      const { data, error } = await client
+        .from("SPORT")
+        .select("*")
+        .eq("sport_name", sportsName)
+        .single();
+      if (error) {
+        console.error("Error fetching sports:", error);
+        return;
+      }
+      setSportsInfo(data);
+      console.log(data);
+    };
+
+    useEffect(() => {
+      getSports(selectedSport);
+    }, [selectedSport]);
+
+    return (
+      <SportsWrapper>
+        <SportsContainer>
+          <SportsBtn
+            onClick={() => {
+              setSelectedSport("");
+            }}
+          >
+            X
+          </SportsBtn>
+          <SportsTitle>
+            {sportsInfo.title ? sportsInfo.title : "제목"}
+          </SportsTitle>
+          <InfoImage src={sportsInfo.image} />
+          <InfoBox>
+            <InfoName>소개 💁🏻‍♂️</InfoName>
+            <InfoContent>{sportsInfo.intro}</InfoContent>
+          </InfoBox>
+          <InfoBox>
+            <InfoName>준비물 🛟</InfoName>
+            {sportsInfo.required.map((e, i) => {
+              return <InfoContent key={i}>• {e}</InfoContent>;
+            })}
+          </InfoBox>
+          <InfoBox>
+            <InfoName>추천시간 🕙 </InfoName>
+            <InfoContent>{sportsInfo.recommend_time}</InfoContent>
+          </InfoBox>
+          <InfoBox>
+            <InfoName>한줄팁 💡</InfoName>
+            <InfoContent>{sportsInfo.tip}</InfoContent>
+          </InfoBox>
+          <InfoBox>
+            <InfoName>유의사항 ⚠️</InfoName>
+            {sportsInfo.caution.map((e, i) => {
+              return <InfoContent key={i}>• {e}</InfoContent>;
+            })}
+          </InfoBox>
+        </SportsContainer>
+      </SportsWrapper>
+    );
+  };
 
   const onDragEnd = (event, info) => {
     boogieRef.current.src = "/img/sport_items/boogie.png";
@@ -232,10 +318,6 @@ export default function Sports() {
           ref: (el) => (sportsRef.current[i] = el),
         });
       })}
-
-      <Slides>
-        <Slide>{selectedSport}</Slide>
-      </Slides>
       <Seashade src="public/img/sport_items/seashade.png" />
       <Boogie
         ref={boogieRef}
@@ -260,6 +342,14 @@ export default function Sports() {
         <span>Drag me!</span>
       </Balloon>
       {isHandVisible && <Hand src="/img/sport_items/hand.png" />}
+      {/* <Slides>
+        <Slide>{selectedSport}</Slide>
+      </Slides> */}
+      {selectedSport && (
+        <>
+          <SportsInfo /> <ModalCover />
+        </>
+      )}
     </Wrapper>
   );
 }
