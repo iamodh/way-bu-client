@@ -184,6 +184,7 @@ export default function Login() {
     if (rememberMe) {
       await saveCredentials(formData.email, formData.password);
     }
+    navigate("/");
   }
 
   async function googleLogin() {
@@ -240,7 +241,7 @@ export default function Login() {
 
   useEffect(() => {
     if (loggedInUser) navigate("/");
-  }, []);
+  }, [loggedInUser]);
 
   /* Login Error 처리 */
   const [alert, setAlert] = useState({ cnt: 0, err: null });
@@ -259,70 +260,76 @@ export default function Login() {
   };
 
   return (
-    <Wrapper>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <Title>로그인</Title>
-        <GreyHR />
-        <InputBox>
-          <Label htmlFor="email">이메일</Label>
-          <Input
-            {...register("email")}
-            id="email"
-            type="email"
-            placeholder="이메일을 입력하세요"
-            required
-          />
-          {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
-        </InputBox>
-        <InputBox>
-          <Label htmlFor="password">비밀번호</Label>
-          <Input
-            {...register("password", {
-              minLength: {
-                value: 6,
-                message: "비밀번호는 최소 6자리 입니다.",
-              },
-            })}
-            id="password"
-            type="password"
-            required
-            placeholder="비밀번호를 입력하세요"
-          />
-          {errors?.password && <ErrorMsg>{errors.password.message}</ErrorMsg>}
-        </InputBox>
-        <Check>
-          <Remember>
-            <input type="checkbox" id="remember" {...register("rememberMe")} />
-            <Label htmlFor="remember" style={{ fontSize: "0.7rem" }}>
-              기억하기
-            </Label>
-          </Remember>
-          <Find>
-            <Link to="/find-id" style={{ fontSize: "0.7rem" }}>
-              이메일 찾기
-            </Link>{" "}
-            |{" "}
-            <Link to="/find-pwd" style={{ fontSize: "0.7rem" }}>
-              비밀번호 찾기
+    !loggedInUser && (
+      <Wrapper>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <Title>로그인</Title>
+          <GreyHR />
+          <InputBox>
+            <Label htmlFor="email">이메일</Label>
+            <Input
+              {...register("email")}
+              id="email"
+              type="email"
+              placeholder="이메일을 입력하세요"
+              required
+            />
+            {errors?.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
+          </InputBox>
+          <InputBox>
+            <Label htmlFor="password">비밀번호</Label>
+            <Input
+              {...register("password", {
+                minLength: {
+                  value: 6,
+                  message: "비밀번호는 최소 6자리 입니다.",
+                },
+              })}
+              id="password"
+              type="password"
+              required
+              placeholder="비밀번호를 입력하세요"
+            />
+            {errors?.password && <ErrorMsg>{errors.password.message}</ErrorMsg>}
+          </InputBox>
+          <Check>
+            <Remember>
+              <input
+                type="checkbox"
+                id="remember"
+                {...register("rememberMe")}
+              />
+              <Label htmlFor="remember" style={{ fontSize: "0.7rem" }}>
+                기억하기
+              </Label>
+            </Remember>
+            <Find>
+              <Link to="/find-id" style={{ fontSize: "0.7rem" }}>
+                이메일 찾기
+              </Link>{" "}
+              |{" "}
+              <Link to="/find-pwd" style={{ fontSize: "0.7rem" }}>
+                비밀번호 찾기
+              </Link>
+            </Find>
+          </Check>
+          <ButtonContainer>
+            <Button type="submit">로그인</Button>
+            <Link to="/signup" style={{ fontSize: "0.7rem" }}>
+              회원가입
             </Link>
-          </Find>
-        </Check>
-        <ButtonContainer>
-          <Button type="submit">로그인</Button>
-          <Link to="/signup" style={{ fontSize: "0.7rem" }}>
-            회원가입
-          </Link>
-        </ButtonContainer>
-        <LogoLoginContainer>
-          <KakaoButton onClick={kakaoLogin}>
-            <img src={kakaoLogo} alt="카카오 로그인" />
-          </KakaoButton>
-          <GoogleButton onClick={googleLogin}>
-            <img src={googleLogo} alt="구글 로그인" />
-          </GoogleButton>
-        </LogoLoginContainer>
-      </Form>
-    </Wrapper>
+          </ButtonContainer>
+          <LogoLoginContainer>
+            <KakaoButton onClick={kakaoLogin}>
+              <img src={kakaoLogo} alt="카카오 로그인" />
+            </KakaoButton>
+            <GoogleButton onClick={googleLogin}>
+              <img src={googleLogo} alt="구글 로그인" />
+            </GoogleButton>
+          </LogoLoginContainer>
+        </Form>
+      </Wrapper>
+    )
   );
 }
 
