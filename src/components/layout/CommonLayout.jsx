@@ -36,7 +36,9 @@ const Sign = styled.div`
   font-size: var(--font-size-m);
   @media screen and (max-width: 768px) {
     font-size: var(--font-size-s);
+    margin-right: 1rem;
   }
+  margin-right: 2rem;
 `;
 const Logo = styled.img`
   width: 120px;
@@ -433,10 +435,12 @@ export default function CommonLayout() {
             <SearchInput type="text" />
             <SearchButton />
           </Search>
-          <Alarm onClick={() => setShowNotificationBox(!showNotificationBox)}>
-            <NotificationCounter />
-            <Notification />
-          </Alarm>
+          {loggedInUser && (
+            <Alarm onClick={() => setShowNotificationBox(!showNotificationBox)}>
+              <NotificationCounter />
+              <Notification />
+            </Alarm>
+          )}
           {loggedInUser && loggedInUserProfile ? (
             <StyledLink to={"/mypage/" + loggedInUserProfile.id}>
               <ProfileImage src={loggedInUserProfile.avatar_url} />
