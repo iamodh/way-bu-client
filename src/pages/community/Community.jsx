@@ -62,7 +62,6 @@ export default function Community() {
       .select(
         "post_id, title, contents, post_type, user_nickname, user_id, views, thumbs, comment_count, created_at, updated_at, sport"
       );
-    console.log(posts);
     posts.sort((a, b) => {
       return b["created_at"] > a["created_at"] ? 1 : -1;
     });
@@ -339,7 +338,6 @@ export default function Community() {
     setPostsCount(count);
     setMaxPage(Math.ceil(count / postPerPage));
     setPostPage(1);
-    console.log(count, maxPage);
   }, [posts]);
 
   useEffect(() => {

@@ -36,7 +36,9 @@ const Sign = styled.div`
   font-size: var(--font-size-m);
   @media screen and (max-width: 768px) {
     font-size: var(--font-size-s);
+    margin-right: 1rem;
   }
+  margin-right: 2rem;
 `;
 const Logo = styled.img`
   width: 120px;
@@ -244,7 +246,6 @@ export default function CommonLayout() {
           console.error("Error fetching user profile:", profileError);
         } else {
           setLoggedInUserProfile(userProfile[0]);
-          console.log("User profile:", userProfile[0]);
         }
       }
     } else {
@@ -279,13 +280,11 @@ export default function CommonLayout() {
   const handleLogout = async () => {
     const { error } = await client.auth.signOut();
     if (error) {
-      console.log(error.message);
+      console.error(error);
       return;
     }
     setLoggedInUser(null);
     setLoggedInUserProfile(null);
-    navigate("/");
-    console.log("로그아웃 되었습니다.");
     navigate("/");
   };
 
@@ -417,7 +416,6 @@ export default function CommonLayout() {
   /* index나 sorts 페이지일때 fixed */
   const location = useLocation();
   const fixed = location.pathname === "/";
-  console.log(fixed);
   return (
     <Wrapper>
       <Header $fixed={fixed}>
@@ -437,10 +435,12 @@ export default function CommonLayout() {
             <SearchInput type="text" />
             <SearchButton />
           </Search>
-          <Alarm onClick={() => setShowNotificationBox(!showNotificationBox)}>
-            <NotificationCounter />
-            <Notification />
-          </Alarm>
+          {loggedInUser && (
+            <Alarm onClick={() => setShowNotificationBox(!showNotificationBox)}>
+              <NotificationCounter />
+              <Notification />
+            </Alarm>
+          )}
           {loggedInUser && loggedInUserProfile ? (
             <StyledLink to={"/mypage/" + loggedInUserProfile.id}>
               <ProfileImage src={loggedInUserProfile.avatar_url} />
