@@ -155,7 +155,11 @@ export default function MypageProfile() {
   );
 
   useEffect(() => {
-    if (!loggedInUser || !loggedInUserProfile || loggedInUser.id != url_id) {
+    if (
+      !loggedInUser ||
+      !loggedInUserProfile ||
+      loggedInUserProfile.id != url_id
+    ) {
       navigate("/login");
     }
   }, []);

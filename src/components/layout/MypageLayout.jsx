@@ -84,11 +84,11 @@ export default function MypageLayout() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loggedInUser || !loggedInUserProfile || loggedInUser.id != url_id) {
-      navigate("/login");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!loggedInUser || !loggedInUserProfile || loggedInUser.id != url_id) {
+  //     navigate("/login");
+  //   }
+  // }, []);
 
   useEffect(() => {
     getProfiles();

@@ -242,67 +242,6 @@ export default function Login() {
     if (loggedInUser) navigate("/");
   }, []);
 
-  const [avatarFile, setAvatarFile] = useState(null);
-
-  const uploadFile = async () => {
-    // db에 avatar 이미지 파일을 저장
-    if (!avatarFile) {
-      return;
-    }
-    const filePath = `${loggedInUser.id}-${new Date().getTime()}`;
-    // 저장하는 파일명을 user_id로 해서 주인을 구분하고
-    // 동일한 파일명을 사용시 변경을 인지하지 못해 page가 rendering되지 않는 문제를 해결하기 위해 뒤에 시간 값을 추가
-
-    if (loggedInUserProfile.avatar_url) {
-      // 기존의 avatar가 존재할 경우 삭제
-      const oldPath = loggedInUserProfile.avatar_url.replace(
-        import.meta.env.VITE_STORE_URL + "avatar/",
-        ""
-      );
-      const { data: deleteData, error: deleteError } = await client.storage
-        .from("avatar")
-        .remove([oldPath]);
-      if (deleteError) {
-        console.error("Error deleting file:", deleteError);
-        return;
-      }
-    }
-
-    const { data, error } = await client.storage
-      .from("avatar")
-      .upload(filePath, avatarFile, {
-        cacheControl: "no-cache, no-store, must-revalidate",
-        upsert: true,
-      });
-    const {
-      data: { publicUrl },
-    } = await client.storage.from("avatar").getPublicUrl(filePath);
-
-    updateUserAvatar(publicUrl);
-    if (error) {
-      console.error(error);
-    }
-  };
-
-  const updateUserAvatar = async (url) => {
-    // user_profile의 avatar_url을 변경된 url로 업데이트
-    const { data, error } = await client
-      .from("USER_PROFILE")
-      .update({ avatar_url: url })
-      .eq("user_id", loggedInUser.id)
-      .select();
-    if (error) {
-      console.log(error);
-    } else {
-      setLoggedInUserProfile(data);
-    }
-  };
-
-  const handleImage = (e) => {
-    //선택한 파일 정보를 저장
-    setAvatarFile(e.target.files[0]);
-  };
-
   /* Login Error 처리 */
   const [alert, setAlert] = useState({ cnt: 0, err: null });
 
