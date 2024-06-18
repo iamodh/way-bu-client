@@ -1,18 +1,16 @@
 import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { client } from "../../../libs/supabase";
 
 const Wrapper = styled.div`
   position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* 스크롤 숨김 */
+  height: 85vh;
 `;
 
 const Background = styled.div`
   width: 100%;
-  height: 85vh;
+  height: 100%;
   background-image: url("/img/sports1.jpeg");
   background-size: cover;
   background-position: center;
@@ -21,26 +19,6 @@ const Background = styled.div`
   left: 0;
   z-index: -10;
 `;
-
-// const Slides = styled.div``;
-
-// const Slide = styled.div`
-//   width: 300px;
-//   height: 400px;
-//   background-color: var(--color-white);
-//   position: absolute;
-//   top: 30%;
-//   left: 80%;
-//   transform: translate(-50%, -50%);
-//   border-radius: 20px;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.3);
-//   @media (max-width: 480px) {
-//     border-radius: 12px;
-//   }
-// `;
 
 const SportObject = styled.img`
   transition: all 0.1s ease-in;
@@ -95,7 +73,7 @@ const Kayak = styled(SportObject)`
 const Seashade = styled(SportObject)`
   transform: rotate(-1deg);
   width: 450px;
-  top: 30%;
+  top: 38%;
   left: 0px;
   @media (max-width: 480px) {
     width: 150px;
@@ -148,8 +126,8 @@ const balloonAnimation = keyframes`
 
 const Balloon = styled.div`
   position: absolute;
-  top: ${(props) => props.top}px;
-  left: ${(props) => props.left}px; /* left 값을 수정하여 위치 조정 */
+  top: ${(props) => props.top - 120}px;
+  left: ${(props) => props.left + 200}px; /* 오른쪽으로 50px 이동 */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -198,6 +176,8 @@ const SportsContainer = styled.div`
 
   border-radius: 1rem;
   box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.1);
+  max-height: 800px;
+  overflow-y: hidden;
 `;
 
 const SportsTitle = styled.div`
@@ -440,6 +420,9 @@ export default function Sports() {
         <span>Drag me!</span>
       </Balloon> */}
       {isHandVisible && <Hand src="/img/sport_items/hand.png" />}
+      {/* <Slides>
+        <Slide>{selectedSport}</Slide>
+      </Slides> */}
       {selectedSport && (
         <>
           <SportsInfo />
