@@ -264,7 +264,7 @@ const B1 = styled(B)`
   }
 `;
 
-export default function MypageProfile() {
+export default function MypageProfile({ count }) {
   const navigate = useNavigate();
   const { id: url_id } = useParams();
   /* 회원 정보 불러오기 */
@@ -446,17 +446,17 @@ export default function MypageProfile() {
             <CountItem>
               <FrameItem loading="lazy" alt="like" src="/icon/like.svg" />
               <B1>좋아요</B1>
-              <Div>{loggedInUserProfile.countLikes}개</Div>
+              <Div>{count.countLikes}개</Div>
             </CountItem>
             <CountItem>
               <FrameItem loading="lazy" alt="review" src="/icon/edit.svg" />
               <B1>후기</B1>
-              <Div>{loggedInUserProfile.countReviews}개</Div>
+              <Div>{count.countReviews}개</Div>
             </CountItem>
             <CountItem>
               <FrameItem loading="lazy" alt="matching" src="/icon/smile.svg" />
               <B1>매칭</B1>
-              <Div>{loggedInUserProfile.countMatches}개</Div>
+              <Div>{count.countMatches}개</Div>
             </CountItem>
           </CountBox>
         </ProfileBox>

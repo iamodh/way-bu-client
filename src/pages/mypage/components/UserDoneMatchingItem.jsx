@@ -76,8 +76,9 @@ const ProfileName = styled(Div)`
 `;
 
 export default function UserDoneMatchingItem({ matching, users }) {
-  return (
+  return users != null ? (
     <Wrapper>
+      {console.log("notnull", users)}
       <Row>
         <PostTitle>{matching.title}</PostTitle>
         <SportTag>{matching.SPORT.title}</SportTag>
@@ -96,6 +97,15 @@ export default function UserDoneMatchingItem({ matching, users }) {
           );
         })}
       </Row2>
+    </Wrapper>
+  ) : (
+    <Wrapper>
+      {console.log("null", users)}
+      <Row>
+        <PostTitle>{matching.title}</PostTitle>
+        <SportTag>{matching.SPORT.title}</SportTag>
+      </Row>
+      <Date>{matching.date}</Date>
     </Wrapper>
   );
 }

@@ -124,7 +124,6 @@ export default function MypageUpdate() {
   async function getSportList() {
     const { data, error } = await client.from("SPORT").select("id, title");
     setSportList(data);
-    console.log(data);
   }
   useEffect(() => {
     getSportList();
