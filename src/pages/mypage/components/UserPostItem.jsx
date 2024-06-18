@@ -35,6 +35,23 @@ const SportTag = styled.div`
 const PostTitle = styled.div`
   font-size: var(--font-size-m);
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40rem;
+  @media (max-width: 1280px) {
+    max-width: 30rem;
+  }
+
+  @media (max-width: 1000px) {
+    max-width: 23rem;
+  }
+  @media (max-width: 768px) {
+    max-width: 15rem;
+  }
+  @media (max-width: 480px) {
+    max-width: 10rem;
+  }
 `;
 const Div = styled.div`
   font-size: var(--font-size-s);

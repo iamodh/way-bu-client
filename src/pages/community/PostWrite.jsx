@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { client } from "../../../libs/supabase";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
@@ -29,6 +29,12 @@ export default function PostWrite() {
     formState: { errors },
   } = useForm();
 
+  useEffect(() => {
+    if (!loggedInUser || !loggedInUserProfile) {
+      navigate("/login");
+    }
+  }, []);
+
   const addComPost = async (formData) => {
     const { data, error } = await client
       .from("POST")
@@ -47,7 +53,6 @@ export default function PostWrite() {
       console.error(error);
       return;
     }
-    console.log("작성완료", data);
     navigate(`/community/${data[0].post_id}`);
   };
 

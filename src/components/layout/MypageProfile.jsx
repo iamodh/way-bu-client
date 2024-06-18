@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import { client } from "../../../libs/supabase";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
+import { useNavigate, useParams } from "react-router-dom";
 import SportsTag from "../SportTag";
 
 const H = styled.h2`
@@ -264,11 +265,23 @@ const B1 = styled(B)`
 `;
 
 export default function MypageProfile() {
+  const navigate = useNavigate();
+  const { id: url_id } = useParams();
   /* 회원 정보 불러오기 */
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
     loggedInUserProfileState
   );
+
+  useEffect(() => {
+    if (
+      !loggedInUser ||
+      !loggedInUserProfile ||
+      loggedInUserProfile.id != url_id
+    ) {
+      navigate("/login");
+    }
+  }, []);
 
   const [avatarFile, setAvatarFile] = useState(null);
   const [fileName, setFileName] = useState("-");
@@ -377,67 +390,77 @@ export default function MypageProfile() {
 
   // console.log("user", loggedInUserProfile);
   return (
-    <ProfileWrapper>
-      <ProfileBox>
-        <IntroduceBox>
-          <ImageBox>
-            <ProfileImage
-              loading="lazy"
-              alt=""
-              src={`${loggedInUserProfile.avatar_url}`}
-            />
-            <FileForm action={"/mypage/" + loggedInUserProfile.id}>
-              <FileName type="text" value={fileName} disabled />
-              <FileInput
-                type="file"
-                accept="image/jpeg, image/png"
-                name="input_avatar"
-                onChange={handleImage}
-                id="fileinput"
+    loggedInUser && (
+      <ProfileWrapper>
+        <ProfileBox>
+          <IntroduceBox>
+            <ImageBox>
+              <ProfileImage
+                loading="lazy"
+                alt=""
+                src={`${loggedInUserProfile.avatar_url}`}
               />
-              <Row>
-                <FileLabel htmlFor="fileinput">사진 업로드</FileLabel>
-                <FileButton onClick={uploadFile}>변경</FileButton>
-              </Row>
-            </FileForm>
-          </ImageBox>
-          <IntroduceContents>
-            <Introduce>
-              <H>{loggedInUserProfile.user_nickname}</H>
-              <BioForm
-                onSubmit={updateBio}
-                action={"/mypage/" + loggedInUserProfile.id}
-              >
-                <Bio value={bio} onChange={handleChange}></Bio>
-                <BioButtion onClick={updateBio}>수정</BioButtion>
-              </BioForm>
-            </Introduce>
-            <Interest>
-              <B>관심종목</B>
-              <SportTagParent>
-                {sport != null ? <SportsTag sport={sport} /> : "..."}
-              </SportTagParent>
-            </Interest>
-          </IntroduceContents>
-        </IntroduceBox>
-        <CountBox>
-          <CountItem>
-            <FrameItem loading="lazy" alt="like" src="/icon/like.svg" />
-            <B1>좋아요</B1>
-            <Div>{loggedInUserProfile.countLikes}개</Div>
-          </CountItem>
-          <CountItem>
-            <FrameItem loading="lazy" alt="review" src="/icon/edit.svg" />
-            <B1>후기</B1>
-            <Div>{loggedInUserProfile.countReviews}개</Div>
-          </CountItem>
-          <CountItem>
-            <FrameItem loading="lazy" alt="matching" src="/icon/smile.svg" />
-            <B1>매칭</B1>
-            <Div>{loggedInUserProfile.countMatches}개</Div>
-          </CountItem>
-        </CountBox>
-      </ProfileBox>
-    </ProfileWrapper>
+              {loggedInUserProfile.id == url_id ? (
+                <FileForm action={"/mypage/" + loggedInUserProfile.id}>
+                  <FileName type="text" value={fileName} disabled />
+                  <FileInput
+                    type="file"
+                    accept="image/jpeg, image/png"
+                    name="input_avatar"
+                    onChange={handleImage}
+                    id="fileinput"
+                  />
+                  <Row>
+                    <FileLabel htmlFor="fileinput">사진 업로드</FileLabel>
+                    <FileButton onClick={uploadFile}>변경</FileButton>
+                  </Row>
+                </FileForm>
+              ) : null}
+            </ImageBox>
+            <IntroduceContents>
+              <Introduce>
+                <H>{loggedInUserProfile.user_nickname}</H>
+                {loggedInUserProfile.id == url_id ? (
+                  <BioForm
+                    onSubmit={updateBio}
+                    action={"/mypage/" + loggedInUserProfile.id}
+                  >
+                    <Bio value={bio} onChange={handleChange}></Bio>
+                    <BioButtion onClick={updateBio}>수정</BioButtion>
+                  </BioForm>
+                ) : (
+                  <BioForm>
+                    <Bio value={bio} disabled />
+                  </BioForm>
+                )}
+              </Introduce>
+              <Interest>
+                <B>관심종목</B>
+                <SportTagParent>
+                  {sport != null ? <SportsTag sport={sport} /> : "..."}
+                </SportTagParent>
+              </Interest>
+            </IntroduceContents>
+          </IntroduceBox>
+          <CountBox>
+            <CountItem>
+              <FrameItem loading="lazy" alt="like" src="/icon/like.svg" />
+              <B1>좋아요</B1>
+              <Div>{loggedInUserProfile.countLikes}개</Div>
+            </CountItem>
+            <CountItem>
+              <FrameItem loading="lazy" alt="review" src="/icon/edit.svg" />
+              <B1>후기</B1>
+              <Div>{loggedInUserProfile.countReviews}개</Div>
+            </CountItem>
+            <CountItem>
+              <FrameItem loading="lazy" alt="matching" src="/icon/smile.svg" />
+              <B1>매칭</B1>
+              <Div>{loggedInUserProfile.countMatches}개</Div>
+            </CountItem>
+          </CountBox>
+        </ProfileBox>
+      </ProfileWrapper>
+    )
   );
 }

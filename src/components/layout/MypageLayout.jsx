@@ -6,7 +6,7 @@ import { useRecoilState } from "recoil";
 import { NavLink, Outlet } from "react-router-dom";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { client } from "../../../libs/supabase";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const MypageWrapper = styled.div`
   width: 100%;
@@ -81,6 +81,14 @@ export default function MypageLayout() {
   const [isCommentsLoading, setIsCommentsLoading] = useState(true);
   const [isReviewsLoading, setIsReviewsLoading] = useState(true);
   const [isMatchingsLoading, setIsMatchingsLoading] = useState(true);
+
+  const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   if (!loggedInUser || !loggedInUserProfile || loggedInUser.id != url_id) {
+  //     navigate("/login");
+  //   }
+  // }, []);
 
   useEffect(() => {
     getProfiles();

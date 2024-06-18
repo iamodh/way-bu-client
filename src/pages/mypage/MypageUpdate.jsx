@@ -159,9 +159,17 @@ export default function MypageUpdate() {
     if (formData.email) {
       updateAccount.email = formData.email;
     }
-    // if (formData.password) {
-    //   updateAccount.password = formData.password;
-    // }
+    if (formData.password) {
+      if (!formData.password2) {
+        alert("비밀번호 확인을 입력해주세요.");
+      } else {
+        if (formData.password !== formData.password2) {
+          alert("비밀번호가 일치하지 않습니다.");
+        } else {
+          updateAccount.password = formData.password;
+        }
+      }
+    }
     if (formData.phone) {
       updateProfile.phone = formData.phone;
     }
@@ -213,9 +221,13 @@ export default function MypageUpdate() {
           placeholder={loggedInUser.email}
         />
         <ItemTitle htmlFor="myPassword">비밀번호 변경</ItemTitle>
-        <InputText {...register("password")} type="text" id="myPassword" />
+        <InputText {...register("password")} type="password" id="myPassword" />
         <ItemTitle htmlFor="myPassword2">비밀번호 확인</ItemTitle>
-        <InputText {...register("password2")} type="text" id="myPassword2" />
+        <InputText
+          {...register("password2")}
+          type="password"
+          id="myPassword2"
+        />
         <ItemTitle htmlFor="myPhone">전화번호</ItemTitle>
         <InputWith>
           <InputText

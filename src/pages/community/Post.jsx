@@ -35,6 +35,7 @@ export default function Post() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
   const { id: postId } = useParams();
@@ -100,7 +101,6 @@ export default function Post() {
   };
 
   const onCommentSubmit = async (formData) => {
-    console.log(loggedInUserProfile);
     const { comment } = formData;
     try {
       const { data, commentError } = await client.from("COMMENT").insert([
@@ -122,13 +122,35 @@ export default function Post() {
       if (countError) {
         throw new Error(countError.message);
       }
+      try {
+        const { data: notiData, error: notiError } = await client
+          .from("NOTIFICATION")
+          .delete()
+          .eq("post_id", postId)
+          .select();
+      } catch (error) {}
+      if (post.user_id !== loggedInUser.id) {
+        const { data: notificationData, notificationError } = await client
+          .from("NOTIFICATION")
+          .insert([
+            {
+              user_id: post.user_id,
+              content: "회원님의 게시물에 새로운 댓글이 달렸습니다.",
+              post_id: postId,
+              title: post.title,
+            },
+          ]);
+        if (notificationError) {
+          throw new Error(notificationError.message);
+        }
+      }
     } catch (error) {
       console.error(error);
       return;
     }
+    reset({ comment: "" });
     getPost();
   };
-
   const startEditComment = (comment) => {
     setEditingCommentId(comment.comment_id);
     setEditContent(comment.content);
@@ -184,7 +206,6 @@ export default function Post() {
       console.error(error.message);
       return;
     }
-    console.log(data, "게시글 삭제 완료");
     window.history.back();
   };
 
@@ -267,7 +288,7 @@ export default function Post() {
 
   useEffect(() => {
     getPost();
-  }, []);
+  }, postId);
 
   if (isLoading) return <>Loading...</>;
 
