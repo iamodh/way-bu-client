@@ -34,6 +34,14 @@ export default function PostEdit() {
 
   const { id: postId } = useParams();
 
+  useEffect(() => {
+    if (!loggedInUser || !loggedInUserProfile) {
+      navigate("/login");
+    } else if (loggedInUser.id != postInfo.user_id) {
+      navigate("/community");
+    }
+  }, []);
+
   const setFormValues = (data) => {
     setValue("title", data.title);
     setValue("content", data.contents);
@@ -52,7 +60,6 @@ export default function PostEdit() {
     }
     setPostInfo(data);
     setFormValues(data);
-    console.log(data);
   };
 
   useEffect(() => {
@@ -77,7 +84,6 @@ export default function PostEdit() {
       console.error(error);
       return;
     }
-    console.log("작성완료", data);
     navigate(`/community/${data[0].post_id}`);
   };
 
