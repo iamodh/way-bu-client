@@ -17,6 +17,7 @@ const Background = styled.div`
   position: absolute;
   top: 0;
   left: 0;
+  z-index: -10;
 `;
 
 // const Slides = styled.div``;
