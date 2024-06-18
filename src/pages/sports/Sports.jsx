@@ -16,38 +16,18 @@ import {
 
 const Wrapper = styled.div`
   position: relative;
-  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 스크롤 숨김 */
 `;
 
 const Background = styled.div`
   width: 100%;
-  height: 100%;
+  height: 85vh;
   background-image: url("/img/sports1.jpeg");
   background-size: cover;
   background-position: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-`;
-
-const Slides = styled.div``;
-
-const Slide = styled.div`
-  width: 300px;
-  height: 400px;
-  background-color: var(--color-white);
-  position: absolute;
-  top: 30%;
-  left: 80%;
-  transform: translate(-50%, -50%);
-  border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.3);
-  @media (max-width: 480px) {
-    border-radius: 12px;
-  }
+  position: relative;
 `;
 
 const SportObject = styled.img`
@@ -87,7 +67,7 @@ const Kayak = styled(SportObject)`
 const Seashade = styled(SportObject)`
   transform: rotate(-1deg);
   width: 450px;
-  top: 38%;
+  top: 30%;
   left: 0px;
 `;
 
