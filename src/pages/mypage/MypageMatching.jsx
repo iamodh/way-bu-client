@@ -190,7 +190,6 @@ export default function MypageMatching() {
         <UserMatchingArea>
           <UserMatchingList {...settings}>
             {filteredMatchings.map((matching) => {
-              console.log("num", settings.slidesToShow);
               return (
                 <UserMatchingItem
                   key={"matching" + matching.id}
@@ -205,15 +204,15 @@ export default function MypageMatching() {
       )}
       <Hr />
       <Title>진행 종료된 매칭</Title>
-      {filteredDoneMatchings == null ? (
+      {filteredDoneMatchings != null ? (
         <UserDoneMatchingArea>
           <UserDoneMatchingList>
             {filteredDoneMatchings
               ? filteredDoneMatchings.map((d_matching) => {
                   /* 사용자 프로필 정보 불러오기 */
-                  let userList = userProfiles.filter((u) =>
-                    d_matching.joining_users.includes(u.id)
-                  );
+                  let userList = userProfiles.filter((u) => {
+                    return d_matching.joining_users.includes(u.user_id);
+                  });
                   return (
                     <UserDoneMatchingItem
                       key={"done_matching" + d_matching.id}

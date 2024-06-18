@@ -151,6 +151,7 @@ export default function MypageLayout() {
     setUserMatchings(matching);
     setIsMatchingsLoading(false);
   };
+
   return (
     <MypageWrapper>
       <Profile />

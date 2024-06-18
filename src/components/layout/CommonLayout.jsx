@@ -87,6 +87,7 @@ const ProfileImage = styled.img`
   width: 64px;
   height: 64px;
   border-radius: 50%;
+  object-fit: cover;
   margin: var(--padding-5xs) 64px var(--padding-5xs);
   @media screen and (max-width: 768px) {
     width: 40px;
@@ -171,7 +172,7 @@ export default function CommonLayout() {
         setLoggedInUser(user);
         const { data: userProfile, error: profileError } = await client
           .from("USER_PROFILE")
-          .select("*, SPORT(title, theme_color)")
+          .select("*")
           .eq("user_id", user.id);
 
         if (profileError) {
@@ -232,7 +233,7 @@ export default function CommonLayout() {
           <Alarm />
           {loggedInUser && loggedInUserProfile ? (
             <StyledLink to={"/mypage/" + loggedInUserProfile.id}>
-              <ProfileImage src="/img/ellipse-13@2x.png" />
+              <ProfileImage src={loggedInUserProfile.avatar_url} />
             </StyledLink>
           ) : null}
         </Sign>
