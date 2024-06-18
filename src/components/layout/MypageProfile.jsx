@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import SportsTag from "../SportTag";
 
 const H = styled.h2`
@@ -144,55 +146,69 @@ const B1 = styled(B)`
 `;
 
 export default function MypageProfile() {
+  const navigate = useNavigate();
+  const { id: url_id } = useParams();
   /* 회원 정보 불러오기 */
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
     loggedInUserProfileState
   );
 
+  useEffect(() => {
+    if (
+      !loggedInUser ||
+      !loggedInUserProfile ||
+      loggedInUserProfile.id != url_id
+    ) {
+      navigate("/login");
+    }
+  }, []);
+
   // console.log("user", loggedInUserProfile);
   return (
-    <ProfileWrapper>
-      <ProfileBox>
-        <IntroduceBox>
-          <ProfileImage
-            loading="lazy"
-            alt=""
-            src={`${loggedInUserProfile.avatar_url}`}
-          />
-          <IntroduceContents>
-            <Introduce>
-              <H>{loggedInUserProfile.user_nickname}</H>
-              <Div>{loggedInUserProfile.bio}</Div>
-            </Introduce>
-            <Interest>
-              <B>관심종목</B>
-              <SportTagParent>
-                {loggedInUserProfile.SPORT ? (
-                  <SportsTag sport={loggedInUserProfile.SPORT} />
-                ) : null}
-              </SportTagParent>
-            </Interest>
-          </IntroduceContents>
-        </IntroduceBox>
-        <CountBox>
-          <CountItem>
-            <FrameItem loading="lazy" alt="like" src="/icon/like.svg" />
-            <B1>좋아요</B1>
-            <Div>{loggedInUserProfile.countLikes}개</Div>
-          </CountItem>
-          <CountItem>
-            <FrameItem loading="lazy" alt="review" src="/icon/edit.svg" />
-            <B1>후기</B1>
-            <Div>{loggedInUserProfile.countReviews}개</Div>
-          </CountItem>
-          <CountItem>
-            <FrameItem loading="lazy" alt="matching" src="/icon/smile.svg" />
-            <B1>매칭</B1>
-            <Div>{loggedInUserProfile.countMatches}개</Div>
-          </CountItem>
-        </CountBox>
-      </ProfileBox>
-    </ProfileWrapper>
+    loggedInUser && (
+      <ProfileWrapper>
+        <ProfileBox>
+          <IntroduceBox>
+            <ProfileImage
+              loading="lazy"
+              alt=""
+              src={`${loggedInUserProfile.avatar_url}`}
+            />
+            <IntroduceContents>
+              <Introduce>
+                <H>{loggedInUserProfile.user_nickname}</H>
+                <Div>{loggedInUserProfile.bio}</Div>
+              </Introduce>
+              <Interest>
+                <B>관심종목</B>
+                <SportTagParent>
+                  {loggedInUserProfile.SPORT ? (
+                    <SportsTag sport={loggedInUserProfile.SPORT} />
+                  ) : null}
+                </SportTagParent>
+              </Interest>
+            </IntroduceContents>
+          </IntroduceBox>
+          <CountBox>
+            <CountItem>
+              <FrameItem loading="lazy" alt="like" src="/icon/like.svg" />
+              <B1>좋아요</B1>
+              <Div>{loggedInUserProfile.countLikes}개</Div>
+            </CountItem>
+            <CountItem>
+              <FrameItem loading="lazy" alt="review" src="/icon/edit.svg" />
+              <B1>후기</B1>
+              <Div>{loggedInUserProfile.countReviews}개</Div>
+            </CountItem>
+            <CountItem>
+              <FrameItem loading="lazy" alt="matching" src="/icon/smile.svg" />
+              <B1>매칭</B1>
+              <Div>{loggedInUserProfile.countMatches}개</Div>
+            </CountItem>
+          </CountBox>
+        </ProfileBox>
+      </ProfileWrapper>
+    )
   );
 }
