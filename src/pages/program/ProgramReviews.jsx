@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import StarAvgContainer from "./components/StarAvgContainer";
 import Review from "./components/Review";
+import { useOutletContext } from "react-router-dom";
 const Wrapper = styled.div`
   width: 100%;
   padding: var(--padding-13xl);
