@@ -130,7 +130,7 @@ const Footer = styled.footer`
   justify-content: center;
   align-items: center;
   background-color: rgba(27, 73, 101, 1);
-  height: 126px;
+  height: 95px;
 `;
 
 const FooterText = styled.p`
@@ -178,7 +178,7 @@ const NotificationCount = styled.div`
   background-color: red;
   color: white;
   width: 15px;
-  height: 15px;
+  height: 15px; /* 세미콜론 추가 */
   text-align: center;
   line-height: 15px;
   font-size: 10px;
@@ -466,17 +466,17 @@ export default function CommonLayout() {
       <Outlet />
       <Footer>
         <FooterText>
-          TEAM <span style={{ fontWeight: 700 }}>WAY-BU</span> | 대표이메일 :
+          TEAM <span style={{ fontWeight: 600 }}>WAY-BU</span> | 대표이메일 :
           asdf@ser | 개발자 홈페이지 <br />
           부산광역시 남구 용소로 45, 부경대학교 대연캠퍼스 창의관 3층 (우:
           48513)
         </FooterText>
         <FooterDiv />
         <FooterText>
-          <span style={{ fontWeight: 700 }}>고객센터(09:00~18:00)</span> |
-          <span style={{ fontWeight: 700 }}>이용약관</span> |
-          <span style={{ fontWeight: 700 }}>개인정보처리방침</span> |
-          <span style={{ fontWeight: 700 }}>제휴·광고 문의</span>
+          <span style={{ fontWeight: 600 }}>고객센터(09:00~18:00)</span> |
+          <span style={{ fontWeight: 600 }}>이용약관</span> |
+          <span style={{ fontWeight: 600 }}>개인정보처리방침</span> |
+          <span style={{ fontWeight: 600 }}>제휴·광고 문의</span>
         </FooterText>
       </Footer>
     </Wrapper>

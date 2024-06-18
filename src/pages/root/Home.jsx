@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
-import { animate, motion, spring } from "framer-motion";
+import { motion } from "framer-motion";
+import { useQuery } from "react-query";
+import { getWeather } from "../../../apis/weather";
 
 const AnimationWrapper = styled.div`
   overflow: hidden;
@@ -190,43 +192,71 @@ const Dots = styled.div`
 /* Intro */
 
 const IntroTitle = styled.h3`
-  font-size: var(--font-size-xxl);
+  font-size: 48px;
+  margin-bottom: 32px;
   font-weight: 700;
-  margin-to: 20px;
 `;
 
 const IntroBox = styled(motion.div)`
   display: flex;
-  gap: 32px;
+  width: 50%;
+  justify-content: space-around;
+`;
+
+const WeatherContainer = styled.div`
+  position: absolute;
+  right: 5%;
+  bottom: 10%;
+  display: flex;
 `;
 
 const WeatherBox = styled(motion.div)`
   width: 240px;
   height: 120px;
-  position: absolute;
-  right: 5%;
-  bottom: 10%;
   background-image: url("/img/index/weather.png");
   background-size: cover;
+`;
+
+const WeatherInfo = styled.span`
+  display: flex;
+  align-items: center;
+  p {
+    align-self: flex-start;
+    font-size: 24px;
+    transform: rotateZ(-21deg) translateY(-33px) translateX(-14px);
+    font-weight: bold;
+
+    font-family: "UhBeeSeulvely";
+    color: #ac893e;
+    text-shadow: -1px 0px white, 0px 1px white, 1px 0px white, 0px -1px white;
+  }
 `;
 
 const IntroItem = styled(motion.div)`
   width: 200px;
   height: 250px;
-  background-color: rgba(250, 250, 244, 1);
+  /* background-color: rgba(250, 250, 244, 1);
   border: 2px solid rgba(175, 211, 131, 1);
-  border-radius: 35px;
+  border-radius: 35px; */
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: var(--font-size-xl);
   font-family: "Pretendard-regular";
+  &:hover {
+    scale: 1.1;
+  }
+  transition: scale 0.05s ease-in;
 `;
 
 /* Beaches */
 
 const BeachIcon = styled(motion.div)`
   position: absolute;
+  img {
+    width: 200px;
+    height: auto;
+  }
 `;
 
 export default function Home() {
@@ -350,6 +380,13 @@ export default function Home() {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { type: "spring" } },
   };
+
+  /* 날씨 불러오기 */
+  const { isLoading: weatherLoading, data: weatherData } = useQuery(
+    ["weather", "busan"],
+    getWeather
+  );
+
   return (
     <Wrapper>
       <Outer ref={outerDivRef}>
@@ -408,18 +445,51 @@ export default function Home() {
             animate={currentPage === 2 ? "visible" : "hidden"}
           >
             <Link to="sports">
-              <IntroItem variants={introVariants}>스포츠</IntroItem>
+              <IntroItem variants={introVariants}>
+                <img src="img/index/bottle_sports.png" alt="" />
+              </IntroItem>
             </Link>
 
             <Link to="matching">
-              <IntroItem variants={introVariants}>매칭</IntroItem>
+              <IntroItem
+                variants={introVariants}
+                style={{ translateY: "100px" }}
+              >
+                <img src="img/index/bottle_matching.png" alt="" />
+              </IntroItem>
             </Link>
 
             <Link to="program">
-              <IntroItem variants={introVariants}>비교하기</IntroItem>
+              <IntroItem
+                variants={introVariants}
+                style={{ translateX: "20px", translateY: "-30px" }}
+              >
+                <img src="img/index/bottle_compare.png" alt="" />
+              </IntroItem>
             </Link>
           </IntroBox>
-          <WeatherBox />
+          <WeatherContainer>
+            <WeatherBox />
+            <WeatherInfo>
+              {weatherLoading ? (
+                "Loading..."
+              ) : (
+                <>
+                  <p>
+                    {weatherData.main.temp} {weatherData.weather[0].description}
+                  </p>
+                  {/* <p>
+                      습도: {weatherData.main.humidity} 풍속:{" "}
+                      {weatherData.wind.speed}
+                    </p>
+                    <p>
+                      일출시간: {weatherData.sys.sunrise} 일몰시간:{" "}
+                      {weatherData.sys.sunset}
+                    </p> */}
+                </>
+              )}
+            </WeatherInfo>
+          </WeatherContainer>
         </Inner>
         <Divider className="second" />
         <Inner
