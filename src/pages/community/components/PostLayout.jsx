@@ -170,6 +170,19 @@ export const CommentForm = styled.form`
   display: flex;
   align-items: center;
   justify-content: center;
+  &.reply {
+    width: calc(100% - 3rem);
+    margin-left: 3rem;
+  }
+`;
+
+export const ReplyContainer = styled.div`
+  padding: 1rem 2rem 1rem 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: var(--color-skyblue-background);
 `;
 
 export const CommentInput = styled.textarea`
@@ -195,11 +208,12 @@ export const CommentInputBtn = styled.button`
   width: 6rem;
   margin-left: 0.5rem;
   border-radius: 0.2rem;
+  cursor: pointer;
 `;
 
 export const CommentBox = styled.div`
   background-color: var(--color-skyblue-background);
-  padding: 0.6rem 1rem;
+  padding: 0.2rem 1rem;
   &:nth-child(2) {
     padding-top: 1rem;
     border-top-left-radius: 0.5rem;
@@ -208,6 +222,10 @@ export const CommentBox = styled.div`
   &:nth-last-child(2) {
     border-bottom-left-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
+    padding-bottom: 1rem;
+  }
+  &.reply {
+    padding-left: 50px;
     padding-bottom: 1rem;
   }
 `;
@@ -223,6 +241,9 @@ export const CommentItem = styled.div`
   &:nth-child(2),
   &:nth-child(3) {
     opacity: 0.6;
+  }
+  &.edited {
+    font-size: var(--font-size-s);
   }
   @media (max-width: 768px) {
     &:nth-child(3) {
@@ -259,4 +280,18 @@ export const CommentCount = styled.div`
   @media (max-width: 768px) {
     font-size: 1rem;
   }
+`;
+
+export const ReplyBtn = styled.div`
+  margin-right: 1.5em;
+  opacity: 0.8;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 3px;
+  font-size: 12px;
+  @media (max-width: 768px) {
+    font-size: 10px;
+    margin-right: 1rem;
+  }
+  cursor: pointer;
 `;

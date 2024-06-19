@@ -3,7 +3,7 @@ import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useState, useEffect } from "react";
 import { client } from "../../../libs/supabase";
 import { useRecoilState } from "recoil";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import {
   PostWrapper,
@@ -30,6 +30,8 @@ import {
   CommentContent,
   CommentBtn,
   CommentCount,
+  ReplyBtn,
+  ReplyContainer,
 } from "./components/PostLayout";
 
 export default function Post() {
@@ -50,6 +52,8 @@ export default function Post() {
   );
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editContent, setEditContent] = useState("");
+  const [replyingCommentId, setReplyingCommentId] = useState(null);
+  const [replyContent, setReplyContent] = useState("");
 
   const getPost = async () => {
     try {
@@ -104,14 +108,24 @@ export default function Post() {
   const onCommentSubmit = async (formData) => {
     const { comment } = formData;
     try {
-      const { data, commentError } = await client.from("COMMENT").insert([
-        {
-          post_id: postId,
-          user_id: loggedInUser.id,
-          content: comment,
-          user_nickname: loggedInUserProfile.user_nickname,
-        },
-      ]);
+      const { data: DeleteData, error: DeleteError } = await client
+        .from("NOTIFICATION")
+        .delete()
+        .eq("post_id", postId)
+        .select();
+      if (DeleteError) {
+        throw new Error(DeleteError.message);
+      }
+      const { data, error: commentError } = await client
+        .from("COMMENT")
+        .insert([
+          {
+            post_id: postId,
+            user_id: loggedInUser.id,
+            content: comment,
+            user_nickname: loggedInUserProfile.user_nickname,
+          },
+        ]);
       if (commentError) {
         throw new Error(commentError.message);
       }
@@ -123,17 +137,9 @@ export default function Post() {
       if (countError) {
         throw new Error(countError.message);
       }
-      try {
-        const { data: notiData, error: notiError } = await client
-          .from("NOTIFICATION")
-          .delete()
-          .eq("post_id", postId)
-          .select();
-      } catch (error) {}
       if (post.user_id !== loggedInUser.id) {
-        const { data: notificationData, notificationError } = await client
-          .from("NOTIFICATION")
-          .insert([
+        const { data: notificationData, error: notificationError } =
+          await client.from("NOTIFICATION").insert([
             {
               user_id: post.user_id,
               content: "회원님의 게시물에 새로운 댓글이 달렸습니다.",
@@ -152,6 +158,75 @@ export default function Post() {
     reset({ comment: "" });
     getPost();
   };
+
+  const onReplySubmit = async (commentId) => {
+    if (!replyContent) return;
+    try {
+      const { data: originCommentData, error: originCommentError } =
+        await client
+          .from("COMMENT")
+          .select("*")
+          .eq("comment_id", commentId)
+          .single();
+      if (originCommentError) {
+        throw new Error(originCommentError.message);
+      }
+      const { data: DeleteData, error: DeleteError } = await client
+        .from("NOTIFICATION")
+        .delete()
+        .eq("comment_id", originCommentData.comment_id)
+        .select();
+      if (DeleteError) {
+        throw new Error(DeleteError.message);
+      }
+
+      const { data: newCommentData, error: commentError } = await client
+        .from("COMMENT")
+        .insert([
+          {
+            post_id: postId,
+            user_id: loggedInUser.id,
+            content: replyContent,
+            user_nickname: loggedInUserProfile.user_nickname,
+            parent: commentId,
+          },
+        ]);
+      if (commentError) {
+        throw new Error(commentError.message);
+      }
+      const { data: countData, error: countError } = await client
+        .from("POST")
+        .update({ comment_count: post.comment_count + 1 })
+        .eq("post_id", postId)
+        .select();
+      if (countError) {
+        throw new Error(countError.message);
+      }
+      if (originCommentData.user_id !== loggedInUser.id) {
+        const { data: notificationData, error: notificationError } =
+          await client.from("NOTIFICATION").insert([
+            {
+              user_id: originCommentData.user_id,
+              content: "회원님의 댓글에 새로운 답글이 달렸습니다.",
+              post_id: postId,
+              title: replyContent,
+              comment_id: originCommentData.comment_id,
+            },
+          ]);
+        if (notificationError) {
+          throw new Error(notificationError.message);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+    setReplyContent("");
+    setReplyingCommentId(null);
+
+    getPost();
+  };
+
   const startEditComment = (comment) => {
     setEditingCommentId(comment.comment_id);
     setEditContent(comment.content);
@@ -246,14 +321,35 @@ export default function Post() {
 
   const commentList = () => {
     comments.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-    const list = comments.map((comment, key) => {
+    const originList = comments.filter((comment) => !comment.parent);
+    const list = originList.map((comment, key) => {
+      const replyList = comments.filter(
+        (reply) => reply.parent === comment.comment_id
+      );
       return (
-        <CommentBox key={comment.comment_id}>
+        <>
+          {CommentStructure(comment, null)}
+          {replyList.map((reply, key) => (
+            <>{CommentStructure(reply, true)}</>
+          ))}
+        </>
+      );
+    });
+    return list;
+  };
+
+  const CommentStructure = (comment, isReply) => {
+    return (
+      <>
+        <CommentBox key={comment.comment_id} className={isReply ? "reply" : ""}>
           <CommentInfo>
             <CommentItem>{comment.user_nickname}</CommentItem>
             <CommentItem>{formatTime(comment.created_at)}</CommentItem>
             {comment.updated_at && (
-              <CommentItem>{formatTime(comment.updated_at)} 수정됨</CommentItem>
+              <CommentItem className="edited">
+                {/* {formatTime(comment.updated_at)}  */}
+                수정됨
+              </CommentItem>
             )}
             {loggedInUser && comment.user_id === loggedInUser.id && (
               <>
@@ -274,22 +370,54 @@ export default function Post() {
                 onChange={(e) => setEditContent(e.target.value)}
               />
               <button onClick={() => saveEditComment(comment.comment_id)}>
-                Save
+                변경
               </button>
-              <button onClick={() => setEditingCommentId(null)}>Cancel</button>
+              <button onClick={() => setEditingCommentId(null)}>취소</button>
             </div>
           ) : (
             <CommentContent>{comment.content}</CommentContent>
           )}
+          {!comment.parent && (
+            <ReplyBtn
+              onClick={() => {
+                if (replyingCommentId === comment.comment_id) {
+                  setReplyingCommentId(null);
+                } else {
+                  setReplyingCommentId(comment.comment_id);
+                }
+              }}
+            >
+              {replyingCommentId === comment.comment_id ? "취소" : "답글 달기"}
+            </ReplyBtn>
+          )}
         </CommentBox>
-      );
-    });
-    return list;
+        {replyingCommentId === comment.comment_id && (
+          <ReplyContainer>
+            <CommentInput
+              col="3"
+              required
+              onChange={(e) => {
+                setReplyContent(e.target.value);
+              }}
+            >
+              {replyContent}
+            </CommentInput>
+            <CommentInputBtn
+              onClick={() => {
+                onReplySubmit(comment.comment_id);
+              }}
+            >
+              답글 추가
+            </CommentInputBtn>
+          </ReplyContainer>
+        )}
+      </>
+    );
   };
 
   useEffect(() => {
     getPost();
-  }, postId);
+  }, [postId]);
 
   if (isLoading) return <>Loading...</>;
 
