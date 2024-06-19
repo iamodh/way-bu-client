@@ -176,7 +176,7 @@ const SportsContainer = styled.div`
   border-radius: 1rem;
   box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.1);
   height: 800px;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 const SportsTitle = styled.div`

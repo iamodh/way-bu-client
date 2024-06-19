@@ -98,6 +98,7 @@ export default function Post() {
     } catch (error) {
       console.error(error);
     }
+    console.log(post);
   };
 
   const onCommentSubmit = async (formData) => {
@@ -322,11 +323,13 @@ export default function Post() {
           </PostInfoBox>
         </PostInfoBottom>
       </PostInfoContainer>
-      <PostContent>
-        {post.contents}
-        <ThumbBtn onClick={() => clickThumb()}>{post.thumbs} 👍🏻</ThumbBtn>
-      </PostContent>
-      {loggedInUser && post.user_id == loggedInUser.id && (
+      <PostContent
+        dangerouslySetInnerHTML={{
+          __html: post.contents.replace(/\n/g, "<br>"),
+        }}
+      />
+      <ThumbBtn onClick={() => clickThumb()}>{post.thumbs} 👍🏻</ThumbBtn>
+      {loggedInUser && post.user_id === loggedInUser.id && (
         <PostBtnContainer>
           <PostBtn>
             <Link to={`edit`}>수정하기</Link>
