@@ -5,7 +5,7 @@ import { client } from "../../../libs/supabase";
 
 const Wrapper = styled.div`
   position: relative;
-  height: 100vh;
+  height: 85vh;
 `;
 
 const Background = styled.div`
@@ -19,26 +19,6 @@ const Background = styled.div`
   left: 0;
   z-index: -10;
 `;
-
-// const Slides = styled.div``;
-
-// const Slide = styled.div`
-//   width: 300px;
-//   height: 400px;
-//   background-color: var(--color-white);
-//   position: absolute;
-//   top: 30%;
-//   left: 80%;
-//   transform: translate(-50%, -50%);
-//   border-radius: 20px;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.3);
-//   @media (max-width: 480px) {
-//     border-radius: 12px;
-//   }
-// `;
 
 const SportObject = styled.img`
   transition: all 0.1s ease-in;
@@ -196,6 +176,8 @@ const SportsContainer = styled.div`
 
   border-radius: 1rem;
   box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.1);
+  max-height: 800px;
+  overflow-y: hidden;
 `;
 
 const SportsTitle = styled.div`

@@ -576,10 +576,21 @@ export default function Program() {
   const filterProgramByOrder = (programs) => {
     let result = programs;
 
+    // 인기
+    if (order.popularity && order.popOn) {
+    }
+
     // 가격
     if (order.priceOn) {
-      result;
+      if (order.price) result = [...result.sort((a, b) => a.price - b.price)];
+      else result = [...result.sort((a, b) => b.price - a.price)];
     }
+
+    // 별점
+    if (order.reviews && order.reviewsOn) {
+      console.log("review 오름차순");
+    }
+
     return result;
   };
 
@@ -588,7 +599,9 @@ export default function Program() {
     () => getPrograms(searchKeyword),
     {
       select: (programsData) =>
-        filterProgramByDetails(filterProgramBySports(programsData)),
+        filterProgramByOrder(
+          filterProgramByDetails(filterProgramBySports(programsData))
+        ),
     }
   );
 
@@ -614,7 +627,6 @@ export default function Program() {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
-
   return (
     <Body>
       <Wrapper>
@@ -677,12 +689,7 @@ export default function Program() {
                 />
               </SmallFilterBox>
               <SmallFilterBox>
-                <select
-                  {...filterRegister("beach")}
-                  value={
-                    searchParams.get("beach") ? searchParams.get("beach") : ""
-                  }
-                >
+                <select {...filterRegister("beach")}>
                   <option value="">해수욕장</option>
                   <option value="해운대해수욕장">해운대해수욕장</option>
                   <option value="광안리해수욕장">광안리해수욕장</option>
@@ -851,9 +858,7 @@ export default function Program() {
             }}
           >
             <span>인기순</span>{" "}
-            {order.popOn ? (
-              <span>{order.popularity ? "asc" : "desc"}</span>
-            ) : null}
+            {order.popOn ? <span>{order.popularity ? "🔼" : "🔽"}</span> : null}
           </div>
           <div
             onClick={() => {
@@ -863,7 +868,7 @@ export default function Program() {
             }}
           >
             <span>가격순</span>
-            {order.priceOn ? <span>{order.price ? "asc" : "desc"}</span> : null}
+            {order.priceOn ? <span>{order.price ? "🔼" : "🔽"}</span> : null}
           </div>
           <div
             onClick={() => {
@@ -874,7 +879,7 @@ export default function Program() {
           >
             <span>별점순</span>{" "}
             {order.reviewsOn ? (
-              <span>{order.reviews ? "asc" : "desc"}</span>
+              <span>{order.reviews ? "🔼" : "🔽"}</span>
             ) : null}
           </div>
         </OrderContainer>

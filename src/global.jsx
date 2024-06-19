@@ -16,6 +16,13 @@ export default createGlobalStyle`
     font-weight: 400;
     font-style: normal;
 }
+@font-face {
+      font-family: "UhBeeSeulvely";
+      src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_five@.2.0/UhBeeSeulvely.woff")
+        format("woff");
+      font-weight: normal;
+      font-style: normal;
+    }
 
 
 /* font sizes */
