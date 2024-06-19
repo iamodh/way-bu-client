@@ -136,6 +136,9 @@ const Footer = styled.footer`
 const FooterText = styled.p`
   color: var(--color-white);
   text-align: center;
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 
   &:first-child {
     flex: 1;
@@ -148,7 +151,6 @@ const FooterText = styled.p`
 const FooterDiv = styled.div`
   width: 1px;
   height: 66px;
-  border: 1px solid var(--color-white);
 `;
 
 const NotificationBox = styled.div`
@@ -472,17 +474,20 @@ export default function CommonLayout() {
       <Outlet />
       <Footer>
         <FooterText>
-          TEAM <span style={{ fontWeight: 600 }}>WAY-BU</span> | 대표이메일 :
-          asdf@ser | 개발자 홈페이지 <br />
-          부산광역시 남구 용소로 45, 부경대학교 대연캠퍼스 창의관 3층 (우:
-          48513)
+          TEAM <span style={{ fontWeight: 600 }}>WAY-BU</span>
+          <div>대표이메일 : odh9568@gmail.com </div>
+          <div> 개발자 홈페이지 </div>
+          <div>
+            부산광역시 남구 용소로 45, 부경대학교 대연캠퍼스 창의관 3층 (우:
+            48513)
+          </div>
         </FooterText>
         <FooterDiv />
         <FooterText>
-          <span style={{ fontWeight: 600 }}>고객센터(09:00~18:00)</span> |
-          <span style={{ fontWeight: 600 }}>이용약관</span> |
-          <span style={{ fontWeight: 600 }}>개인정보처리방침</span> |
-          <span style={{ fontWeight: 600 }}>제휴·광고 문의</span>
+          <div style={{ fontWeight: 600 }}>고객센터(09:00~18:00)</div>
+          <div style={{ fontWeight: 600 }}>이용약관</div>
+          <div style={{ fontWeight: 600 }}>개인정보처리방침</div>
+          <div style={{ fontWeight: 600 }}>제휴·광고 문의</div>
         </FooterText>
       </Footer>
     </Wrapper>

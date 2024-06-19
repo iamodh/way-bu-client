@@ -111,6 +111,13 @@ export const PostInfoItem = styled.div`
 
 export const PostContent = styled.div`
   width: 100%;
+  margin-bottom: 5rem;
+`;
+
+export const PostContentContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--color-blue-main);
   border-radius: 0.5rem;
   min-height: 15rem;
@@ -140,8 +147,8 @@ export const ThumbBtn = styled.button`
     font-size: 1rem;
   }
   position: absolute;
-  bottom: 1rem;
   right: 50%;
+  bottom: 2rem;
   background-color: rgba(0, 0, 0, 0);
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 0.5rem;
