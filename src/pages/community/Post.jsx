@@ -98,7 +98,6 @@ export default function Post() {
     } catch (error) {
       console.error(error);
     }
-    console.log(post);
   };
 
   const onCommentSubmit = async (formData) => {

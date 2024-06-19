@@ -53,8 +53,7 @@ export default function PostWrite() {
       console.error(error);
       return;
     }
-    console.log(data);
-    // navigate(`/community/${data[0].post_id}`);
+    navigate(`/community/${data[0].post_id}`);
   };
 
   return (
