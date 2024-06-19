@@ -16,6 +16,7 @@ import {
   PostInfoItem,
   PostInfoBottom,
   PostContent,
+  PostContentContainer,
   ThumbBtn,
   PostBtn,
   PostBtnContainer,
@@ -322,12 +323,14 @@ export default function Post() {
           </PostInfoBox>
         </PostInfoBottom>
       </PostInfoContainer>
-      <PostContent
-        dangerouslySetInnerHTML={{
-          __html: post.contents.replace(/\n/g, "<br>"),
-        }}
-      />
-      <ThumbBtn onClick={() => clickThumb()}>{post.thumbs} 👍🏻</ThumbBtn>
+      <PostContentContainer>
+        <PostContent
+          dangerouslySetInnerHTML={{
+            __html: post.contents.replace(/\n/g, "<br>"),
+          }}
+        />
+        <ThumbBtn onClick={() => clickThumb()}>{post.thumbs} 👍🏻</ThumbBtn>
+      </PostContentContainer>
       {loggedInUser && post.user_id === loggedInUser.id && (
         <PostBtnContainer>
           <PostBtn>
