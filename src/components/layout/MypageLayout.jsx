@@ -159,9 +159,53 @@ export default function MypageLayout() {
     setUserMatchings(matching);
     setIsMatchingsLoading(false);
   };
+
+  const [count, setCount] = useState({
+    countLikes: 0,
+    countReviews: 0,
+    countMatchings: 0,
+  });
+  /* 좋아요, 후기, 매칭 카운트 */
+  useEffect(() => {
+    /* 좋아요 카운트 */
+    if (userPosts) {
+      let i = 0;
+      let countPosts = userPosts.filter(
+        (p) => p.user_nickname === loggedInUserProfile.user_nickname
+      );
+      countPosts.forEach((p) => (i += p.thumbs));
+      setCount((prvCount) => {
+        return { ...prvCount, countLikes: i };
+      });
+      // console.log(count.thumbs, countPosts);
+    }
+    /* 후기 카운트 */
+    if (userReviews) {
+      let countReviews = userReviews.filter(
+        (r) => r.writter === loggedInUserProfile.id
+      );
+      setCount((prvCount) => {
+        return { ...prvCount, countReviews: countReviews.length };
+      });
+      // console.log(count.reviews, countReviews);
+    }
+    /* 매칭 카운트 */
+    if (userMatchings) {
+      let countMatchings = userMatchings.filter(
+        (m) =>
+          m.hoset === loggedInUser.id ||
+          (m.joining_users && m.joining_users.includes(loggedInUser.id))
+      );
+      setCount((prvCount) => {
+        return { ...prvCount, countMatches: countMatchings.length };
+      });
+      // console.log(count.matchings, countMatchings);
+    }
+  }, [userPosts, userReviews, userMatchings]);
+
   return (
     <MypageWrapper>
-      <Profile />
+      {count ? <Profile count={count} /> : null}
       {loggedInUserProfile && loggedInUserProfile.id == url_id ? (
         <Index>
           <StyledLink end to={"/mypage/" + loggedInUserProfile.id}>
