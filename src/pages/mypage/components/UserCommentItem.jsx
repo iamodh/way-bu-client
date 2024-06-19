@@ -35,7 +35,7 @@ const Div = styled.div`
 `;
 
 export default function UserCommentItem({ comment }) {
-  console.log("comment", comment);
+  // console.log("comment", comment);
   const formatDate = (datestr) => {
     const date = new Date(datestr);
     var options = { year: "numeric", month: "numeric", day: "numeric" };

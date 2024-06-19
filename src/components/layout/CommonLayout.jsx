@@ -91,6 +91,7 @@ const ProfileImage = styled.img`
   width: 64px;
   height: 64px;
   border-radius: 50%;
+  object-fit: cover;
   margin: var(--padding-5xs) 64px var(--padding-5xs);
   @media screen and (max-width: 768px) {
     width: 40px;

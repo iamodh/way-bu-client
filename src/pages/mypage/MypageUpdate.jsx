@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { loggedInUserState, loggedInUserProfileState } from "../../atom";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 const MypageUpdateWrapper = styled.form`
   width: 80%;
@@ -59,6 +60,17 @@ const InputWith = styled.div`
   grid-template-columns: 4fr 1fr;
   gap: var(--gap-5xs);
 `;
+
+const SportSelect = styled.select`
+  font-size: inherit;
+  padding: 2px var(--padding-xs);
+  border: 1px solid var(--color-gray);
+  border-radius: var(--br-8xs);
+  color: var(--color-black);
+  &:hover {
+    background-color: var(--color-skyblue-light);
+  }
+`;
 const BtnConfirm = styled.button`
   cursor: pointer;
   border: 1px solid var(--color-blue-main);
@@ -106,6 +118,16 @@ export default function MypageUpdate() {
   const [loggedInUserProfile, setLoggedInUserProfile] = useRecoilState(
     loggedInUserProfileState
   );
+  const [sportList, setSportList] = useState([]);
+  const navigate = useNavigate();
+  /* 스포츠 목록 불러오기 */
+  async function getSportList() {
+    const { data, error } = await client.from("SPORT").select("id, title");
+    setSportList(data);
+  }
+  useEffect(() => {
+    getSportList();
+  }, []);
 
   const {
     register,
@@ -118,6 +140,7 @@ export default function MypageUpdate() {
   const onSubmit = (formData) => {
     updateUserInfo(formData);
     reset();
+    navigate("/mypage/" + loggedInUserProfile.id);
   };
 
   /* 개인정보 수정하는 함수 */
@@ -135,17 +158,40 @@ export default function MypageUpdate() {
     if (formData.email) {
       updateAccount.email = formData.email;
     }
-    // if (formData.password) {
-    //   updateAccount.password = formData.password;
-    // }
+    if (formData.password) {
+      if (!formData.password2) {
+        alert("비밀번호 확인을 입력해주세요.");
+      } else {
+        if (formData.password !== formData.password2) {
+          alert("비밀번호가 일치하지 않습니다.");
+        } else {
+          updateAccount.password = formData.password;
+        }
+      }
+    }
     if (formData.phone) {
       updateProfile.phone = formData.phone;
     }
-    const { data1 } = await client
+    if (formData.favoriteSport) {
+      updateProfile.favoriteSports = formData.favoriteSport;
+    }
+    const { data, error } = await client
       .from("USER_PROFILE")
       .update(updateProfile)
-      .eq("user_id", loggedInUser.id);
-    const { data2 } = await client.auth.updateUser(updateAccount);
+      .eq("id", loggedInUserProfile.id)
+      .select();
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+      console.log("avatar url is changed");
+      console.log(data[0]);
+      setLoggedInUserProfile(data[0]);
+    }
+
+    // setLoggedInUserProfile(data1[0]);
+    // const { data2 } = await client.auth.updateUser(updateAccount);
+    // setLoggedInUser(data2[0]);
   }
 
   return (
@@ -174,9 +220,13 @@ export default function MypageUpdate() {
           placeholder={loggedInUser.email}
         />
         <ItemTitle htmlFor="myPassword">비밀번호 변경</ItemTitle>
-        <InputText {...register("password")} type="text" id="myPassword" />
+        <InputText {...register("password")} type="password" id="myPassword" />
         <ItemTitle htmlFor="myPassword2">비밀번호 확인</ItemTitle>
-        <InputText {...register("password2")} type="text" id="myPassword2" />
+        <InputText
+          {...register("password2")}
+          type="password"
+          id="myPassword2"
+        />
         <ItemTitle htmlFor="myPhone">전화번호</ItemTitle>
         <InputWith>
           <InputText
@@ -187,6 +237,21 @@ export default function MypageUpdate() {
           />
           <BtnConfirm>인증</BtnConfirm>
         </InputWith>
+        <ItemTitle htmlFor="myFavoriteSport">선호종목 설정</ItemTitle>
+        {sportList != null ? (
+          <SportSelect {...register("favoriteSport")} id="myFavoriteSport">
+            <option value="none">== 선택 ==</option>
+            {sportList.map((sport, i) => {
+              return (
+                <option key={i} value={sport.id}>
+                  {sport.title}
+                </option>
+              );
+            })}
+          </SportSelect>
+        ) : (
+          "Loading..."
+        )}
       </ItemBox>
       <Button>저장하기</Button>
     </MypageUpdateWrapper>
