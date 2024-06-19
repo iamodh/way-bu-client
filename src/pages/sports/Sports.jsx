@@ -167,7 +167,6 @@ const SportsContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   max-width: 800px;
   padding: 3rem 5%;
   background-color: var(--color-skyblue-background);
@@ -176,8 +175,8 @@ const SportsContainer = styled.div`
 
   border-radius: 1rem;
   box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.1);
-  max-height: 800px;
-  overflow-y: hidden;
+  height: 800px;
+  overflow-y: auto;
 `;
 
 const SportsTitle = styled.div`
