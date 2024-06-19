@@ -195,6 +195,9 @@ const IntroTitle = styled.h3`
   font-size: 48px;
   margin-bottom: 32px;
   font-weight: 700;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const IntroBox = styled(motion.div)`
@@ -208,6 +211,9 @@ const WeatherContainer = styled.div`
   right: 5%;
   bottom: 10%;
   display: flex;
+  @media (max-width: 768px) {
+    bottom: 5%;
+  }
 `;
 
 const WeatherBox = styled(motion.div)`
@@ -215,6 +221,10 @@ const WeatherBox = styled(motion.div)`
   height: 120px;
   background-image: url("/img/index/weather.png");
   background-size: cover;
+  @media (max-width: 768px) {
+    width: 160px;
+    height: 80px;
+  }
 `;
 
 const WeatherInfo = styled.span`
@@ -223,12 +233,18 @@ const WeatherInfo = styled.span`
   p {
     align-self: flex-start;
     font-size: 24px;
-    transform: rotateZ(-21deg) translateY(-33px) translateX(-14px);
+    transform: rotateZ(-21deg) translateY(-25px) translateX(-14px);
     font-weight: bold;
 
     font-family: "UhBeeSeulvely";
     color: #ac893e;
     text-shadow: -1px 0px white, 0px 1px white, 1px 0px white, 0px -1px white;
+  }
+  @media (max-width: 768px) {
+    p {
+      font-size: 20px;
+      transform: rotateZ(-21deg) translateY(-25px) translateX(-5px);
+    }
   }
 `;
 
@@ -247,6 +263,12 @@ const IntroItem = styled(motion.div)`
     scale: 1.1;
   }
   transition: scale 0.05s ease-in;
+  @media (max-width: 768px) {
+    width: 50px;
+    img {
+      width: 150px;
+    }
+  }
 `;
 
 /* Beaches */
@@ -256,6 +278,17 @@ const BeachIcon = styled(motion.div)`
   img {
     width: 200px;
     height: auto;
+  }
+  @media (max-width: 768px) {
+    img {
+      width: 70px;
+    }
+    &.haeundae {
+      left: 80% !important;
+    }
+    &.songdo {
+      left: 50% !important;
+    }
   }
 `;
 
@@ -476,7 +509,8 @@ export default function Home() {
               ) : (
                 <>
                   <p>
-                    {weatherData.main.temp} {weatherData.weather[0].description}
+                    {weatherData.main.temp}
+                    {weatherData.weather[0].description}
                   </p>
                   {/* <p>
                       습도: {weatherData.main.humidity} 풍속:{" "}
@@ -503,7 +537,7 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "30%", left: "5%" }}
             >
-              <img src="img/beaches/songjung.png" width={"120px"} />
+              <img src="img/beaches/songjung.png" />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=일광해수욕장"}>
@@ -511,7 +545,7 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "50%", left: "20%" }}
             >
-              <img src="img/beaches/ilgwang.png" width={"120px"} />
+              <img src="img/beaches/ilgwang.png" />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=임랑해수욕장"}>
@@ -519,7 +553,7 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "20%", left: "35%" }}
             >
-              <img src="img/beaches/imrang.png" width={"120px"} />
+              <img src="img/beaches/imrang.png" />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=다대포해수욕장"}>
@@ -527,24 +561,26 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "70%", left: "45%" }}
             >
-              <img src="img/beaches/dadaepo.png" width={"120px"} />
+              <img src="img/beaches/dadaepo.png" />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=송도해수욕장"}>
             <BeachIcon
+              className="songdo"
               variants={beachVariants}
               style={{ top: "40%", left: "60%" }}
             >
-              <img src="img/beaches/songdo.png" width={"120px"} />
+              <img src="img/beaches/songdo.png" />
             </BeachIcon>
           </Link>
 
           <Link to={"program?beach=해운대해수욕장"}>
             <BeachIcon
+              className="haeundae"
               variants={beachVariants}
               style={{ top: "30%", left: "85%" }}
             >
-              <img src="img/beaches/haeundae.png" width={"120px"} />
+              <img src="img/beaches/haeundae.png" />
             </BeachIcon>
           </Link>
           <Link to={"program?beach=광안리해수욕장"}>
@@ -552,7 +588,7 @@ export default function Home() {
               variants={beachVariants}
               style={{ top: "60%", left: "75%" }}
             >
-              <img src="img/beaches/gwanganli.png" width={"120px"} />
+              <img src="img/beaches/gwanganli.png" />
             </BeachIcon>
           </Link>
         </Inner>
